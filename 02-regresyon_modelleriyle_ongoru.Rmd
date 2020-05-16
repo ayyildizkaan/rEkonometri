@@ -1,0 +1,148 @@
+# Regresyon Modelleriyle Öngörü
+
+Öngörülerin kullanışlı olduğunu gösteren bazı alanlar:
+
+* Planlama ve kontrol işlemleri
+
+* Pazarlama
+
+* Ekonomi
+
+* Finansal varlık yönetimi
+
+* Finansal risk yönetimi
+
+* İşletme ve devlet bütçesi
+
+* Demografi
+
+* Kriz yönetimi
+
+Gujarati, *geçmiş ve bugünkü bilgiye dayanan öngörünün amacı ilgi alanına giren konunun gelecekte alabileceği yola ait niceliksel tahmin(ler) vermektir. Bu amaçla ekonometrik modeller geliştirir ve gelecekteki güzergah için en az bir öngörü yöntemini kullanırız* der.
+
+Basit bir şekilde aşağıdaki regresyonu ele alalım:
+
+$pce_t = \beta_1 + \beta_2pdi_t + \epsilon_t$
+
+Bağımlı değişken:
+
+* **pce:** Kişi başına düşen kişisel tüketim harcaması
+
+Bağımsız değişken(ler):
+
+* **pdi:** Kişi başına düşen kişisel harcanabilir gelir (vergi sonrası)
+
+Bu bir tüketim fonksiyonudur. Regresyonun eğim parametresi marjinal tüketim eğilimine eşittir. Yani, gelirdeki 1 $ artış için artan tüketim harcamasıdır.
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df <- read_excel("Table16_1.xls")
+
+```
+
+```{r}
+
+df %<>% 
+  dplyr::select(year, pce, pdi)
+
+str(df)
+
+```
+
+Veriler 1960-2008 yıllarını kapsıyor. Tüketim fonksiyonunun tahmininde ilk olarak 1960-2004 arası gözlemleri kullanıyoruz ve son 4 gözlemi (2005-2008) tahmin edilen modelin performansını değerlendirebilmek amacıyla ayırıyoruz.
+
+```{r}
+
+df_train <- df %>% 
+  filter(year %in% c(1960:2004))
+
+```
+
+Öncelikle iki değişkenin ilişkisini grafiğe aktaralım.
+
+```{r}
+
+ggplot(df_train, aes(x = pdi, y = pce)) +
+  geom_point() +
+  theme_minimal() +
+  theme(axis.title = element_text())
+
+```
+
+Modelin çıktısına da ulaşalım.
+
+```{r}
+
+model <- lm(formula = pce ~ pdi, data = df_train)
+summary(model)
+
+```
+
+pdi'daki 1 $'lık artış pce'de 0.95 \$'lık artışa neden oluyor. Dolayısıyla marjinal tüketim eğilimi 0.95'tir.
+
+Çıktıda da görebileceğimiz gibi modeli yaklaşık olarak $\hat{pce_t} = -1083.98 + 0.95pdi_t$ bulduk.
+
+Öngörüde bulunmadan önce bazı terimleri bilmemiz gerekiyor.
+
+```{r, echo=FALSE, out.width = "100%"}
+knitr::include_graphics("C:/Users/datanerd/Desktop/Github/rEkonometri/img/typesofforecasting.png")
+```
+
+Nokta ve aralık öngörüleri: Noktada her öngörü dönemi için tek bir değer bulunur. Aralıkta ise belli bir olasılık ile alt ve üst sınırlar vardır. Aralık öngörü için Merkez Bankası'ndan örnek verebiliriz.
+
+```{r, echo=FALSE, out.width = "100%"}
+knitr::include_graphics("C:/Users/datanerd/Desktop/Github/rEkonometri/img/interval.png")
+```
+
+Gerçekleşen ve öncül öngörüler (ex post and ex ante forecasts): Örneğimizde 1960-2004 yıllarını alıp model kurmuştuk. Bu tahmin dönemidir (estimation period). Gerçekleşen öngörü (ex post forecast) döneminde ise bağımlı-bağımsız değişken değerlerini biliriz. 2005-2008 yılları ayırdığımız dönemlerdir. Bu değerleri aslında biliyoruz. Bu dönem performans ölçümü ile alakalıdır. Son olarak öncül öngörüde (ex ante forecast) bağımlı değişken değerlerini tahmin döneminin ilerisi için tahmin ederiz.
+
+```{r}
+
+df %>% 
+  filter(year %in% c(2005:2008)) %>% 
+  dplyr::select(pdi, pce, year)
+
+```
+
+31,318 milyar $ olan 2005 yılı kişi başı pdi değeri verildiğinde yine 2005 yılı için pce nedir? Burada nokta öngörü yapacağız. Kişi başı pdi verildiğinde *en iyi ortalama kestirimi* elde ederiz.
+
+$\hat{pce}_{2005} = \beta_1 + \beta_2pdi_{2005} = -1083.98 + 0.95*31318 = 28668.12$
+
+31,318 milyar $ olan pdi verildiğinde 2005 için en iyi ortalama kestirim değeri 28,668 milyar \$'dır. Biz bunun gerçek değerinin 29,771 milyar \$ olduğunu biliyoruz. Yani, öngörü hatamız (forecast error) 1,103 milyar \$'dır.
+
+Peki, muhtemel öngörü hatamızı hesaplayabilir miyiz? Hata terimi normal dağılımlı ise...
+
+2005 yılı için;
+
+$Pr[\hat{Y}_{2005} - t_{\alpha/2}sh(\hat{Y}_{2005}) \le E(Y_{2005}) \le \hat{Y}_{2005} + t_{\alpha/2}sh(\hat{Y}_{2005})] = \%95$
+
+$\alpha = \%5$
+
+sh: Standart hata
+
+Normal dağılım yerine t dağılımını kullandık. Çünkü gerçek hata varyansını tahmin etmek istiyoruz.
+
+```{r}
+
+predict(model, newdata = data.frame(pdi = 31318, year = 2005), interval = "confidence")
+
+```
+
+En iyi tek tahmin 28,786 milyar $ olmasına rağmen %95 güven aralığı 28,553;29,018 milyar \$ şeklindedir. Tabi biz bunu sadece 2005 için yapmayacağız. Her bir yıl için yaptığımızda ortaya bir güven bandı çıkacaktır.
+
+```{r}
+
+df %>% 
+  dplyr::select(pdi,year) %>% 
+  filter(year %in% c(2005:2008)) -> expost
+
+predict(model, newdata = expost, interval = "confidence")
+
+```
+
+Bağımsız değişken ortalama değerden uzaklaştıkça öngörü hatası artacaktır. Bu da bandın genişlemesine yol açacaktır (Merkez Bankası'nın güven bandına tekrar bakın).
+
+Bu yazıda öngörü konusuna odaklandığımız için sahte regresyon, otokorelasyon gibi karşımıza çıkabilecek sorunları atladık.

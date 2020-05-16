@@ -1,0 +1,49 @@
+# Yararlanılan Kaynaklar
+
+*Temel Ekonometri; Damodar N. Gujarati, Dawn C. Porter (Ümit Şenesen, Gülay Günlük Şenesen)*
+
+*Örneklerle Ekonometri; Damodar Gujarati (Nasip Bolatoğlu)*
+
+*Örneklerle Ekonometri Veri Setleri: https://www.macmillanihe.com/companion/gujarati-econometrics-by-example-2e/learning-resources/Data-sets/*
+
+*Ekonometriye Giriş; James H. Stock, Mark W. Watson (Bedriye Saraçoğlu)*
+
+*Ekonometri Kılavuzu; Peter Kennedy (Şenay Açıkgöz, Muzaffer Sarımeşeli)*
+
+*Ekonometrik Çözümleme; William H. Greene (Ümit Şenesen)*
+
+*Ekonometriye Giriş Modern Yaklaşım; Jeffrey M. Wooldridge (Ebru Çağlayan)*
+
+*Ekonometri Temel Kavramlar; Ebru Çağlayan, Selahattin Güriş*
+
+[*Elements of Forecasting; Diebold*](https://www.sas.upenn.edu/~fdiebold/Teaching221/FullBook.pdf)
+
+[*Enflasyon Raporu 2020 - I (30 Ocak 2020)*](https://www.tcmb.gov.tr/wps/wcm/connect/TR/TCMB+TR/Main+Menu/Yayinlar/Raporlar/Enflasyon+Raporu/2020/Enflasyon+Raporu+2020+-+I)
+
+[*Tanrılara Karşı Riskin Olağanüstü Tarihi; Peter L. Bernstein (Canan Feyyat)*](http://professor.ufabc.edu.br/~nelson.faustino/Ensino/IPE2016/Livros/Peter%20L.%20Bernstein-Against%20the%20Gods_%20The%20Remarkable%20Story%20of%20Risk-Wiley%20(1998)%20(1).pdf)
+
+[*Francis Galton: The man who drew up the 'ugly map' of Britain*](https://www.bbc.com/news/magazine-13775520)
+
+[*Finger Prints*](http://galton.org/books/finger-prints/galton-1892-fingerprints-1up.pdf)
+
+[*İstatistik Sonuçlarının Yorumu: p Değeri ve Güven Aralığı Nedir?*](https://www.toraks.org.tr/uploadFiles/book/file/1832014154715-113.pdf)
+
+[*1992-2018 Dönemi için Gece Işıklarıyla İl Bazında GSYH Tahmini: 2018'de 81 İlin Büyüme Performansı*](https://www.tepav.org.tr/upload/mce/2019/haberler/gece_isiklariyla_il_bazinda_gsyh_tahmini_19922018.pdf)
+
+[*Stochastic Hydrology*](https://nptel.ac.in/content/storage2/courses/105108079/module7/lecture31.pdf)
+
+[*Çoklu Doğrusal Bağlantı Halinde En Küçük Kareler Tekniğinin Alternatifi Yanlı Tahmin Teknikleri ve Bir Uygulama*](http://www.acarindex.com/dosyalar/makale/acarindex-1423937309.pdf)
+
+[*Çoklu Doğrusal Bağlantı Durumunda Ridge ve Temel Bileşenler Regresyon Analiz Yöntemlerinin Kullanımı*](http://static.dergipark.org.tr:8080/article-download/imported/1025008693/1025007279.pdf?)
+
+[*Yumurta tavukçuluğunda gelirin Ridge Regresyon analizi ile tahmini*](https://dspace.ankara.edu.tr/xmlui/bitstream/handle/20.500.12575/59591/20427.pdf?sequence=1&isAllowed=y)
+
+[*Outliers, Leverage Points and Influential Points*](https://www2.stat.duke.edu/courses/Spring19/sta101.002/post/project/outliers.html)
+
+[*Ekonometride Güncel Konular: Mixed Logit Modeli*](https://www.researchgate.net/profile/Gozde_Koca/publication/324831528_EKONOMETRIDE_GUNCEL_KONULAR/links/5c2c88c992851c22a3547b3f/EKONOMETRIDE-GUeNCEL-KONULAR.pdf#page=32)
+
+[*Van Belediyelerinin Hizmetlerine Yönelik Memnuniyetin Genelleştirilmiş Sıralı Logit Modeli ile Analizi*](https://www.gecekitapligi.com/Webkontrol/uploads/Fck/yayin4_3.pdf#page=88)
+
+[*Lung Cancer Study with Tobit Regression Analysis: Sivas Case*](https://www.semanticscholar.org/paper/Lung-Cancer-Study-with-Tobit-Regression-Analysis%3A-Zorlutuna-Erilli/327a4952217d1c03c603db02fa6c43c47873f2c0)
+
+[*Uygulamalı İstatistik*](http://auzefkitap.istanbul.edu.tr/kitap/iktisat_ue/uygulamaliista.pdf)

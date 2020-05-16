@@ -1,0 +1,242 @@
+# Doğrusal Olasılık, Logit ve Probit Modeller
+
+Yalnızca Cumhur İttifakı ve Millet İttifakı gibi iki grubun olduğunu varsayalım. Burada bağımlı değişken iki siyasal grup arasında seçimdir. Oy, Cumhur'a verilmişse Y = 1, Millet'e verilmişse Y = 0 diyelim. Ek olarak oy tercihlerini etkileyecek bazı bağımsız değişkenler de olacaktır (Oy vermede sizin tarafınızda neler etkili ise onları düşünebilirsiniz). Dikkat etmemiz gereken yer bağımlı değişken niteldir. Yani, bağımlı değişken ya öyledir ya da böyle.
+
+Tabi ki tepki değişkenimizi iki şıklı değişkenlerle sınırlamak zorunda değiliz. Yukarıdaki varsayımı bozup üç gruba da çıkarabilirdik. Yani, çok şıklı tepki değişkenlerimiz olabilir.
+
+Y bağımlı değişkeninin nicel olduğu bir regresyon modeli ile nitel olduğu bir regresyon modeli arasında nasıl bir fark vardır?
+
+Kısa cevap: Biri nicel diğeri niteldir.
+
+Uzun cevap: Y bağımlı değişkeninin nicel olduğu bir modelde amacımız Y'nin beklenen ya da ortalama değerini bulmaktır. Fakat Y bağımlı değişkeninin nitel olduğu bir modelde bir olayın gerçekleşme olasılığına odaklanırız. Millet İttifakı'na oy verme olasılığı gibi.
+
+İki şıklı varsayımımız devam ediyor...
+
+İki şıklı bir tepki değişkeni için olasılık modelleri:
+
+i. Doğrusal olasılık modeli
+
+ii. Logit modeli
+
+iii. Probit modeli
+
+iv. Tobit modeli
+
+## Doğrusal Olasılık
+
+Bildiğimiz model üzerinden gidelim: $Y_i = \beta_1 + \beta_2X_i + \epsilon_i$
+
+X = aile geliri, Y = aile ev sahibi ise 1; değilse 0 olsun. Bu bildiğimiz doğrusal regresyon modeli değil mi? Fakat bağımlı değişken Y ikili olduğu için bu, doğrusal olasılık modeli adını alacaktır.
+
+$Y_i$ = 1 olma (olayın gerçekleşmesi) olasılığına $P_i$, $Y_i$ = 0 olma (olayın gerçekleşmemesi) olasılığına 1 – $P_i$ dersek; $Y_i$ bernoulli olasılık dağılımına uyar. Bu arada n tane bağımsız deneme varsa, her birinin başarı olasılığı P, başarısızlık olasılığı 1-P ise ve bu denemelerden x tanesi başarılıysa, x'in binom dağılıma uyduğu söylenebilir.
+
+Kısaca şunları bilmekte fayda olacaktır:
+
+i. Doğrusal olasılık modelleri için $u_i$'lerin normal dağıldığını söyleyemeyiz. Çünkü, $\epsilon_i$'ler de $Y_i$'ler gibi ikili değer alır. Yani, bernoulli dağılımına uyar.
+
+ii. $\epsilon_i$'lerin sabit varyanslı oldukları ileri sürülemez. Yani, doğrusal olasılık modellerinde hata teriminin varyansı değişkendir.
+
+iii. $\hat{Y_i}$'nin 0 ile 1 arasında olup olmadığını anlamanın iki yolu:
+
+* Doğrusal olasılık modeli Sıradan En Küçük Kareler yöntemi ile tahmin edilip $\hat{Y_i}$'nin 0 ile 1 arasında olup olmadığına bakılır. Eğer bazıları 0'dan küçükse $\hat{Y_i}$ 0; 1'den büyükse 1 sayılır.
+
+* Logit ve probit modelleri tahmin edilen olasılıkların 0 ile 1 mantıksal sınırları içinde kalmasını sağlar.
+
+iv. $R^2$'nin yararı sınırlıdır. Bu nedenle, bu istatistiğin kullanılmasından kaçınılması gerektiği ileri sürülür.
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df1 <- read.table(file = "http://www.econometrics.com/comdata/gujarati/data_15.1.shd", sep = "", header = FALSE, col.names = c("y","x"))
+df2 <- read_excel("Table8_1.xls")
+
+```
+
+```{r}
+
+str(df1)
+
+```
+
+40 aile için verileri inceleyelim.
+
+Bağımlı değişken:
+
+* **y:** Ev sahipliği (Ev sahibi ise 1 değilse 0)
+
+Bağımsız değişken(ler):
+
+* **x:** Aile geliri
+
+Sıradan En Küçük Kareler yöntemi ile tahmin edelim.
+
+```{r}
+
+model <- lm(formula = y ~ x, data = df1)
+summary(model)
+
+```
+
+-0.94569 kesme terimi, sıfır gelirli bir ailenin ev sahibi olma olasılığını verir. Fakat değer eksi olmayacağı için bu değeri sıfırmış gibi görürüz.
+
+0.10213 eğim değeriyse gelirdeki 1 birimlik artışın (örnekte 1000 $), ev sahibi olma olasılığını ortalama olarak 0.10213 ya da ~ %10 artıracağı anlamına gelir.
+
+Örneğin, aile geliri 15 (15000) ise ev sahibi olma olasılığı aşağıdaki gibidir:
+
+```{r}
+
+model$coefficients[1] + model$coefficients[2] * 15
+
+```
+
+Aslında bize şu özellikleri taşıyan bir olasılık modeli gerekiyor:
+
+i) $X_i$ arttıkça $P_i$ de artar ama 0-1 aralığı dışına hiç çıkmaz
+
+ii) $P_i$ ile $X_i$ arasındaki ilişki doğrusal değildir ($X_i$ küçüldükçe $P_i$ gitgide daha yavaş 0'a yaklaşır; $X_i$ çok büyük değerlere çıktıkça $P_i$ gitgide daha yavaş 1'e yaklaşır).
+
+Bir uygulama daha yapıp ABD'li 1196 erkeğe ait rassal bir örneklemi inceleyelim.
+
+```{r}
+
+df2 %<>% 
+  dplyr::select(c(6,1,2,3,4))
+
+str(df2)
+
+```
+
+Bağımlı değişken:
+
+* **smoker:** Sigara içiyorsa 1; içmiyorsa 0
+
+Bağımsız değişken(ler):
+
+* **educ:** Eğitim süresi
+
+* **age:** Yaş
+
+* **income:** Aile geliri
+
+* **pcigs79:** Eyaletteki sigaranın 1979 yılındaki fiyatları
+
+Bağımsız değişken değerleri (educ, age, income, pcigs79) verildiğinde bağımlı değişkenin (smoker) koşullu beklentisi, sigara içme olayının gerçekleşmesinin koşullu olasılığı olarak yorumlanabilir.
+
+```{r}
+
+model <- lm(formula = smoker ~., data = df2)
+summary(model)
+
+```
+
+En az %10 anlamlılık düzeyinde income hariç bütün değişkenler tek başına istatistiksel olarak anlamlıdır.
+
+age, educ ve pcigs79 değişkenlerinin smoker üzerine negatif etkisi vardır.
+
+Bağımsız değişkenler toplu halde anlamlıdır çünkü F değerinin neredeyse sıfıra yakın bir p değeri vardır.
+
+Diğer tüm değişkenleri sabit tuttuğumuzda;
+
+Muhtemelen sigara içmenin sağlık üzerindeki olumsuz etkisine bağlı olarak kişinin yaşı ilerledikçe sigara içme olasılığı yaklaşık olarak 0.005 oranında azalmaktadır (age).
+
+Eğitimin 1 yıl artması sigara içme olasılığını 0.02 kadar azaltmaktadır (educ).
+
+Sigara fiyatı 1 $ yükseldiğinde sigara içme olasılığı yaklaşık olarak 0.005 kadar azalmaktadır (pcigs79).
+
+0.038 olan $R^2$ değeri çok düşüktür fakat bununla ilgili yukarıda yararının sınırlı olduğunu söylemiştik. Çünkü bağımlı değişken sadece 0-1 değerlerini alan bir nominal değişkendir.
+
+Doğrusal olasılık modeli bizi yine de tatmin etmeyecek. Çünkü;
+
+i. Doğrusal olasılık modeli sigara içme olasılığının bağımsız değişken değeriyle doğrusal hareket ettiğini varsayar.
+
+ii. Mantıken olasılık değeri 0-1 arasında yer alır ama doğrusal olasılık modelinde 0-1 dışına çıkabilir. Çünkü Sıradan En Küçük Kareler yöntemi bunu umursamaz.
+
+iii. Bağımlı değişken 0-1 değerlerini aldığından hata terimi için normal dağılım varsayımı geçerli olmaz.
+
+iv. Doğrusal olasılık modelindeki hata terimi değişen varyanslı olup, geleneksel anlamlılık testlerini şüpheli hale getirir.
+
+## Logit Modeli
+
+$L_i = ln(\frac{P_i}{1-P_i}) = Z_i = \beta_1 + \beta_2X_i$
+
+Yukarıda yazılan model doğal logaritma alınarak oluşturulmuştur.
+
+Logit modelinin özellikleri şöyledir:
+
+i. P, 0'dan 1'e giderken ($Z_i$, $-\infty$'dan $+\infty$'a doğru değişirken), logit (L) de $-\infty$'dan $+\infty$'a doğru değişir. Yani olasılıklar 0 ile 1 arasında yer alırken logitler böyle sınırlı değildir.
+
+ii. L, X'e göre doğrusal olmakla birlikte olasılıkların kendileri böyle değildir. Yani, olasılıkların X ile birlikte doğrusal olarak arttığı doğrusal olasılık modeli ile zıttır.
+
+iii. Tek bir bağımsız değişken değil; birden fazla bağımsız değişken de modele eklenebilir. Yani, birden fazla X.
+
+iv. Ev sahibi olma olasılığı $P_i$ idi. O zaman ev sahibi olmama olasılığı $1-P_i$ olmaz mı? Bu durumda $\frac{P_i}{(1-P_i)}$ ev sahibi olmanın bahis oranı olur. Eğer logit L artıysa, bağımsız değişkenlerin değeri arttıkça, bağımlı değişkenin 1 olmasının bahis oranı yükselir; eğer logit L eksiyse, X büyüdükçe bağımlı değişkenin 1 olmasının bahis oranı düşer.
+
+v. $\beta_2$ eğimi, X'teki 1 birim değişmeye karşılık L'deki değişmeyi ölçer. Örneğin, gelir 1000 $ değiştiğinde ev sahibi olmanın log-bahis oranının nasıl değiştiğini bildirir.
+
+vi. Kesme terimi $\beta_1$ ise gelir sıfır olursa, ev sahibi olmanın log-bahis oranı değeridir.
+
+vii. Eğer belli bir değeri almadan ev sahibi olmanın kendi olasılığını tahmin etmek istersek, $\beta_1$ ile $\beta_2$ tahminleri bir kez elde edildikten sonra bunu $P_i = \frac{e^z}{(1 + e^z)}$ ile bulabiliriz.
+
+viii. Bir önceki konuda adı geçen doğrusal olasılık modeli $P_i$'nin $X_i$ ile doğrusal ilişki içinde olduğunu varsayarken, logit modeli log-bahis oranının $X_i$ ile doğrusal ilişki içinde olduğunu varsayar.
+
+$L_i = ln(\frac{P_i}{1-P_i}) = Z_i = \beta_1 + \beta_2X_i + u_i$
+
+Yazdığımız modeli tahmin etmek için $X_i$'den başka, bağımlı değişkenin ya da logit $L_i$'nin değerine gerek vardır. Bu da çözümleme için eldeki verinin türüne bağlıdır. İki tür veri ayırt ediyoruz: i) Tekil ya da mikro düzeydeki veri, ii) Gruplanmış veri ya da yinelenmiş veri.
+
+Modeli kuralım. Model kurarken en çok olabilirlik yönteminden yararlanacağız.
+
+```{r}
+
+logitmodel <- glm(smoker ~ educ + age + income + pcigs79, family = binomial(link = "logit"), data = df2)
+summary(logitmodel)
+
+```
+
+educ ve age değişkenleri istatistiksel olarak oldukça anlamlıdır. İşaretler de negatiftir. Yani, insanların eğitimi ya da yaşı arttıkça sigara içme olasılıkları azalmaktadır.
+
+pcigs79 değişkeni de %7'de anlamlıdır. Yani, sigara fiyatı arttıkça sigara içme olasılığı düşer.
+
+income istatistiksel olarak anlamlı değildir.
+
+Diğer değişkenler sabit tutulduğunda;
+
+Eğitimdeki bir yıllık artış ortalama logit değerini 0.09 azaltacaktır (educ). Yani, sigara içme lehine olan bahis oranının logaritması 0.09 azalacaktır. $P_i$, sigara içme; $1-P_i$ ise sigara içmeme olasılığı olsun. $\frac{P_i}{1-P_i}$ basitçe sigara içme lehine olan bahis oranıdır.
+
+Yaştaki bir yıllık artış ortalama logit değerini 0.02 azaltacaktır (age). Yani, sigara içme lehine olan bahis oranının logaritması 0.02 azalacaktır.
+
+Sigara fiyatlarındaki 1 $'lık artış ortalama logit değerini 0.02 azaltacaktır (pcigs79). Yani, sigara içme lehine olan bahis oranının logaritması 0.02 azalacaktır.
+
+$R^2$'nin çok anlamlı olmayacağından bahsetmiştik. Fakat bunun yerine sayma $R^2$ kullanabiliriz. Bu, doğru kestirim sayısının gözlem sayısına oranıdır. Eğer kestirilen değer 0.5'ten büyükse 1; küçükse 0 değerini alır. Bu durumda sayma $R^2$;
+
+```{r}
+
+df2 %<>% 
+  mutate(fitted = logitmodel$fitted.values) %>% 
+  mutate(tahmin = ifelse(fitted > 0.5, 1, 0)) %>% 
+  mutate(durum = ifelse(smoker == tahmin, "başarılı", "başarısız"))
+
+df2 %>% 
+  count(durum)
+
+```
+
+Sayma $R^2$ değeri 730 / 1196 = 0.6103679 ya da %61 olacak.
+
+Bizim önceliğimiz regresyon katsayılarının beklenen işaretleri ile istatistiksel anlamlılıkları olacaktır.
+
+Doğrusal olasılık modelinde hata terimi normal olmayan dağılımdaydı. Logit modelde ise hata terimi lojistik dağılıma sahiptir. Şimdi de hata terimi normal dağılımlı olan probit modeli göreceğiz.
+
+## Probit Model
+
+```{r}
+
+probitmodel <- glm(smoker ~ educ + age + income + pcigs79, family = binomial(link = "probit"), data = df2)
+summary(probitmodel)
+
+```
+
+Sonuçlar aslında logit model ile aynı (niceliksel farklılılar var tabi ki).
+
+Gujarati şu notu düşer: *Logit ve probit modelleri genellikle benzer sonuçlar verir. İki model arasındaki temel fark lojistik dağılımın biraz daha şişman kuyruklarının olmasıdır; lojistik dağılımlı rassal bir değişkenin varyansının yaklaşık* $\frac{\pi^2}{3}$, *oysa (standart) normal dağılımlı değişkeninkinin 1 olduğunu hatırlayalım. Yani, logitte* $P_i$ *koşullu olasılığı probitten daha düşük bir hızla 0 veya 1'e yaklaşır. Ancak uygulamada birisini diğerine tercih etmenin ikna edici bir nedeni bulunmamaktadır. Nispeten matematiksel kolaylığı sebebiyle araştırmacı logiti probite tercih etmektedir.* Çağlayan ve Güriş ise şuna dikkat çeker: *Aralarındaki fark sadece kuyruklarda bulunmaktadır. Bu fark; logit eğrisinin daha kalın kuyruklu olması yani eksene probit eğrisinden daha geç yaklaşması şeklinde açıklanabilir. (...) özellikle verinin kuyruklardaki yoğunluğuna konsantre olunmadıysa probit model mi logit model mi sorusunun önemi pek bulunmamaktadır.*

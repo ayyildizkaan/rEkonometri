@@ -1,0 +1,188 @@
+# Değişen Varyans
+
+Regresyon modelindeki hata terimi gözlemler boyunca sabit varyanslıdır (homoscedasticity). Sabit varyans olmaması durumu ise değişen varyanstır (heteroscedasticity). Burada bir noktanın altını çizmek gerekiyor: Bu varsayım, her bir gözlemin varyansının aynı olmasını ifade eder; örnek gözlemlerinin tümü için varyansın sabit olmasını değil. Bunu Stock ve Watson'ın kitabında bulunan bir örnek ile açıklayalım.
+
+```{r}
+
+library(AER);library(ggplot2)
+data("CPSSWEducation") #Kitaptaki verilere AER paketi yardımı ile ulaşılabilir.
+head(CPSSWEducation, 10)
+
+ggplot(data = CPSSWEducation, aes(x = education, y = earnings)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  theme_minimal()
+
+```
+
+Eğitim düzeyi daha yüksek olan çalışanların eğitim düzeyi daha düşük olan çalışanlara göre kazançları (earnings) ortalama olarak daha fazladır. Ancak kazancı daha yüksek olan işler eğitim düzeyi daha yüksek olan kişiler tarafından alınıyorsa kazançların dağılımının *varyansı* eğitim düzeyi yüksek olan çalışanlar için daha büyük olabilir.
+
+Şimdi bir model kuralım.
+
+Bağımlı değişken:
+
+* **earnings:** Saatlik kazanç
+
+Bağımsız değişken(ler):
+
+* **education:** Eğitim düzeyi (6-18 yıl arasında değişen)
+
+```{r}
+
+model <- lm(formula = earnings ~ education, data = CPSSWEducation)
+summary(model)
+
+```
+
+Ortalama olarak saatlik kazanç her bir ilave eğitim yılı için 1.47 $ artmaktadır. Güven aralığı %95 güven düzeyinde aşağıdaki gibidir:
+
+```{r}
+
+confint(model, level = 0.95)
+
+```
+
+Standart sapma değerleri yıl olarak eğitim düzeyine göre farklılaştığı için regresyon modeline ilişkin kalıntıların varyansı bağımsız değişkene (yıl olarak eğitim düzeyi) bağlıdır. Yani, değişen varyans söz konusudur.
+
+```{r}
+
+library(dplyr)
+
+CPSSWEducation %>% 
+  group_by(education) %>% 
+  summarise(ss = round(sd(earnings), digits = 2)) #Standart sapmalar alındı.
+
+```
+
+Değişen varyansın nedenleri aşağıdaki gibi sıralanabilir.
+
+* Hatasını öğrenen modellerde, tıpkı insanların öğrenmesi gibi davranış hataları zamanla azalır ya da hata sayıları daha tutarlı hale gelir.
+
+* Örneğin, gelir yükseldikçe insanların istedikleri gibi harcayabilecekleri gelir daha çok olur, seçenekler gelişir (varyans artırıcı etki) ya da daha çok kar eden şirketlerin temettü dağıtımlarında düşük karlı şirketlere göre genellikle daha çok değişkenlik göstermesi beklenir (varyans artırıcı etki).
+
+* Verilerin toplanmasında bazı hatalar yapılabilir. Veri derleme teknikleri geliştikçe (daha az hataların ortaya çıkması) varyans da düşebilir.
+
+* Aykırı/uç değerlerin varlığı.
+
+* Model kurma hataları.
+
+* Modelde yer alan değişkenlerin birinde ya da birkaçında bulunan çarpıklık.
+
+* Yanlış veri dönüştürmeleri ya da yanlış fonksiyon kalıbı.
+
+Değişen varyans varsa neler olur?
+
+* Sıradan En Küçük Kareler tahmincileri için BLUE'dur (Best Linear Unbiased Estimator, En İyi Doğrusal Yansız Tahmin Edici) demiştik. Değişen varyans olması durumunda doğrusal yansız tahmin edici olur.
+
+* t ve F testlerine olan güven azalır.
+
+* Değişen varyans durumunda BLUE tahmincilerini ağırlıklı en küçük kareler yöntemi verir.
+
+Değişen varyans durumunun tespiti konusunda iki testten yararlanacağız: Breusch-Pagan ve White testleri.
+
+Ne tür düzeltici önlemler alabiliriz?
+
+i. Eğer gerçek hata terimi varyansı bağımsız değişkenlerden birinin karesi ile orantılı ise eşitliğin her iki tarafı bu değişkene bölünüp regresyon çalıştırabilir. Ardından bunları Breusch-Pagan ve White testlerinden geçirebiliriz.
+
+ii. Eğer gerçek hata terimi varyansı bağımsız değişkenlerden birisi ile orantılıysa karekök dönüşümü kullanılabilir. Yani, her iki taraf belirlenen bağımsız değişkenin kareköküne bölünür. Ardından Breusch-Pagan ve White testlerinden geçirebiliriz.
+
+iii. Eğer değerler pozitifse bağımlı değişkenin logaritması alınabilir.
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr);library(lmtest);library(estimatr)
+
+```
+
+```{r}
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df <- read_excel("Table1_1.xls")
+df %<>% 
+  dplyr::select(wage, female, nonwhite, union, education, exper)
+
+```
+
+## Breusch-Pagan
+
+Büyük örneklemler içindir. Sıradan En Küçük Kareler regresyonu tahmin edilip bu regresyondan kalıntı kareleri elde edilir. Ardından kalıntı karelerin bir veya daha fazla X değişkeni ile ilişkili olup olmadığını görmek için kalıntı karelerin modele dahil edilen bağımsız değişkenlere göre regresyonu alınır. Buradaki $H_0$ hata teriminin sabit varyanslı olduğudur. Bu hipotezin testi için F testini (pay ve payda sırasıyla k-1 ve n-k serbestlik dereceli olacak) kullanabiliriz. F istatistiği istatistiksel olarak anlamlı ise $H_0$ reddedilir. F istatistiğine alternatif olarak $\chi^2$ istatistiği de kullanılabilir. $\chi^2$ değeri küçük bir p değerine sahipse $H_0$ reddedilebilir.
+
+Öncelikle modeli normal bir şekilde kuralım.
+
+```{r}
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper, data = df)
+summary(model)
+
+```
+
+Ardından bu modelden kalıntı kareleri elde edip bir model daha kuralım.
+
+```{r}
+
+df$res <- (model$residuals)^2
+modelres <- lm(res ~ female + nonwhite + union + education + exper, data = df)
+summary(modelres)
+
+```
+
+%4.3 olan bir $R^2$ elde ettik. Bu değeri gözlem sayısı olan 1289 ile çarpıp aşağıdaki $\chi^2$ değerini elde ederiz.
+
+```{r}
+
+summary(modelres)$r.squared * nrow(df)
+
+```
+
+Tabi bunu paket yardımı ile de yapabiliriz. Hatta buradan p değerini de elde edip hipotezin red olup olmayacağına karar vereceğiz.
+
+```{r}
+
+bptest(model)
+
+```
+
+5 serbestlik dereceli (bağımsız değişken sayımız) en az bu değerde bir $\chi^2$ bulma olasılığı neredeyse sıfırdır (0.0000000001118). Yani, $H_0$ reddedilir. Bu da değişen varyansa işaret ediyor.
+
+## White
+
+Büyük örneklemler içindir. Yukarıdaki teste göre daha genel ve daha esnektir. Burada da $\chi^2$ istatistiği kullanılabilir. White testinin uygulanması için kurulan model tahmin edilerek kalıntılar belirlenir. Belirlenen kalıntıların karelerinin bağımlı değişken olduğu, bağımsız değişkenlerin ise modelin bağımsız değişkenleri, bağımsız değişkenlerin kareleri ve bağımsız değişkenlerin birbirleri ile çarpımlarından oluşan yardımcı regresyon modeli tahmin edilir.
+
+```{r}
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper, data = df)
+bptest(model, ~ female*nonwhite + female*union + female*education + female*exper + nonwhite*union + nonwhite*education + nonwhite*exper + union*education + union*exper + education*exper + I(female^2) + I(nonwhite^2) + I(union^2) + I(education^2) + I(exper^2), data = df)
+
+```
+
+Yukarıdaki fonksiyon bağımsız değişkenlerin karesel ve çarpraz terimlerini model ekler. p değeri burada da sıfıra yakın çıktı (0.0000000004839). Yani, White = 79.431 veya daha büyük bir $\chi^2$ değeri bulma olasılığı neredeyse sıfırdır; $H_0$ reddedilir. Bu da değişen varyans sorununa işaret eder.
+
+Daha önce bağımlı değişkene logaritma almayı uygulamıştık. Acaba bu model değişen varyans içeriyor mu?
+
+```{r}
+
+df %>% 
+  mutate(lnwage = log(wage)) -> df
+
+model <- lm(formula = lnwage ~ female + nonwhite + union + education + exper, data = df)
+bptest(model)
+
+bptest(model, ~ female*nonwhite + female*union + female*education + female*exper + nonwhite*union + nonwhite*education + nonwhite*exper + union*education + union*exper + education*exper + I(female^2) + I(nonwhite^2) + I(union^2) + I(education^2) + I(exper^2), data = df)
+
+```
+
+p değerleri büyüdü ama yine de değişen varyans sorununa işaret ediyor.
+
+Çoklu doğrusal bağlantıda da belirtmiştik: Hiçbir şey yapmamak. Değişen varyans için de aslında sorun ciddiyse düzeltmeye gidileceği önerilir. Bu durumu her hastalık için ilaç almamaya benzetiyorum ama yine de önlemlerin ne olabileceğini bilmeliyiz.
+
+## Robust Standart Hatalar
+
+Örneklem genişliği büyük olduğunda, White, değişen varyansı düzeltilmiş standart hataları bulmak için bir yöntem önermiştir. Literatürde White-Huber standart hataları ya da robust (dirençli) standart hatalar olarak geçer. Bu yöntem ile birazdan çıktıda da göreceğiniz üzere parametreler değişmez ama değişen varyansı hesaba katmak amacıyla standart hatalar düzeltilir. Değişen varyans yoksa diye soracak olursak, robust standart hatalar geleneksel Sıradan En Küçük Kareler standart hataları olacaktır. Yani, sabit varyans durumunda bile bu robust standart hatalar geçerli olacaktır. Altını çizmemiz gereken yer büyük bir örnekleme ihtiyacımız olacağıdır (küçük örneklerde dirençli t istatistikleri t dağılımına çok da yakın olmayan bir dağılım sergiler). Robust standart hatalar ile F istatistiği kullanmak yerine değişen varyans robust Wald istatistiği kullanılır. Değişen varyans robust Wald istatistiğinin F istatistiğine dönüştürülebilir olduğunu da bilelim.
+
+```{r}
+
+summary(lm_robust(formula = wage ~ female + nonwhite + union + education + exper, data = df, se_type = "stata"))
+
+```
+
+İşte, hepsi bu kadar. White'ın robust standart hatalarını hesaplayarak değişen varyans sorununu basitçe düzelttik. Regresyon parametreleri (ilk görseldeki modele bakın) aynı kaldı. Bazı standart hatalar değişti bu da doğal olarak t değerlerini değiştirdi.

@@ -1,0 +1,545 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Konu 12 Doğrusal Olasılık, Logit ve Probit Modeller | R’da Ekonometri Uygulamaları</title>
+  <meta name="description" content="Ekonometri uygulamalarını R’da yapın." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Konu 12 Doğrusal Olasılık, Logit ve Probit Modeller | R’da Ekonometri Uygulamaları" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Konu 12 Doğrusal Olasılık, Logit ve Probit Modeller | R’da Ekonometri Uygulamaları" />
+  
+  <meta name="twitter:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+<meta name="author" content="Ahmet Akgül (rpydaneogrendim)" />
+
+
+<meta name="date" content="2020-05-16" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="model-tan-mlama-hatalar-.html"/>
+<link rel="next" href="çok-terimli-regresyon-modelleri.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R'da Ekonometri Uygulamaları</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Nelere İhtiyacınız Olacak?</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#kullanılan-kütüphaneler"><i class="fa fa-check"></i><b>1.1</b> Kullanılan Kütüphaneler</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#kullanılan-veri-setleri"><i class="fa fa-check"></i><b>1.2</b> Kullanılan Veri Setleri</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html"><i class="fa fa-check"></i><b>2</b> Veri ve Model Çeşitleri</a><ul>
+<li class="chapter" data-level="2.1" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#veri-çeşitleri"><i class="fa fa-check"></i><b>2.1</b> Veri Çeşitleri</a></li>
+<li class="chapter" data-level="2.2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#model-çeşitleri"><i class="fa fa-check"></i><b>2.2</b> Model Çeşitleri</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="do-rusal-regresyon-modeli.html"><a href="do-rusal-regresyon-modeli.html"><i class="fa fa-check"></i><b>3</b> Doğrusal Regresyon Modeli</a></li>
+<li class="chapter" data-level="4" data-path="regresyon-modelleriyle-öngörü.html"><a href="regresyon-modelleriyle-öngörü.html"><i class="fa fa-check"></i><b>4</b> Regresyon Modelleriyle Öngörü</a></li>
+<li class="chapter" data-level="5" data-path="francis-galton-ve-regresyon-terimi.html"><a href="francis-galton-ve-regresyon-terimi.html"><i class="fa fa-check"></i><b>5</b> Francis Galton ve Regresyon Terimi</a></li>
+<li class="chapter" data-level="6" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><i class="fa fa-check"></i><b>6</b> Değişkenleri Doğrusal Olmayan Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="6.1" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-doğrusal-ya-da-çift-log-modeller"><i class="fa fa-check"></i><b>6.1</b> Log-Doğrusal ya da Çift-Log Modeller</a></li>
+<li class="chapter" data-level="6.2" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-lin-ya-da-yarı-logaritmik-modeller"><i class="fa fa-check"></i><b>6.2</b> Log-Lin ya da Yarı-Logaritmik Modeller</a></li>
+<li class="chapter" data-level="6.3" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#lin-log-modeller"><i class="fa fa-check"></i><b>6.3</b> Lin-Log Modeller</a></li>
+<li class="chapter" data-level="6.4" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#ters-modeller"><i class="fa fa-check"></i><b>6.4</b> Ters Modeller</a></li>
+<li class="chapter" data-level="6.5" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#polinom-regresyon-modelleri"><i class="fa fa-check"></i><b>6.5</b> Polinom Regresyon Modelleri</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html"><i class="fa fa-check"></i><b>7</b> Kukla Değişkenli Regresyon Modeli</a><ul>
+<li class="chapter" data-level="7.1" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#kukla-değişkenlerin-yorumu"><i class="fa fa-check"></i><b>7.1</b> Kukla Değişkenlerin Yorumu</a></li>
+<li class="chapter" data-level="7.2" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#yapısal-değişimdeki-rolü"><i class="fa fa-check"></i><b>7.2</b> Yapısal Değişimdeki Rolü</a></li>
+<li class="chapter" data-level="7.3" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#mevsimsellikteki-rolü"><i class="fa fa-check"></i><b>7.3</b> Mevsimsellikteki Rolü</a></li>
+<li class="chapter" data-level="7.4" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#parçalı-doğrusal-regresyondaki-rolü"><i class="fa fa-check"></i><b>7.4</b> Parçalı Doğrusal Regresyondaki Rolü</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html"><i class="fa fa-check"></i><b>8</b> Çoklu Doğrusal Bağlantı</a><ul>
+<li class="chapter" data-level="8.1" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#temel-bileşenler-analiziregresyonu"><i class="fa fa-check"></i><b>8.1</b> Temel Bileşenler Analizi/Regresyonu</a></li>
+<li class="chapter" data-level="8.2" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#ridge-regresyon"><i class="fa fa-check"></i><b>8.2</b> Ridge Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html"><i class="fa fa-check"></i><b>9</b> Değişen Varyans</a><ul>
+<li class="chapter" data-level="9.1" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#breusch-pagan"><i class="fa fa-check"></i><b>9.1</b> Breusch-Pagan</a></li>
+<li class="chapter" data-level="9.2" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#white"><i class="fa fa-check"></i><b>9.2</b> White</a></li>
+<li class="chapter" data-level="9.3" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#robust-standart-hatalar"><i class="fa fa-check"></i><b>9.3</b> Robust Standart Hatalar</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="otokorelasyon.html"><a href="otokorelasyon.html"><i class="fa fa-check"></i><b>10</b> Otokorelasyon</a><ul>
+<li class="chapter" data-level="10.1" data-path="otokorelasyon.html"><a href="otokorelasyon.html#durbin-watson-d"><i class="fa fa-check"></i><b>10.1</b> Durbin-Watson d</a></li>
+<li class="chapter" data-level="10.2" data-path="otokorelasyon.html"><a href="otokorelasyon.html#breusch-godfrey"><i class="fa fa-check"></i><b>10.2</b> Breusch-Godfrey</a></li>
+<li class="chapter" data-level="10.3" data-path="otokorelasyon.html"><a href="otokorelasyon.html#hac-yöntemi"><i class="fa fa-check"></i><b>10.3</b> HAC Yöntemi</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html"><i class="fa fa-check"></i><b>11</b> Model Tanımlama Hataları</a><ul>
+<li class="chapter" data-level="11.1" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#eksik-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.1</b> Eksik Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.2" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aşırı-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.2</b> Aşırı Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.3" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#yanlış-fonksiyon-yapısı"><i class="fa fa-check"></i><b>11.3</b> Yanlış Fonksiyon Yapısı</a></li>
+<li class="chapter" data-level="11.4" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#ölçüm-hataları"><i class="fa fa-check"></i><b>11.4</b> Ölçüm Hataları</a></li>
+<li class="chapter" data-level="11.5" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aykırı-değer-yüksek-kaldıraç-etkisi-baskın-nokta-ve-simüle-edilmiş-veriler"><i class="fa fa-check"></i><b>11.5</b> Aykırı Değer, Yüksek Kaldıraç Etkisi, Baskın Nokta ve Simüle Edilmiş Veriler</a></li>
+<li class="chapter" data-level="11.6" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#hata-teriminin-olasılık-dağılımı"><i class="fa fa-check"></i><b>11.6</b> Hata Teriminin Olasılık Dağılımı</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><i class="fa fa-check"></i><b>12</b> Doğrusal Olasılık, Logit ve Probit Modeller</a><ul>
+<li class="chapter" data-level="12.1" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#doğrusal-olasılık"><i class="fa fa-check"></i><b>12.1</b> Doğrusal Olasılık</a></li>
+<li class="chapter" data-level="12.2" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#logit-modeli"><i class="fa fa-check"></i><b>12.2</b> Logit Modeli</a></li>
+<li class="chapter" data-level="12.3" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#probit-model"><i class="fa fa-check"></i><b>12.3</b> Probit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>13</b> Çok Terimli Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="13.1" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#çok-terimli-logit-model"><i class="fa fa-check"></i><b>13.1</b> Çok Terimli Logit Model</a></li>
+<li class="chapter" data-level="13.2" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#koşullu-logit-model"><i class="fa fa-check"></i><b>13.2</b> Koşullu Logit Model</a></li>
+<li class="chapter" data-level="13.3" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#karma-logit-model"><i class="fa fa-check"></i><b>13.3</b> Karma Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html"><i class="fa fa-check"></i><b>14</b> Sıralamalı Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="14.1" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html#sıralı-logit-model"><i class="fa fa-check"></i><b>14.1</b> Sıralı Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><a href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>15</b> Sınırlı Bağımlı Değişkenli Regresyon Modelleri</a></li>
+<li class="chapter" data-level="16" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html"><i class="fa fa-check"></i><b>16</b> Sayma Verilerini Modelleme</a><ul>
+<li class="chapter" data-level="16.1" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#poisson-regresyon"><i class="fa fa-check"></i><b>16.1</b> Poisson Regresyon</a></li>
+<li class="chapter" data-level="16.2" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#negatif-binom-regresyon"><i class="fa fa-check"></i><b>16.2</b> Negatif Binom Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html"><i class="fa fa-check"></i><b>17</b> Dinamik Ekonometri Modelleri</a><ul>
+<li class="chapter" data-level="17.1" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html#otoregresif-dağıtılmış-gecikme-modelleri-ardl"><i class="fa fa-check"></i><b>17.1</b> Otoregresif Dağıtılmış Gecikme Modelleri (ARDL)</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="dilim-kantil-regresyon.html"><a href="dilim-kantil-regresyon.html"><i class="fa fa-check"></i><b>18</b> Dilim (Kantil) Regresyon</a></li>
+<li class="chapter" data-level="19" data-path="yararlan-lan-kaynaklar.html"><a href="yararlan-lan-kaynaklar.html"><i class="fa fa-check"></i><b>19</b> Yararlanılan Kaynaklar</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rpydaneogrendim" target="blank">Github profilimi ziyaret edin.</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R’da Ekonometri Uygulamaları</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="doğrusal-olasılık-logit-ve-probit-modeller" class="section level1">
+<h1><span class="header-section-number">Konu 12</span> Doğrusal Olasılık, Logit ve Probit Modeller</h1>
+<p>Yalnızca Cumhur İttifakı ve Millet İttifakı gibi iki grubun olduğunu varsayalım. Burada bağımlı değişken iki siyasal grup arasında seçimdir. Oy, Cumhur’a verilmişse Y = 1, Millet’e verilmişse Y = 0 diyelim. Ek olarak oy tercihlerini etkileyecek bazı bağımsız değişkenler de olacaktır (Oy vermede sizin tarafınızda neler etkili ise onları düşünebilirsiniz). Dikkat etmemiz gereken yer bağımlı değişken niteldir. Yani, bağımlı değişken ya öyledir ya da böyle.</p>
+<p>Tabi ki tepki değişkenimizi iki şıklı değişkenlerle sınırlamak zorunda değiliz. Yukarıdaki varsayımı bozup üç gruba da çıkarabilirdik. Yani, çok şıklı tepki değişkenlerimiz olabilir.</p>
+<p>Y bağımlı değişkeninin nicel olduğu bir regresyon modeli ile nitel olduğu bir regresyon modeli arasında nasıl bir fark vardır?</p>
+<p>Kısa cevap: Biri nicel diğeri niteldir.</p>
+<p>Uzun cevap: Y bağımlı değişkeninin nicel olduğu bir modelde amacımız Y’nin beklenen ya da ortalama değerini bulmaktır. Fakat Y bağımlı değişkeninin nitel olduğu bir modelde bir olayın gerçekleşme olasılığına odaklanırız. Millet İttifakı’na oy verme olasılığı gibi.</p>
+<p>İki şıklı varsayımımız devam ediyor…</p>
+<p>İki şıklı bir tepki değişkeni için olasılık modelleri:</p>
+<ol style="list-style-type: lower-roman">
+<li><p>Doğrusal olasılık modeli</p></li>
+<li><p>Logit modeli</p></li>
+<li><p>Probit modeli</p></li>
+<li><p>Tobit modeli</p></li>
+</ol>
+<div id="doğrusal-olasılık" class="section level2">
+<h2><span class="header-section-number">12.1</span> Doğrusal Olasılık</h2>
+<p>Bildiğimiz model üzerinden gidelim: <span class="math inline">\(Y_i = \beta_1 + \beta_2X_i + \epsilon_i\)</span></p>
+<p>X = aile geliri, Y = aile ev sahibi ise 1; değilse 0 olsun. Bu bildiğimiz doğrusal regresyon modeli değil mi? Fakat bağımlı değişken Y ikili olduğu için bu, doğrusal olasılık modeli adını alacaktır.</p>
+<p><span class="math inline">\(Y_i\)</span> = 1 olma (olayın gerçekleşmesi) olasılığına <span class="math inline">\(P_i\)</span>, <span class="math inline">\(Y_i\)</span> = 0 olma (olayın gerçekleşmemesi) olasılığına 1 – <span class="math inline">\(P_i\)</span> dersek; <span class="math inline">\(Y_i\)</span> bernoulli olasılık dağılımına uyar. Bu arada n tane bağımsız deneme varsa, her birinin başarı olasılığı P, başarısızlık olasılığı 1-P ise ve bu denemelerden x tanesi başarılıysa, x’in binom dağılıma uyduğu söylenebilir.</p>
+<p>Kısaca şunları bilmekte fayda olacaktır:</p>
+<ol style="list-style-type: lower-roman">
+<li><p>Doğrusal olasılık modelleri için <span class="math inline">\(u_i\)</span>’lerin normal dağıldığını söyleyemeyiz. Çünkü, <span class="math inline">\(\epsilon_i\)</span>’ler de <span class="math inline">\(Y_i\)</span>’ler gibi ikili değer alır. Yani, bernoulli dağılımına uyar.</p></li>
+<li><p><span class="math inline">\(\epsilon_i\)</span>’lerin sabit varyanslı oldukları ileri sürülemez. Yani, doğrusal olasılık modellerinde hata teriminin varyansı değişkendir.</p></li>
+<li><p><span class="math inline">\(\hat{Y_i}\)</span>’nin 0 ile 1 arasında olup olmadığını anlamanın iki yolu:</p></li>
+</ol>
+<ul>
+<li><p>Doğrusal olasılık modeli Sıradan En Küçük Kareler yöntemi ile tahmin edilip <span class="math inline">\(\hat{Y_i}\)</span>’nin 0 ile 1 arasında olup olmadığına bakılır. Eğer bazıları 0’dan küçükse <span class="math inline">\(\hat{Y_i}\)</span> 0; 1’den büyükse 1 sayılır.</p></li>
+<li><p>Logit ve probit modelleri tahmin edilen olasılıkların 0 ile 1 mantıksal sınırları içinde kalmasını sağlar.</p></li>
+</ul>
+<ol start="4" style="list-style-type: lower-roman">
+<li><span class="math inline">\(R^2\)</span>’nin yararı sınırlıdır. Bu nedenle, bu istatistiğin kullanılmasından kaçınılması gerektiği ileri sürülür.</li>
+</ol>
+<div class="sourceCode" id="cb292"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb292-1" title="1"><span class="kw">library</span>(readxl);<span class="kw">library</span>(tidyverse);<span class="kw">library</span>(magrittr)</a>
+<a class="sourceLine" id="cb292-2" title="2"></a>
+<a class="sourceLine" id="cb292-3" title="3"><span class="kw">setwd</span>(<span class="st">&quot;C:/Users/datanerd/Desktop/Github/rEkonometri/data&quot;</span>)</a>
+<a class="sourceLine" id="cb292-4" title="4">df1 &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="dt">file =</span> <span class="st">&quot;http://www.econometrics.com/comdata/gujarati/data_15.1.shd&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot;&quot;</span>, <span class="dt">header =</span> <span class="ot">FALSE</span>, <span class="dt">col.names =</span> <span class="kw">c</span>(<span class="st">&quot;y&quot;</span>,<span class="st">&quot;x&quot;</span>))</a>
+<a class="sourceLine" id="cb292-5" title="5">df2 &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table8_1.xls&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb293"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb293-1" title="1"><span class="kw">str</span>(df1)</a></code></pre></div>
+<pre><code>## &#39;data.frame&#39;:    40 obs. of  2 variables:
+##  $ y: int  0 1 1 0 0 1 1 0 0 0 ...
+##  $ x: int  8 16 18 11 12 19 20 13 9 10 ...</code></pre>
+<p>40 aile için verileri inceleyelim.</p>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>y:</strong> Ev sahipliği (Ev sahibi ise 1 değilse 0)</li>
+</ul>
+<p>Bağımsız değişken(ler):</p>
+<ul>
+<li><strong>x:</strong> Aile geliri</li>
+</ul>
+<p>Sıradan En Küçük Kareler yöntemi ile tahmin edelim.</p>
+<div class="sourceCode" id="cb295"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb295-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> y <span class="op">~</span><span class="st"> </span>x, <span class="dt">data =</span> df1)</a>
+<a class="sourceLine" id="cb295-2" title="2"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = y ~ x, data = df1)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -0.4842 -0.1777  0.0052  0.2095  0.3329 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -0.94569    0.12284  -7.698 2.85e-09 ***
+## x            0.10213    0.00816  12.515 4.73e-15 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.2264 on 38 degrees of freedom
+## Multiple R-squared:  0.8048, Adjusted R-squared:  0.7996 
+## F-statistic: 156.6 on 1 and 38 DF,  p-value: 4.726e-15</code></pre>
+<p>-0.94569 kesme terimi, sıfır gelirli bir ailenin ev sahibi olma olasılığını verir. Fakat değer eksi olmayacağı için bu değeri sıfırmış gibi görürüz.</p>
+<p>0.10213 eğim değeriyse gelirdeki 1 birimlik artışın (örnekte 1000 $), ev sahibi olma olasılığını ortalama olarak 0.10213 ya da ~ %10 artıracağı anlamına gelir.</p>
+<p>Örneğin, aile geliri 15 (15000) ise ev sahibi olma olasılığı aşağıdaki gibidir:</p>
+<div class="sourceCode" id="cb297"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb297-1" title="1">model<span class="op">$</span>coefficients[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>model<span class="op">$</span>coefficients[<span class="dv">2</span>] <span class="op">*</span><span class="st"> </span><span class="dv">15</span></a></code></pre></div>
+<pre><code>## (Intercept) 
+##   0.5862786</code></pre>
+<p>Aslında bize şu özellikleri taşıyan bir olasılık modeli gerekiyor:</p>
+<ol style="list-style-type: lower-roman">
+<li><p><span class="math inline">\(X_i\)</span> arttıkça <span class="math inline">\(P_i\)</span> de artar ama 0-1 aralığı dışına hiç çıkmaz</p></li>
+<li><p><span class="math inline">\(P_i\)</span> ile <span class="math inline">\(X_i\)</span> arasındaki ilişki doğrusal değildir (<span class="math inline">\(X_i\)</span> küçüldükçe <span class="math inline">\(P_i\)</span> gitgide daha yavaş 0’a yaklaşır; <span class="math inline">\(X_i\)</span> çok büyük değerlere çıktıkça <span class="math inline">\(P_i\)</span> gitgide daha yavaş 1’e yaklaşır).</p></li>
+</ol>
+<p>Bir uygulama daha yapıp ABD’li 1196 erkeğe ait rassal bir örneklemi inceleyelim.</p>
+<div class="sourceCode" id="cb299"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb299-1" title="1">df2 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb299-2" title="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="kw">c</span>(<span class="dv">6</span>,<span class="dv">1</span>,<span class="dv">2</span>,<span class="dv">3</span>,<span class="dv">4</span>))</a>
+<a class="sourceLine" id="cb299-3" title="3"></a>
+<a class="sourceLine" id="cb299-4" title="4"><span class="kw">str</span>(df2)</a></code></pre></div>
+<pre><code>## tibble [1,196 x 5] (S3: tbl_df/tbl/data.frame)
+##  $ smoker : num [1:1196] 0 1 0 0 1 0 0 1 0 1 ...
+##  $ educ   : num [1:1196] 12 15 10 12 12 15 12 13.5 0 12 ...
+##  $ age    : num [1:1196] 21 28 67 20 32 46 58 27 83 24 ...
+##  $ income : num [1:1196] 8500 12500 12500 12500 20000 30000 30000 30000 6500 20000 ...
+##  $ pcigs79: num [1:1196] 60.6 60.6 60.6 60.6 60.6 ...</code></pre>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>smoker:</strong> Sigara içiyorsa 1; içmiyorsa 0</li>
+</ul>
+<p>Bağımsız değişken(ler):</p>
+<ul>
+<li><p><strong>educ:</strong> Eğitim süresi</p></li>
+<li><p><strong>age:</strong> Yaş</p></li>
+<li><p><strong>income:</strong> Aile geliri</p></li>
+<li><p><strong>pcigs79:</strong> Eyaletteki sigaranın 1979 yılındaki fiyatları</p></li>
+</ul>
+<p>Bağımsız değişken değerleri (educ, age, income, pcigs79) verildiğinde bağımlı değişkenin (smoker) koşullu beklentisi, sigara içme olayının gerçekleşmesinin koşullu olasılığı olarak yorumlanabilir.</p>
+<div class="sourceCode" id="cb301"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb301-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> smoker <span class="op">~</span>., <span class="dt">data =</span> df2)</a>
+<a class="sourceLine" id="cb301-2" title="2"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = smoker ~ ., data = df2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -0.6417 -0.3880 -0.2782  0.5563  0.8405 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  1.123e+00  1.884e-01   5.963 3.27e-09 ***
+## educ        -2.061e-02  4.616e-03  -4.465 8.76e-06 ***
+## age         -4.726e-03  8.290e-04  -5.701 1.50e-08 ***
+## income       1.026e-06  1.632e-06   0.629   0.5298    
+## pcigs79     -5.132e-03  2.852e-03  -1.799   0.0723 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.477 on 1191 degrees of freedom
+## Multiple R-squared:  0.03877,    Adjusted R-squared:  0.03554 
+## F-statistic: 12.01 on 4 and 1191 DF,  p-value: 1.431e-09</code></pre>
+<p>En az %10 anlamlılık düzeyinde income hariç bütün değişkenler tek başına istatistiksel olarak anlamlıdır.</p>
+<p>age, educ ve pcigs79 değişkenlerinin smoker üzerine negatif etkisi vardır.</p>
+<p>Bağımsız değişkenler toplu halde anlamlıdır çünkü F değerinin neredeyse sıfıra yakın bir p değeri vardır.</p>
+<p>Diğer tüm değişkenleri sabit tuttuğumuzda;</p>
+<p>Muhtemelen sigara içmenin sağlık üzerindeki olumsuz etkisine bağlı olarak kişinin yaşı ilerledikçe sigara içme olasılığı yaklaşık olarak 0.005 oranında azalmaktadır (age).</p>
+<p>Eğitimin 1 yıl artması sigara içme olasılığını 0.02 kadar azaltmaktadır (educ).</p>
+<p>Sigara fiyatı 1 $ yükseldiğinde sigara içme olasılığı yaklaşık olarak 0.005 kadar azalmaktadır (pcigs79).</p>
+<p>0.038 olan <span class="math inline">\(R^2\)</span> değeri çok düşüktür fakat bununla ilgili yukarıda yararının sınırlı olduğunu söylemiştik. Çünkü bağımlı değişken sadece 0-1 değerlerini alan bir nominal değişkendir.</p>
+<p>Doğrusal olasılık modeli bizi yine de tatmin etmeyecek. Çünkü;</p>
+<ol style="list-style-type: lower-roman">
+<li><p>Doğrusal olasılık modeli sigara içme olasılığının bağımsız değişken değeriyle doğrusal hareket ettiğini varsayar.</p></li>
+<li><p>Mantıken olasılık değeri 0-1 arasında yer alır ama doğrusal olasılık modelinde 0-1 dışına çıkabilir. Çünkü Sıradan En Küçük Kareler yöntemi bunu umursamaz.</p></li>
+<li><p>Bağımlı değişken 0-1 değerlerini aldığından hata terimi için normal dağılım varsayımı geçerli olmaz.</p></li>
+<li><p>Doğrusal olasılık modelindeki hata terimi değişen varyanslı olup, geleneksel anlamlılık testlerini şüpheli hale getirir.</p></li>
+</ol>
+</div>
+<div id="logit-modeli" class="section level2">
+<h2><span class="header-section-number">12.2</span> Logit Modeli</h2>
+<p><span class="math inline">\(L_i = ln(\frac{P_i}{1-P_i}) = Z_i = \beta_1 + \beta_2X_i\)</span></p>
+<p>Yukarıda yazılan model doğal logaritma alınarak oluşturulmuştur.</p>
+<p>Logit modelinin özellikleri şöyledir:</p>
+<ol style="list-style-type: lower-roman">
+<li><p>P, 0’dan 1’e giderken (<span class="math inline">\(Z_i\)</span>, <span class="math inline">\(-\infty\)</span>’dan <span class="math inline">\(+\infty\)</span>’a doğru değişirken), logit (L) de <span class="math inline">\(-\infty\)</span>’dan <span class="math inline">\(+\infty\)</span>’a doğru değişir. Yani olasılıklar 0 ile 1 arasında yer alırken logitler böyle sınırlı değildir.</p></li>
+<li><p>L, X’e göre doğrusal olmakla birlikte olasılıkların kendileri böyle değildir. Yani, olasılıkların X ile birlikte doğrusal olarak arttığı doğrusal olasılık modeli ile zıttır.</p></li>
+<li><p>Tek bir bağımsız değişken değil; birden fazla bağımsız değişken de modele eklenebilir. Yani, birden fazla X.</p></li>
+<li><p>Ev sahibi olma olasılığı <span class="math inline">\(P_i\)</span> idi. O zaman ev sahibi olmama olasılığı <span class="math inline">\(1-P_i\)</span> olmaz mı? Bu durumda <span class="math inline">\(\frac{P_i}{(1-P_i)}\)</span> ev sahibi olmanın bahis oranı olur. Eğer logit L artıysa, bağımsız değişkenlerin değeri arttıkça, bağımlı değişkenin 1 olmasının bahis oranı yükselir; eğer logit L eksiyse, X büyüdükçe bağımlı değişkenin 1 olmasının bahis oranı düşer.</p></li>
+<li><p><span class="math inline">\(\beta_2\)</span> eğimi, X’teki 1 birim değişmeye karşılık L’deki değişmeyi ölçer. Örneğin, gelir 1000 $ değiştiğinde ev sahibi olmanın log-bahis oranının nasıl değiştiğini bildirir.</p></li>
+<li><p>Kesme terimi <span class="math inline">\(\beta_1\)</span> ise gelir sıfır olursa, ev sahibi olmanın log-bahis oranı değeridir.</p></li>
+<li><p>Eğer belli bir değeri almadan ev sahibi olmanın kendi olasılığını tahmin etmek istersek, <span class="math inline">\(\beta_1\)</span> ile <span class="math inline">\(\beta_2\)</span> tahminleri bir kez elde edildikten sonra bunu <span class="math inline">\(P_i = \frac{e^z}{(1 + e^z)}\)</span> ile bulabiliriz.</p></li>
+<li><p>Bir önceki konuda adı geçen doğrusal olasılık modeli <span class="math inline">\(P_i\)</span>’nin <span class="math inline">\(X_i\)</span> ile doğrusal ilişki içinde olduğunu varsayarken, logit modeli log-bahis oranının <span class="math inline">\(X_i\)</span> ile doğrusal ilişki içinde olduğunu varsayar.</p></li>
+</ol>
+<p><span class="math inline">\(L_i = ln(\frac{P_i}{1-P_i}) = Z_i = \beta_1 + \beta_2X_i + u_i\)</span></p>
+<p>Yazdığımız modeli tahmin etmek için <span class="math inline">\(X_i\)</span>’den başka, bağımlı değişkenin ya da logit <span class="math inline">\(L_i\)</span>’nin değerine gerek vardır. Bu da çözümleme için eldeki verinin türüne bağlıdır. İki tür veri ayırt ediyoruz: i) Tekil ya da mikro düzeydeki veri, ii) Gruplanmış veri ya da yinelenmiş veri.</p>
+<p>Modeli kuralım. Model kurarken en çok olabilirlik yönteminden yararlanacağız.</p>
+<div class="sourceCode" id="cb303"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb303-1" title="1">logitmodel &lt;-<span class="st"> </span><span class="kw">glm</span>(smoker <span class="op">~</span><span class="st"> </span>educ <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>income <span class="op">+</span><span class="st"> </span>pcigs79, <span class="dt">family =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>), <span class="dt">data =</span> df2)</a>
+<a class="sourceLine" id="cb303-2" title="2"><span class="kw">summary</span>(logitmodel)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = smoker ~ educ + age + income + pcigs79, family = binomial(link = &quot;logit&quot;), 
+##     data = df2)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.4608  -0.9829  -0.8055   1.2769   1.8384  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  2.745e+00  8.292e-01   3.311 0.000931 ***
+## educ        -9.097e-02  2.067e-02  -4.402 1.07e-05 ***
+## age         -2.085e-02  3.739e-03  -5.577 2.44e-08 ***
+## income       4.720e-06  7.170e-06   0.658 0.510356    
+## pcigs79     -2.232e-02  1.247e-02  -1.789 0.073538 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 1588.9  on 1195  degrees of freedom
+## Residual deviance: 1541.7  on 1191  degrees of freedom
+## AIC: 1551.7
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>educ ve age değişkenleri istatistiksel olarak oldukça anlamlıdır. İşaretler de negatiftir. Yani, insanların eğitimi ya da yaşı arttıkça sigara içme olasılıkları azalmaktadır.</p>
+<p>pcigs79 değişkeni de %7’de anlamlıdır. Yani, sigara fiyatı arttıkça sigara içme olasılığı düşer.</p>
+<p>income istatistiksel olarak anlamlı değildir.</p>
+<p>Diğer değişkenler sabit tutulduğunda;</p>
+<p>Eğitimdeki bir yıllık artış ortalama logit değerini 0.09 azaltacaktır (educ). Yani, sigara içme lehine olan bahis oranının logaritması 0.09 azalacaktır. <span class="math inline">\(P_i\)</span>, sigara içme; <span class="math inline">\(1-P_i\)</span> ise sigara içmeme olasılığı olsun. <span class="math inline">\(\frac{P_i}{1-P_i}\)</span> basitçe sigara içme lehine olan bahis oranıdır.</p>
+<p>Yaştaki bir yıllık artış ortalama logit değerini 0.02 azaltacaktır (age). Yani, sigara içme lehine olan bahis oranının logaritması 0.02 azalacaktır.</p>
+<p>Sigara fiyatlarındaki 1 $’lık artış ortalama logit değerini 0.02 azaltacaktır (pcigs79). Yani, sigara içme lehine olan bahis oranının logaritması 0.02 azalacaktır.</p>
+<p><span class="math inline">\(R^2\)</span>’nin çok anlamlı olmayacağından bahsetmiştik. Fakat bunun yerine sayma <span class="math inline">\(R^2\)</span> kullanabiliriz. Bu, doğru kestirim sayısının gözlem sayısına oranıdır. Eğer kestirilen değer 0.5’ten büyükse 1; küçükse 0 değerini alır. Bu durumda sayma <span class="math inline">\(R^2\)</span>;</p>
+<div class="sourceCode" id="cb305"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb305-1" title="1">df2 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb305-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">fitted =</span> logitmodel<span class="op">$</span>fitted.values) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb305-3" title="3"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">tahmin =</span> <span class="kw">ifelse</span>(fitted <span class="op">&gt;</span><span class="st"> </span><span class="fl">0.5</span>, <span class="dv">1</span>, <span class="dv">0</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb305-4" title="4"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">durum =</span> <span class="kw">ifelse</span>(smoker <span class="op">==</span><span class="st"> </span>tahmin, <span class="st">&quot;başarılı&quot;</span>, <span class="st">&quot;başarısız&quot;</span>))</a>
+<a class="sourceLine" id="cb305-5" title="5"></a>
+<a class="sourceLine" id="cb305-6" title="6">df2 <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb305-7" title="7"><span class="st">  </span><span class="kw">count</span>(durum)</a></code></pre></div>
+<pre><code>## # A tibble: 2 x 2
+##   durum         n
+##   &lt;chr&gt;     &lt;int&gt;
+## 1 başarılı    730
+## 2 başarısız   466</code></pre>
+<p>Sayma <span class="math inline">\(R^2\)</span> değeri 730 / 1196 = 0.6103679 ya da %61 olacak.</p>
+<p>Bizim önceliğimiz regresyon katsayılarının beklenen işaretleri ile istatistiksel anlamlılıkları olacaktır.</p>
+<p>Doğrusal olasılık modelinde hata terimi normal olmayan dağılımdaydı. Logit modelde ise hata terimi lojistik dağılıma sahiptir. Şimdi de hata terimi normal dağılımlı olan probit modeli göreceğiz.</p>
+</div>
+<div id="probit-model" class="section level2">
+<h2><span class="header-section-number">12.3</span> Probit Model</h2>
+<div class="sourceCode" id="cb307"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb307-1" title="1">probitmodel &lt;-<span class="st"> </span><span class="kw">glm</span>(smoker <span class="op">~</span><span class="st"> </span>educ <span class="op">+</span><span class="st"> </span>age <span class="op">+</span><span class="st"> </span>income <span class="op">+</span><span class="st"> </span>pcigs79, <span class="dt">family =</span> <span class="kw">binomial</span>(<span class="dt">link =</span> <span class="st">&quot;probit&quot;</span>), <span class="dt">data =</span> df2)</a>
+<a class="sourceLine" id="cb307-2" title="2"><span class="kw">summary</span>(probitmodel)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = smoker ~ educ + age + income + pcigs79, family = binomial(link = &quot;probit&quot;), 
+##     data = df2)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -1.4607  -0.9830  -0.8028   1.2774   1.8546  
+## 
+## Coefficients:
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept)  1.702e+00  5.096e-01   3.339  0.00084 ***
+## educ        -5.623e-02  1.262e-02  -4.456 8.35e-06 ***
+## age         -1.297e-02  2.277e-03  -5.695 1.23e-08 ***
+## income       2.720e-06  4.411e-06   0.617  0.53741    
+## pcigs79     -1.379e-02  7.685e-03  -1.795  0.07268 .  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for binomial family taken to be 1)
+## 
+##     Null deviance: 1588.9  on 1195  degrees of freedom
+## Residual deviance: 1541.2  on 1191  degrees of freedom
+## AIC: 1551.2
+## 
+## Number of Fisher Scoring iterations: 4</code></pre>
+<p>Sonuçlar aslında logit model ile aynı (niceliksel farklılılar var tabi ki).</p>
+<p>Gujarati şu notu düşer: <em>Logit ve probit modelleri genellikle benzer sonuçlar verir. İki model arasındaki temel fark lojistik dağılımın biraz daha şişman kuyruklarının olmasıdır; lojistik dağılımlı rassal bir değişkenin varyansının yaklaşık</em> <span class="math inline">\(\frac{\pi^2}{3}\)</span>, <em>oysa (standart) normal dağılımlı değişkeninkinin 1 olduğunu hatırlayalım. Yani, logitte</em> <span class="math inline">\(P_i\)</span> <em>koşullu olasılığı probitten daha düşük bir hızla 0 veya 1’e yaklaşır. Ancak uygulamada birisini diğerine tercih etmenin ikna edici bir nedeni bulunmamaktadır. Nispeten matematiksel kolaylığı sebebiyle araştırmacı logiti probite tercih etmektedir.</em> Çağlayan ve Güriş ise şuna dikkat çeker: <em>Aralarındaki fark sadece kuyruklarda bulunmaktadır. Bu fark; logit eğrisinin daha kalın kuyruklu olması yani eksene probit eğrisinden daha geç yaklaşması şeklinde açıklanabilir. (…) özellikle verinin kuyruklardaki yoğunluğuna konsantre olunmadıysa probit model mi logit model mi sorusunun önemi pek bulunmamaktadır.</em></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="model-tan-mlama-hatalar-.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="çok-terimli-regresyon-modelleri.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["rEkonometri.pdf", "rEkonometri.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

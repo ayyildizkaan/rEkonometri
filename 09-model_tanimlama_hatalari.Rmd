@@ -1,0 +1,452 @@
+# Model Tanımlama Hataları
+
+> *Uygulamalı ekonometri gözü kapalı yapılamaz; anlama, sezgi, ustalık gerektirir.* -Cuthbertson, Hall, Taylor
+
+Modelin doğru tanımlanması klasik doğrusal regresyon modeli varsayımlarından biridir.
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr);library(lmtest);library(psych);library(moments)
+
+df <- read_excel("C:/Users/datanerd/Desktop/Github/rEkonometri/data/Table1_1.xls")
+df %<>% 
+  dplyr::select(wage, female, nonwhite, union, education, exper, age)
+
+```
+
+## Eksik Tanımlanmış Modeller
+
+Eksik tanımlı model olursa ne olur?
+
+* Tahmin edilen parametreler yanlıdır ve tutarlı değildir. Bu, dışarıda bırakılan değişkenlerle modeldeki değişkenlerin korelasyonlu olması durumunda geçerlidir.
+
+* Herhangi bir korelasyon olmasa bile modelin kesme terimi yanlıdır.
+
+* Hata varyansı yanlış tahmin edilir.
+
+* Parametre tahminlerine ait varyanslar yanlıdır. Bunun sonucu olarak standart hatalar da yanlıdır.
+
+* Her zamanki güven aralıkları ve hipotez testi yöntemlerinin güvenilirliği azalır ve bu da istatistiksel anlamlılık hakkında yanıltıcı bilgilere yol açar.
+
+* Öngörü ve öngörü güven aralıkları sağlıklı olmaz.
+
+Gujarati, *doğru tanımlanmış modeli bulmaya çalışmak kutsal kaseyi bulmaya çalışmak gibidir* der. En iyi yolun ise dikkate alınacak alternatif bir modelle karşılaştırmak olacağını savunur.
+
+```{r}
+
+df1 <- df
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper, data = df1)
+summary(model)
+
+```
+
+wage'in belirleyicileri olarak female, nonwhite, union, education ve exper değişkenlerini kattık.
+
+Şunu biliyoruz: İş deneyimi arttıkça ücretler de artacaktır. Ama şunu bilmiyoruz: İş deneyimi arttıkça ücretler daha yavaş bir oranda mı artar yoksa daha hızlı bir oranda mı? Bunun için iş deneyimini temsil eden exper değişkeninin karesini modele ekleyeceğiz.
+
+```{r}
+
+df1 %<>% 
+  mutate(exper2 = exper^2)
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper + exper2, data = df1)
+summary(model)
+
+```
+
+Yeni eklediğimiz $exper^2$ değişkeninin istatistiksel olarak oldukça anlamlı (düşük p değeri) olduğunu görüyoruz. Fakat parametre işaretinin negatif olduğuna dikkat edelim. exper değişkeni pozitif idi. Bu da iş deneyimine bağlı olarak ücretlerin artış gösterdiğini ama azalan oranda bir artış olduğunu göstermektedir.
+
+Aslında $exper^2$ değişkenini modelden dışlayarak bu değişkenin (belki de değişkenlerin) modelden dışlanması yanlılığına düştük. Şimdi bir de modele cinsiyet ve deneyim arasındaki etkileşimi dahil edelim.
+
+```{r}
+
+df1 %<>% 
+  mutate(female_exper = female * exper)
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper + exper2 + female_exper, data = df1)
+summary(model)
+
+```
+
+Eklediğimiz female_exper değişkeninin tıpkı $exper^2$ değişkeninde olduğu gibi istatistiksel olarak anlamlı olduğunu görüyoruz. Bu yeni değişkenin parametresi negatiftir. Bu da kadınların benzer iş deneyimi olan erkek meslektaşlarına göre daha az kazandığını belirtmektedir.
+
+Peki, orijinal modeli genişletmeye değer mi? Öyle olduğu görülüyor ama bunu F ile de test edebiliriz.
+
+İlk model kısıtlanmış; genişlettiğimiz model ise kısıtlanmamış model olsun.
+
+$F = \frac{(R^2_{ur} - R^2_r) / m}{(1 - R^2_{ur}) / (n - k)}$
+
+Burada, $R^2_{r}$ kısıtlanmış; $R^2_{ur}$ kısıtlanmamış $R^2$'yi temsil etmektedir. Ayrıca m kısıtlama sayısı (kısıtlanmış model 2 değişkeni dışarıda bıraktı), n gözlem sayısı (1289) ve k kısıtlanmamış modeldeki bağımsız değişken sayısıdır (2 tane de sonradan ekledik ve 8 oldu).
+
+```{r}
+
+summary(lm(formula = wage ~ female + nonwhite + union + education + exper + exper2 + female_exper, data = df1))$r.squared #Kısıtlanmamış modele ait R2
+summary(lm(formula = wage ~ female + nonwhite + union + education + exper, data = df1))$r.squared #Kısıtlanmış modele ait R2
+
+```
+
+$F = \frac{((0.3403154 – 0.3233388) / 2)}{((1 – 0.3403154) / (1289 – 8))} = 16.4829$
+
+F değeri m = 2 pay ve n - k = 1281 payda serbestlik derecesi için oldukça anlamlıdır. Bu da belirlediğimiz iki değişkenin orijinal modele eklenmesini desteklemektedir. Evet, $R^2$'lerde önemli bir değişiklik olmadı ama F testi bize bunun önemli olduğunu gösterdi. Biz burada değişkenlerin dışlanması ile orijinal modeldeki parametrelerin yanlı olabileceğini gördük çünkü ilgili değişkenleri ekleyince parametreler de önemli ölçüde değişti. Şunu da bilelim: Örneklem büyüklüğü arttıkça yanlılığın ortadan kalkacağına dair bir garanti yoktur.
+
+Dışlanan değişkenlerle ilgili iki test göreceğiz: Ramsey Reset ve Lagrange Çarpan (LM).
+
+Ramsey Reset:
+
+İlk olarak kurduğumuz modelden tahmin değerlerini elde ederiz. Bu tahmin değerlerinin ikinci, üçüncü ve belki daha yüksek kuvvetlerini bağımsız değişken olarak modele ilave ederek yeniden bir tahminleme yaparız. Ardından F testi ile kısıtlanmış-kısıtlanmamış model yaparız. Eğer F testi istatistiksel olarak anlamlı ise $H_0$'ı reddedip kısıtlanmış modelin uygun olmadığını söyleriz.
+
+Önce modeli kuralım. Ardından test edelim.
+
+```{r}
+
+df1$tahmin <- lm(formula = wage ~ female + nonwhite + union + education + exper, data = df1)$fitted.values
+df1$tahmin2 <- df1$tahmin^2
+df1$tahmin3 <- df1$tahmin^3
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper + tahmin2 + tahmin3, data = df1)
+summary(model)
+
+```
+
+```{r}
+
+resettest(lm(formula = wage ~ female + nonwhite + union + education + exper, data = df1))
+
+```
+
+F değeri istatistiksel olarak oldukça anlamlıdır (neredeyse sıfır bir p değerine sahip). Bu da $H_0$'ın reddi olup model tanımlama hatasına kanıttır.
+
+Ramsey Reset testi bu kanıtı bulsa da alternatif bir yol önermez. Ayrıca modele eklenecek tahmin değerlerinin kuvvetlerinin sayısı hakkında da bilgi vermez.
+
+Şimdi bir de Lagrange Çarpan ya da LM testine bakalım. Bu test için öncelikle orijinal modelden elde edilen kalıntıları buluruz. Eğer model doğruysa kalıntılarla modelden dışlanan değişkenler arasında ilişki olmamalıdır. Ardından kalıntıların orijinal modeldeki ve dışlanan değişkenlere göre regresyonunu alırız. Hesaplanan $\chi^2$ değeri kritik $\chi^2$ değerini belirlenen anlamlılık düzeyinde geçerse (p değeri yeterince küçükse) orijinal regresyonu reddederiz. Yani, orijinal model yanlış tanımlanmıştır.
+
+Önce modeli kuralım. Ardından test edelim.
+
+```{r}
+
+df1$`kalıntılar` <- lm(formula = wage ~ female + nonwhite + union + education + exper, data = df1)$residuals
+
+model <- lm(formula = `kalıntılar` ~ female + nonwhite + union + education + exper + exper2 + female_exper, data = df1)
+summary(model)
+
+```
+
+Gözlem sayısı * $R^2$ değeri = 1289 * 0.02509 = 32.34101 olup 2 serbestlik derecesi için bu değeri veya daha büyüğünü elde etme olasılığı son derece düşüktür. Bu da Ramsey Reset testini destekleyen bir Lagrange Çarpan testi sonucudur. Yani, orijinal model yanlış belirlenmiştir.
+
+## Aşırı Tanımlanmış Modeller
+
+$R^2$ yükseldikçe modelin daha iyi olacağına inanılır. Bunun için de modele değişkenler eklenir. Bu da bir modeli aşırı tanımlama sorununa götürebilir.
+
+Aşırı tanımlı model olursa ne olur?
+
+* Aşırı tanımlanmış modelin bütün Sıradan En Küçük Kareler tahmincileri yansızdır ve tutarlıdır.
+
+* Hata terimi varyansı doğru tahmin edilir.
+
+* Güven aralığı ve hipotez testleri güvenilirdir.
+
+* Ancak böyle bir modelin parametre tahminleri genelde etkin değildir. Yani, varyanslar gerçek modelinkilerden daha yüksektir.
+
+Aşırı tanımlı modelde şunu bilmek gerekiyor: Hem tahmincilerde etkinlik kaybı söz konusu olacak hem de çoklu doğrusal bağlantı sorununu doğurabilir.
+
+Bunu anlatabilmek için aynı örnek üzerinden gidelim. Veri setini tekrar alalım ve bu defa age değişkenini de ekleyelim.
+
+```{r}
+
+df2 <- df
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper + age, data = df2)
+summary(model)
+
+```
+
+age ve exper arasındaki tama yakın doğrusal bağlantı nedeniyle regresyonu çalıştıramadık. Hatırlayın, exper değişkeni = yaş – eğitim süresi – 6 okula başlama yaşı olarak tanımlanmıştı. age ve exper değişkenleri arasındaki korelasyon:
+
+```{r}
+
+cor(df2$exper, df2$age)
+
+```
+
+age veya exper değişkenini modele ekleyebilir ama her ikisini birden tama yakın doğrusal bağlantı nedeniyle modele ekleyemeyiz.
+
+## Yanlış Fonksiyon Yapısı
+
+Saatlik ücretler ile ilgili iki tane regresyon modeli kurmuştuk: Doğrusal ve Log-Doğrusal.
+
+```{r}
+
+df3 <- df %>% 
+  dplyr::select(wage, female, nonwhite, union, education, exper) %>% 
+  mutate(exper2 = exper^2,
+         female_exper = female * exper,
+         lnwage = log(wage))
+
+```
+
+Doğrusal model:
+
+```{r}
+
+linmodel <- lm(formula = wage ~., data = df3[,-9]) #9. sütunu alma.
+summary(linmodel)
+
+```
+
+Log-Doğrusal model:
+
+```{r}
+
+loglinmodel <- lm(formula = lnwage ~., data = df3[,-1]) #1. sütunu alma.
+summary(loglinmodel)
+
+```
+
+İki model de çok cazip duruyor. Biz bunlardan hangisini seçmeliyiz?
+
+$R^2$'lerini karşılaştırabilir miyiz?
+
+Hayır cevabını daha önce vermiştik. $R^2$ doğrusal modelde bağımlı değişkendeki değişkenliğin bütün bağımsız değişkenlerce açıklanan oranını ölçerken, yarı-logaritmik modelde bağımlı değişkenin logaritmasındaki değişkenliğin oranını ölçer. Bu ikisi aynı şey değildir.
+
+Şu adımları izleyelim.
+
+i. Bağımlı değişken wage'lerin geometrik ortalamasını alalım.
+
+```{r}
+
+geometric.mean(df3$wage)
+#ya da
+exp(mean(log(df3$wage)))
+
+```
+
+ii. wage'leri bu geometrik ortalamaya bölelim.
+
+```{r}
+
+df3$go_wage <- df3$wage / exp(mean(log(df3$wage)))
+
+```
+
+iii. Artık bağımlı değişken wage yerine geometrik ortalamaya bölünmüş wage'i kullanarak modeli yeniden oluşturalım.
+
+```{r}
+
+yenimodel <- lm(formula = go_wage ~., data = df3[,-c(1,9)]) #1. ve 9. sütunları alma
+
+```
+
+Buradan kalıntı kareler toplamını elde edelim. Yani, kalıntıların karelerini alıp toplayacağız.
+
+```{r}
+
+sum((yenimodel$residuals)^2)
+
+```
+
+iv. Bağımlı değişken lnwage yerine geometrik ortalamaya bölünmüş wage'in logaritmasını kullanıp model kuralım ve yine yukarıda olduğu gibi kalıntı kareler toplamını elde edelim.
+
+```{r}
+
+df3$go_lnwage <- log(df3$go_wage)
+yenimodel2 <- lm(formula = go_lnwage ~., data = df3[,-c(1,9,10)]) #1., 9. ve 10. sütunları alma
+
+sum((yenimodel2$residuals)^2)
+
+```
+
+v. Kalıntı kareler toplamı olan RSS'ler bulunduktan sonra aşağıdaki değeri hesaplayalım.
+
+$λ = \frac{n}{2} * ln(\frac{RSS_1}{RSS_2})\sim\chi^2_1$
+
+n gözlem sayısıdır.
+
+Büyük olan RSS değeri paya koyulur.
+
+```{r}
+
+nrow(df3) / 2 * log(sum(yenimodel$residuals^2) / sum(yenimodel2$residuals^2))
+
+```
+
+1 serbestlik derecesi için bu $\chi^2$ değeri oldukça yüksektir. Bu da istatistiksel olarak anlamlı olup küçük RSS'e sahip modelin daha iyi olduğu sonucunu destekler. Yani, ilk başta kurduğumuz modelin fonksiyon kalıbı yanlış seçilmiştir. Artık log-doğrusal modeli kullanacağız. Log-Doğrusal modelin daha üstün olduğunu istatistiksel olarak göstermiş olduk.
+
+## Ölçüm Hataları
+
+Verileri derlerken çok dikkatli ve bazı aşikar hataların giderildiğinden emin olunmalıdır. Eğer bu hatalar bağımlı değişkenlere aitse Sıradan En Küçük Kareler tahmini üzerinde çok ciddi etkileri olmaz. Yani, Sıradan En Küçük Kareler tahmincileri, varyansları ve standart hataları yansızdır ama tahmin edilen varyanslar ve dolayısıyla standart hatalar ölçüm hatalarının olmamasına göre daha büyüktür. Eğer ölçüm hataları bağımsız değişkenlere aitse Sıradan En Küçük Kareler tahmincileri hem yanlı olma hem tutarlı olmama gibi durumlara girer. Hatta tek bir bağımsız değişken diğer bağımsız değişkenlerin yanlı olmasına ve tutarlı olmamasına yol açar.
+
+> *Hükümetler istatistik biriktirmeye son derece meraklıdır. Onları toplarlar, eklerler, n. kuvvete yükseltirler, küp kökünü alırlar ve harika diagramlar oluştururlar. Ancak hiçbir zaman unutmamamız gereken bir gerçek bu rakamların her birinin başlangıçta ne bildirdiğini pek de umursamayan köy bekçisi (village watchman) tarafından oluşturulduğudur.* -Stamp
+
+## Aykırı Değer, Yüksek Kaldıraç Etkisi, Baskın Nokta ve Simüle Edilmiş Veriler
+
+Regresyon analizi bazında kalıntısı diğer gözlemlerin kalıntılarından büyük olan gözleme aykırı değer denir. Tabi birden fazla olabilir. İşaretleri ortadan kaldırmak için kalıntılara kareleri alınarak da bakılabilir.
+
+Eğer bir gözlem örneklemdeki gözlem yığınlarından aşırı derecede uzaktaysa yüksek kaldıraç etkisi ortaya koyabilir. Bu tür gözlemler regresyon doğrusunu kendine doğru çekebilir ve doğrunun eğiminde değişimlere yol açabilir.
+
+Eğer gözlem, kaldıraç etkisiyle regresyon doğrusunu kendine çekerse buna baskın nokta adı verilir.
+
+```{r}
+
+ulke <- c("ABD", "Avustralya", "Büyük Britanya", "Danimarka", "Finlandiya", "Hollanda", "İsveç", "İsviçre", "İzlanda", "Kanada", "Norveç")
+kisibasinasigara <- c(1300, 480, 1100, 380, 1100, 490, 300, 510, 230, 500, 250)
+milyondaolumoranlari <- c(200, 180, 460, 170, 350, 240, 110, 250, 60, 150, 90)
+df4 <- data.frame(ulke = ulke, kisibasinasigara = kisibasinasigara, milyondaolumoranlari = milyondaolumoranlari)
+
+df4 %>% 
+  ggplot(aes(x = kisibasinasigara, y = milyondaolumoranlari)) +
+  geom_point(size = 3) +
+  ggrepel::geom_label_repel(aes(label = ulke)) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  theme_minimal() +
+  labs(x = "Kişi Başına Sigara", y = "1 Milyonda Ölüm Oranı")
+
+```
+
+ABD, sigara tüketiminin en yüksek olduğu yer fakat ölüm oranı nispeten düşük. Aykırı değer diyebilir miyiz? ABD'nin olduğu ve olmadığı iki farklı model kuralım.
+
+```{r}
+
+abdli_model <- lm(formula = milyondaolumoranlari ~ kisibasinasigara, data = df4)
+summary(abdli_model)
+
+```
+
+Bu çıktı sigara ile ölüm oranları arasında pozitif bir ilişki (nedensellik değil) ortaya koyuyor. İstatistiksel olarak da anlamlı olduğunu görüyoruz.
+
+```{r}
+
+abdsiz_model <- lm(formula = milyondaolumoranlari ~ kisibasinasigara, data = df4[-1,])
+summary(abdsiz_model)
+
+```
+
+Modeli ABD olmadan kurduğumuz zaman parametre değerlerinin, standart hataların ve $R^2$ değerinin oldukça farklılaştığını görüyoruz. Aslında ABD aynı zamanda baskın noktadır. Aşağıdaki görsel ise ABD olmadan çizilmiştir.
+
+```{r}
+
+df4 %>% 
+  filter(ulke != "ABD") %>% 
+  ggplot(aes(x = kisibasinasigara, y = milyondaolumoranlari)) +
+  geom_point(size = 3) +
+  ggrepel::geom_label_repel(aes(label = ulke)) +
+  geom_smooth(method = "lm", se = FALSE, color = "red") +
+  theme_minimal() +
+  labs(x = "Kişi Başına Sigara", y = "1 Milyonda Ölüm Oranı")
+
+```
+
+Buradan aykırı değerlerin gereksiz olduğu ve atılması gerektiği sonucu çıkmasın. Her zaman değil!
+
+Aşağıda simüle edilmiş verilerle çalışacağız. Üç tanımı da anladık ama bunları birbirleri ile karıştırmamak gerekiyor.
+
+0 ile 5 arasında 20 tane veri elde edelim. Bunlar bağımsız değişkene ait olsun. Ardından da 1 + 3x + $\epsilon_i$ ile de $Y_i$ değerlerini belirleyelim. Gerçek parametrelerimiz $β_0$ = 1 ve $β_1$ = 3.
+
+```{r}
+
+set.seed(1)
+n <- 20
+x <- runif(n, min=0, max=5)
+y <- 1 + 3*x + rnorm(n,0,1)
+df5 <- data.frame(y=y, x=x)
+
+```
+
+Doğrusal regresyon modelini kuralım.
+
+```{r}
+
+model1 <- lm(formula = y ~ x, data = df5)
+summary(model1)
+
+```
+
+```{r}
+
+df5 %>% 
+  ggplot(aes(x=x, y=y)) +
+  geom_point() +
+  geom_smooth(method = "lm", se = FALSE) +
+  theme_minimal()
+
+```
+
+Her aykırı değerin kaldıraç etkisi yaratmadığını gösterelim.
+
+```{r}
+
+y2 <- c(y,18)
+x2 <- c(x,2.5)
+df6 <- data.frame(y=y2, x=x2)
+model2 <- lm(formula = y ~ x, data = df6)
+summary(model2)
+
+```
+
+```{r}
+
+ggplot() +
+  geom_point(data = df5, aes(x = x, y = y), color = "red", size = 3) +
+  geom_smooth(data = df5, aes(x = x, y = y), method = "lm", se = FALSE, color = "red") +
+  geom_point(data = df6, aes(x = x, y = y), color = "blue") +
+  geom_smooth(data = df6, aes(x = x, y = y), method = "lm", se = FALSE, color = "blue") +
+  theme_minimal()
+
+```
+
+Eklediğimiz aykırı değer $β_0$'da etkiye neden oldu fakat $β_1$'de onun kadar bir etki göstermedi.
+
+Yüksek kaldıraç etkisi olan ama baskın nokta olmayan bir gözleme örnek verelim.
+
+```{r}
+
+y3 <- c(y,25)
+x3 <- c(x,8)
+df7 <- data.frame(y=y3, x=x3)
+model3 <- lm(formula = y ~ x, data = df7)
+summary(model3)
+
+```
+
+```{r}
+
+ggplot() +
+  geom_point(data = df5, aes(x = x, y = y), color = "red", size = 3) +
+  geom_smooth(data = df5, aes(x = x, y = y), method = "lm", se = FALSE, color = "red") +
+  geom_point(data = df7, aes(x = x, y = y), color = "blue") +
+  geom_smooth(data = df7, aes(x = x, y = y), method = "lm", se = FALSE, color = "blue") +
+  theme_minimal()
+
+```
+
+Kaldıraca sahip gözlem eğimi etkilemedi çünkü zaten doğrunun üzerinde. Böylece kaldıraç özelliğine sahip oldu ama baskın nokta olamadı.
+
+Baskın nokta öyle değil böyle olur demek için son örneği görelim.
+
+```{r}
+
+y4 <- c(y,5)
+x4 <- c(x,8)
+df8 <- data.frame(y=y4, x=x4)
+model4 <- lm(formula = y ~ x, data = df8)
+summary(model4)
+
+```
+
+```{r}
+
+ggplot() +
+  geom_point(data = df5, aes(x = x, y = y), color = "red", size = 3) +
+  geom_smooth(data = df5, aes(x = x, y = y), method = "lm", se = FALSE, color = "red") +
+  geom_point(data = df8, aes(x = x, y = y), color = "blue") +
+  geom_smooth(data = df8, aes(x = x, y = y), method = "lm", se = FALSE, color = "blue") +
+  theme_minimal()
+
+```
+
+Eğimi oldukça değiştirdi ve baskın nokta özelliği kazandı.
+
+## Hata Teriminin Olasılık Dağılımı
+
+Klasik doğrusal regresyon modelinin varsayımlarından biri modeldeki hata teriminin normal dağıldığı yönündedir. Eğer örneklem büyüklüğü nispeten küçükse varsayım oldukça önem kazanır çünkü t ve F testleri normallik varsayımına dayanır.
+
+Biz daha önce Jarque-Bera (J-B) testinden bahsetmiştik. J-B, normallik testlerinden bir tanesidir ve büyük örneklemlerde çalışır (küçük örneklemlerde yanıltıcı olabilir). Daha önce formülünü görmemiştik ama şimdi öğrenelim: $n * [\frac{S^2}{6} + \frac{(K-3)^2}{24}]\sim\chi^2_2$. Burada, n örneklem sayısı, S skewness ya da çarpıklık, K kurtosis ya da basıklıktır. Normal dağılım için S = 0 ve K = 3'tür. Bu değerler sağlandığında J-B = 0 olur. Bu da J-B'nin sıfıra yaklaştıkça normallik varsayımını güçlendirdiğini söyler. Ama biz ek olarak J-B'nin istatistiksel anlamlılığını bulmak isteriz ve bunun için de $\chi^2$ dağılımını kullanırız. Karar verme aşamasında şuna bakacağız: Eğer J-B istatistiği ya da $\chi^2$ istatistiği, örneğin %5 seviyesinde, kritik $\chi^2$ değerini aşarsa $H_0$'ı reddederiz. $H_0$ hata teriminin normal dağıldığını varsayar. Uygulamada gerçek hata terimini kullanamadığımız için kalıntıyı (hata teriminin temsili) kullanırız.

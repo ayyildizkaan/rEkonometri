@@ -1,0 +1,451 @@
+# Değişkenleri Doğrusal Olmayan Regresyon Modelleri
+
+Doğrusallığın tanımını şöyle yapmıştık:
+
+> *Doğrusal dediğimiz zaman buradaki doğrusallığın değişkenlerden (X'ler) değil; parametrelerden* ($\beta'lar$) *geldiğini bilmemiz gerekiyor. Bağımlı ve bağımsız değişken(ler) logaritmik, tersi veya kuvveti alınmış şekilde olabilir. Bu, doğrusallık kavramını etkilemez. Asıl önemli olan* $\beta$ *parametrelerinin kuvvetinin alınmaması, diğer parametrelere bölünmemesi veya dönüştürülmemesidir.*
+
+Bu başlık altında parametrelerine göre doğrusal olan ama değişkenleri açısından doğrusallık göstermeyen modellerle ilgili uygulamalar yapacağız.
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr);library(moments)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df1 <- read_excel("Table1_1.xls")
+df2 <- read_excel("Table2_1.xls")
+df3 <- read_excel("tepav_il_gsyh_gece_isiklari.xlsx", sheet = "Kişi Başına GSYH ($) Türkiye")
+df4 <- read_excel("Table2_8.xls")
+
+```
+
+## Log-Doğrusal ya da Çift-Log Modeller
+
+Aşağıdaki modeli ele alalım.
+
+$Y_i = \beta_1X_i^{\beta_2}e^{\epsilon_i}$
+
+Her iki tarafın logaritmasını alırsak (log-doğrusal, çift-log);
+
+$lnY_i = ln\beta_1 + \beta_2lnX_i + \epsilon_i$
+
+*ln: e tabanına göre logaritmadır.*
+
+Yukarıda bir doğrusallaştırma işlemi yaptık.
+
+```{r}
+
+df2 %<>% 
+  dplyr::select(output, capital, labor) %>% 
+  mutate(lnoutput = log(output),
+         lncapital = log(capital),
+         lnlabor = log(labor)) #Her bir değişkenin logaritmasını aldık.
+
+str(df2)
+
+```
+
+ABD için Cobb-Douglas üretim fonksiyonuna bakıyoruz.
+
+Bağımlı değişken:
+
+* **output:** İmalat sektörüne ait çıktı (katma değer, bin $)
+
+Bağımsız değişken(ler):
+
+* **capital:** Sermaye girdisi (sermaye harcaması, bin $)
+
+* **labor:** Emek girdisi (çalışma saati, bin saat)
+
+Modeli kurabiliriz.
+
+```{r}
+
+model <- lm(formula = lnoutput ~ lncapital + lnlabor, data = df2)
+summary(model)
+
+```
+
+Çıktıya ait parametreler esnekliklerdir. Parametreleri farklı olarak şöyle yorumlayacağız: labor girdisi sabit tutulduğunda, capital girdisini %1 artırırsak output %0.52 artacaktır. Aynı şekilde capital girdisi sabit tutulduğunda, labor girdisini %1 artırırsak output %0.47 artacaktır.
+
+p değerleri çok düşüktür. Bu da parametrelerin istatistiksel olarak anlamlı olduğu ve output üzerinde etkiye sahip olduklarını gösterir.
+
+F ve onun p değerine bakarsak capital ve labor değişkenlerinin bir arada istatistiksel olarak anlamlı olduğunu görürüz. Bu da en az birinin output üzerinde etkisinin olduğunu gösterir.
+
+$R^2$ değerleri %96 ile oldukça yüksektir.
+
+Peki, değişkenlerin logaritmasını almadan model kursaydık ne olurdu?
+
+```{r}
+
+model <- lm(formula = output ~ capital + labor, data = df2)
+summary(model)
+
+```
+
+capital ve labor parametreleri istatistiksel olarak anlamlıdır (kesme terimi hariç) fakat yorumları yukarıdaki gibi olmayacaktır.
+
+labor girdisi sabit tutulduğunda, capital girdisindeki 1 birimlik artışın output üzerindeki ortalama etkisi 10 birimdir. capital girdisi sabit tutulduğunda, labor girdisindeki 1 birimlik artışın ise output üzerindeki ortalama etkisi 48 birimdir.
+
+## Log-Lin ya da Yarı-Logaritmik Modeller
+
+Bu modellerde, bağımsız değişkendeki bir birim değişime karşılık bağımlı değişkendeki yüzde büyümeyi bulmak ile ilgileniriz.
+
+```{r}
+
+df3 %<>% 
+  mutate(lnkbgsyh = log(kbgsyh)) #Bağımlı değişkenin logaritması alındı.
+
+str(df3)
+
+```
+
+Türkiye'ye ait veriler, TEPAV'ın yaptığı *1992-2018 Dönemi için Gece Işıklarıyla İl Bazında GSYH Tahmini: 2018'de 81 İlin Büyüme Performansı* başlıklı çalışmasından elde edilmiştir.
+
+```{r}
+
+df3 %>% 
+  ggplot(aes(x = zaman, y = kbgsyh)) +
+  geom_line() +
+  theme_minimal()
+
+```
+
+Bağımlı değişken:
+
+* **kbgsyh:** Kişi Başına GSYH
+
+Bağımsız değişken(ler):
+
+* **zaman:** Zaman
+
+Modeli kuralım.
+
+```{r}
+
+model <- lm(formula = lnkbgsyh ~ zaman, data = df3)
+summary(model)
+
+```
+
+1992-2018 döneminde Türkiye kbgsyh'sinin yıllık %5.67 büyüdüğünü söyleyebiliriz. zaman'ın p değeri oldukça düşüktür ve istatistiksel olarak anlamlıdır. Bu parametre anlık büyüme hızını verir; bileşik büyüme hızını değil. Eğer ters logaritmasını alıp 1 çıkarırsak bileşik büyüme hızına da ulaşabiliriz ki bu da %5.84'tür.
+
+```{r}
+
+exp(as.numeric(model$coefficients[2])) - 1
+
+```
+
+Kesme teriminin ters logaritmasını alırsak aşağıdaki değeri bulacağız. Bu, kbgsyh'nin başlangıç (1992 yılı) değeridir. 1992 için gerçek kbgsyh 3720 $'dır.
+
+```{r}
+
+exp(as.numeric(model$coefficients[1]))
+
+df3$kbgsyh[1] #Başlangıç 1992 yılıdır.
+
+```
+
+Burada doğrusal trend modeli de kurulabilirdi.
+
+```{r}
+
+model <- lm(formula = kbgsyh ~ zaman, data = df3)
+summary(model)
+
+```
+
+zaman değişkeni trend değişkendir. zaman'ın eğim parametresi birim dönemde kbgsyh'deki mutlak değişimi verir. Bu parametre pozitif ise yükselen; negatif ise azalan trend anlamını taşır.
+
+Sonuçlar 1992-2018 yılı boyunca Türkiye'de Kişi Başına GSYH'nin yıllık 383 $ arttığını söyler. Bu da yükselen bir trend olduğunu gösterir.
+
+## Lin-Log Modeller
+
+Bu modeller, bağımsız değişkendeki yüzde değişime karşılık bağımlı değişkendeki mutlak değişimin ölçüsü nedir sorusuna cevap verir.
+
+```{r}
+
+df4 %<>% 
+  dplyr::select(expend, sfdho) %>% 
+  mutate(lnexpend = log(expend)) #Bağımsız değişkenin logaritması alındı.
+
+str(df4)
+
+```
+
+ABD hanehalkı için evde tüketilen yiyecek ve alkolsüz içecekler ile toplam hanehalkı harcamasına ait verilere bakıyoruz.
+
+Bağımlı değişken:
+
+* **sfdho:** Gıda harcamasının toplam harcamadaki payı
+
+Bağımsız değişken(ler):
+
+* **expend:** Toplam hanehalkı harcaması
+
+Modeli kuralım.
+
+```{r}
+
+model <- lm(formula = sfdho ~ lnexpend, data = df4)
+summary(model)
+
+```
+
+Tahmin edilen parametrelere ait p değerleri oldukça düşüktür ya da istatistiksel olarak anlamlıdır.
+
+Toplam harcama %1 arttığında yiyecek ve alkolsüz içeceklerin harcamadaki payı ortalama 0.0008 birim düşecektir ama parametre -0.08? Bu modellerde doğru yorumlamak için eğim parametresi 100'e bölünür. Alternatif olarak şu yorum da yapılabilir: Toplam harcama %100 arttığında yiyecek ve alkolsüz içeceklerin harcamadaki payı 0.08 birim azalır.
+
+## Ters Modeller
+
+Bazen bağımlı değişken ile bağımsız değişkenler arasında ters yönlü ilişki olabilir.
+
+```{r}
+
+ggplot(df4, aes(x = lnexpend, y = sfdho)) +
+  geom_point() +
+  theme_minimal()
+
+```
+
+```{r}
+
+df4 %<>% 
+  mutate(expend_ters = 1 / expend) #expend değişkenini 1 / expend (expend_ters) olarak çevirdik.
+
+```
+
+Modeli kuralım.
+
+```{r}
+
+model <- lm(formula = sfdho ~ expend_ters, data = df4)
+summary(model)
+
+```
+
+Parametreler istatistiksel olarak anlamlıdır. 0.08 olan kesme terimi, toplam harcama sonsuza gittiğinde yiyecek ve alkolsüz içecek harcamasının toplam harcamadaki payının er ya da geç %8'e yerleşeceğini belirtir. expend_ters pozitiftir. Yani, sfdho'nun toplam harcamaya göre değişim hızının her noktada negatif olacağını belirtir. Bunu grafikle gösterebiliriz.
+
+```{r}
+
+ggplot(df4, aes(x = expend, y = sfdho)) +
+  geom_point() +
+  theme_minimal()
+
+```
+
+## Polinom Regresyon Modelleri
+
+Doğrusal trend modelinde kbgsyh'nin zaman'a göre regresyonunu almıştık. Şimdi, zamanın doğrusal olmayan bir fonksiyonu olan zaman'ın karesini alacağız ve karesel fonksiyon ya da ikinci dereceden polinoma döneceğiz (Bağımsız değişkenin en büyük kuvveti ne ise polinomun derecesi odur). zaman ve zaman'ın karesi çoklu doğrusallık sorunu yaratmaz. Nedeni ise zaman'ın karesinin zamanın doğrusal olmayan bir fonksiyonu olmasıdır.
+
+Modeli kuralım.
+
+```{r}
+
+model <- lm(formula = kbgsyh ~ zaman + I(zaman^2), data = df3)
+summary(model)
+
+```
+
+$zaman^2$ dışında parametreler istatistiksel olarak anlamlıdır.
+
+$zaman^2$ istatistiksel olarak anlamlı olsaydı... Karesel model için kbgsyh artan bir oranda artmaktadır derdik. Çünkü zaman ve $zaman^2$ değişkenlerinin parametre işaretleri pozitiftir.
+
+Mesela bir de karesel trend değişkenli Log-Lin modeli kuralım.
+
+```{r}
+
+model <- lm(formula = lnkbgsyh ~ zaman + I(zaman^2), data = df3)
+summary(model)
+
+```
+
+zaman pozitif iken $zaman^2$ negatiftir. Bu durum kbgsyh'nin büyüme hızının pozitif olmasına rağmen azalan oranda arttığını gösterir ($zaman^2$ istatistiksel olarak anlamlı olsaydı).
+
+Güncel bir uygulama olarak Türkiye Covid-19 verilerini de kullanabiliriz.
+
+```{r}
+
+zaman <- seq(1,32,1)
+vaka <- c(1, 1, 5, 5, 6, 18, 47, 98, 192, 359, 670, 947, 1236, 1529, 1872, 2433, 3629, 5698, 7402, 9217, 10827, 13531, 15679, 18135, 20921, 23934, 27069, 30217, 34109, 38226, 42282, 47029) #32 günlük; 50K'ya kadar alındı.
+#https://github.com/CSSEGISandData/COVID-19/blob/master/csse_covid_19_data/csse_covid_19_time_series/time_series_covid19_confirmed_global.csv
+#Verilerde 947 eksikti; tamamlandı.
+df <- data.frame(zaman = zaman, vaka = vaka)
+
+model_dogrusal <- lm(formula = vaka ~ zaman, data = df)
+model_kuadratik <- lm(formula = vaka ~ zaman + I(zaman^2), data = df)
+model_kubik <- lm(formula = vaka ~ zaman + I(zaman^2) + I(zaman^3), data = df)
+
+```
+
+Doğrusal model çıktısı:
+
+```{r}
+
+ggplot(df, aes(x = zaman)) +
+  geom_point(aes(y = vaka), color = "red", size = 2) +
+  geom_line(aes(y = model_dogrusal$fitted.values), color = "black") +
+  theme_minimal() +
+  labs(y = "Vaka Sayısı", x = "Zaman")
+
+summary(model_dogrusal)
+
+```
+
+Zamanın karesini aldığımız kuadratik model çıktısı:
+
+```{r}
+
+ggplot(df, aes(x = zaman)) +
+  geom_point(aes(y = vaka), color = "red", size = 2) +
+  geom_line(aes(y = model_kuadratik$fitted.values), color = "black") +
+  theme_minimal() +
+  labs(y = "Vaka Sayısı", x = "Zaman")
+
+summary(model_kuadratik)
+
+```
+
+Zamanın küpünü de aldığımız kübik model çıktısı:
+
+```{r}
+
+ggplot(df, aes(x = zaman)) +
+  geom_point(aes(y = vaka), color = "red", size = 2) +
+  geom_line(aes(y = model_kubik$fitted.values), color = "black") +
+  theme_minimal() +
+  labs(y = "Vaka Sayısı", x = "Zaman")
+
+summary(model_kubik)
+
+```
+
+Farklı farklı fonksiyon kalıplarını tanıdık. Peki, seçimi nasıl yapacağız? Gujarati, beceri ve deneyimin yanında şu maddelere de bakılabileceğini söylüyor:
+
+i. Kuram, belli bir kalıbı önerebilir. Phillips eğrisi gibi.
+
+ii. Bağımlı değişkenin bağımsız değişkene göre eğimi hesaplanabileceği gibi esnekliği de hesaplanabilir.
+
+iii. Modelin parametreleri beklentileri karşılamalıdır. Araba talebinde fiyatın parametresini eksi beklemek gibi.
+
+iv. Bazen iki model de uygun düşebilir. Bu durumda $R^2$ değerine bakılabilir. Fakat buna bakılırken iki modelde de bağımlı değişkenler aynı olmalıdır.
+
+v. Bağımlı değişkenleri aynı olan iki model karşılaştırıldığında illa yüksek $R^2$ değerini seçeceğiz gibi bir kural yoktur. Önemli olan kuramsal sağlamlık, tahmin edilen parametrelerin işaretleri, istatistiksel anlamlılıktır.
+
+vi. Bazen seçim yapmak kolay olmaz. Bu durumlarda Box-Cox dönüştürmeleri kullanılabilir.
+
+*Uygun fonksiyon yapısını bulalım.*
+
+wage değişkeninin dağılımını inceleyerek başlayalım.
+
+```{r}
+
+df1 %<>% 
+  dplyr::select(wage, female, nonwhite, union, education, exper)
+
+df1 %>% 
+  ggplot(aes(x = wage)) +
+  geom_histogram() +
+  theme_minimal()
+
+```
+
+Dağılım çarpık eğilim göstermektedir. Diğer bir ifadeyle dağılım sağa çarpıktır ve normal dağılımdan uzaktır. Bir değişkenin normal dağılıma sahip olması için skewness denilen çarpıklık parametresinin (simetrinin bir ölçüsü) 0, kurtosis denilen basıklık parametresinin (diklik veya yatıklığın bir ölçüsü) 3 olması gerekmektedir.
+
+```{r}
+
+skewness(df1$wage)
+kurtosis(df1$wage)
+
+```
+
+Bulduğumuz her iki değer de belirttiğimiz değerlerden farklıdır. Skewness ve kurtosis ölçülerine dayanan Jarque-Bera (J-B) istatistik ve buna ait p değeri aşağıdaki gibidir:
+
+```{r}
+
+jarque.test(df1$wage)
+
+```
+
+Normal dağılmış bir değişken için skewness = 0, kurtosis = 3'tür demiştik. Dolayısıyla, J-B testi skewness ile kurtosis'in sırasıyla 0 ve 3 olduğu bir bileşik hipotez testidir. Bu durumda J-B istatistiğinin sıfır olması beklenir. Eğer $\chi^2$ istatistiğinin p değeri yeterince düşükse, ki bu durum J-B istatistiği 0'dan çok farklı ise ortaya çıkar, normal dağılım varsayımını ileri süren $H_0$ reddedilebilir. Ama p değeri yüksekse, ki bu durum J-B istatistiği sıfıra yakınsa ortaya çıkar, normallik varsayımı reddedilemez. Uygulamamızda, J-B değeri sıfırdan çok uzaktır ve böyle bir değer elde etmenin olasılığı (p değeri) neredeyse sıfırdır. Yani, normal dağılım varsayımını ileri süren $H_0$'ı reddettik.
+
+Peki, wage'in logaritmasını alsaydık nasıl olurdu?
+
+```{r}
+
+df1 %<>% 
+  mutate(lnwage = log(wage))
+
+df1 %>% 
+  ggplot(aes(x = lnwage)) +
+  geom_histogram() +
+  theme_minimal()
+
+skewness(df1$lnwage)
+kurtosis(df1$lnwage)
+jarque.test(df1$lnwage)
+
+```
+
+Logaritması alınmış wage ile normal dağılıma ulaşmış olduk. Bunu kullanarak modeli oluşturalım.
+
+```{r}
+
+model <- lm(formula = lnwage ~ female + nonwhite + union + education + exper, data = df1)
+summary(model)
+
+```
+
+Parametreler hem t testine göre hem de F testine göre anlamlıdır.
+
+Bu modelde wage değişkeni logaritmik; bağımsız değişkenler ise doğrusal yapıdadır. Yani, yarı logaritmiktir.
+
+Diğer tüm değişkenler sabit tutulduğunda;
+
+Her ilave eğitim yılı için ortalama wage oranının 100*0.099 = %9.99 artacağını söyleyebiliriz (education).
+
+Her ilave yıllık iş deneyimi için ortalama wage oranının 100*0.013 = %1.3 artacağını söyleyebiliriz (exper).
+
+Ortalama kadın wage oranı ortalama erkek wage oranına göre %24.92 daha düşüktür (female). Ancak biz doğru olan yüzdeyi parametrenin ters logaritmasını alıp 1'den çıkararak buluyorduk.
+
+```{r}
+
+exp(as.numeric(model$coefficients[2])) - 1
+
+```
+
+Kadın ortalama wage oranı erkek ortalama wage oranından %22.06 daha düşüktür. Bu da %24.92'den farklıdır. Çıktıdaki parametreler yaklaşık değişimi verirken ikinci yöntem kesin değişimi verir.
+
+Beyaz olmayan işçinin ortalama wage oranı beyaz olan işçinin ortalama wage oranından %12.5 daha düşüktür (nonwhite).
+
+```{r}
+
+exp(as.numeric(model$coefficients[3])) - 1
+
+```
+
+Sendikalı işçinin ortalama wage oranı sendikasız işçinin ortalama wage oranından %19.75 daha fazladır (union).
+
+```{r}
+
+exp(as.numeric(model$coefficients[4])) - 1
+
+```
+
+Aşağıdaki çıktıyı hatırlayalım (wage değişkeni logaritmasız):
+
+```{r}
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper, data = df1)
+summary(model)
+
+```
+
+wage'i logaritmasız olan model ile wage'i logaritmalı modelin $R^2$ değerlerini karşılaştırarak karar verebilir miyiz?
+
+Baktığımız zaman wage'i logaritmasız olan model de parametreler açısından anlamlıdır.
+
+Hatırlayalım:
+
+> *Bazen iki model de uygun düşebilir. Bu durumda* $R^2$ *değerine bakılabilir. Fakat buna bakılırken iki modelde de bağımlı değişkenler aynı olmalıdır.*
+
+Yani, $R^2$ doğrusal modelde bağımlı değişkendeki değişkenliğin bütün bağımsız değişkenlerce açıklanan oranını ölçerken, yarı-logaritmik modelde bağımlı değişkenin logaritmasındaki değişkenliğin oranını ölçer. Bu ikisi aynı şey değildir.

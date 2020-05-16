@@ -1,0 +1,9 @@
+# Veri ve Model Çeşitleri
+
+## Veri Çeşitleri
+
+**Zaman Serisi:** Bir değişkenin farklı zamanlarda aldığı değerler kümesine zaman serisi diyoruz. Günlük $/TL kuru, haftalık para arzı, aylık enflasyon, üç aylık GSYH gibi çeşitli frekanslarda örnekler çoğaltılabilir. **Yatay-Kesit:** Bir veya daha fazla değişken için aynı zaman noktasında derlenen verilere yatay-kesit diyoruz. Nüfus sayımı, kamuoyu yoklamaları, illere göre araç sayıları gibi örnekler verilebilir. **Panel:** Hem zaman serisi hem de yatay-kesit verilerini bir araya getiren bu türe de panel diyoruz. Bankaların 20 yıllık döneme ait sermaye yeterlilik rasyoları, illerin bir ürüne ait 10 yıllık üretim değerleri gibi örnekler verilebilir.
+
+## Model Çeşitleri
+
+Bu kitapta **regresyon** modellerini göreceğiz. Regresyon modelleri dışında kalan **zaman serisi modelleri**, **eşanlı denklem sistemleri** ve **panel veri** modelleri bu kitabın kapsamında değildir. Gelecek projelerde anlatılması planlanmaktadır.

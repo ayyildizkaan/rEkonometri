@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Konu 14 Sıralamalı Regresyon Modelleri | R’da Ekonometri Uygulamaları</title>
+  <meta name="description" content="Ekonometri uygulamalarını R’da yapın." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Konu 14 Sıralamalı Regresyon Modelleri | R’da Ekonometri Uygulamaları" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Konu 14 Sıralamalı Regresyon Modelleri | R’da Ekonometri Uygulamaları" />
+  
+  <meta name="twitter:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+<meta name="author" content="Ahmet Akgül (rpydaneogrendim)" />
+
+
+<meta name="date" content="2020-05-16" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="çok-terimli-regresyon-modelleri.html"/>
+<link rel="next" href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R'da Ekonometri Uygulamaları</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Nelere İhtiyacınız Olacak?</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#kullanılan-kütüphaneler"><i class="fa fa-check"></i><b>1.1</b> Kullanılan Kütüphaneler</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#kullanılan-veri-setleri"><i class="fa fa-check"></i><b>1.2</b> Kullanılan Veri Setleri</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html"><i class="fa fa-check"></i><b>2</b> Veri ve Model Çeşitleri</a><ul>
+<li class="chapter" data-level="2.1" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#veri-çeşitleri"><i class="fa fa-check"></i><b>2.1</b> Veri Çeşitleri</a></li>
+<li class="chapter" data-level="2.2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#model-çeşitleri"><i class="fa fa-check"></i><b>2.2</b> Model Çeşitleri</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="do-rusal-regresyon-modeli.html"><a href="do-rusal-regresyon-modeli.html"><i class="fa fa-check"></i><b>3</b> Doğrusal Regresyon Modeli</a></li>
+<li class="chapter" data-level="4" data-path="regresyon-modelleriyle-öngörü.html"><a href="regresyon-modelleriyle-öngörü.html"><i class="fa fa-check"></i><b>4</b> Regresyon Modelleriyle Öngörü</a></li>
+<li class="chapter" data-level="5" data-path="francis-galton-ve-regresyon-terimi.html"><a href="francis-galton-ve-regresyon-terimi.html"><i class="fa fa-check"></i><b>5</b> Francis Galton ve Regresyon Terimi</a></li>
+<li class="chapter" data-level="6" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><i class="fa fa-check"></i><b>6</b> Değişkenleri Doğrusal Olmayan Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="6.1" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-doğrusal-ya-da-çift-log-modeller"><i class="fa fa-check"></i><b>6.1</b> Log-Doğrusal ya da Çift-Log Modeller</a></li>
+<li class="chapter" data-level="6.2" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-lin-ya-da-yarı-logaritmik-modeller"><i class="fa fa-check"></i><b>6.2</b> Log-Lin ya da Yarı-Logaritmik Modeller</a></li>
+<li class="chapter" data-level="6.3" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#lin-log-modeller"><i class="fa fa-check"></i><b>6.3</b> Lin-Log Modeller</a></li>
+<li class="chapter" data-level="6.4" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#ters-modeller"><i class="fa fa-check"></i><b>6.4</b> Ters Modeller</a></li>
+<li class="chapter" data-level="6.5" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#polinom-regresyon-modelleri"><i class="fa fa-check"></i><b>6.5</b> Polinom Regresyon Modelleri</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html"><i class="fa fa-check"></i><b>7</b> Kukla Değişkenli Regresyon Modeli</a><ul>
+<li class="chapter" data-level="7.1" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#kukla-değişkenlerin-yorumu"><i class="fa fa-check"></i><b>7.1</b> Kukla Değişkenlerin Yorumu</a></li>
+<li class="chapter" data-level="7.2" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#yapısal-değişimdeki-rolü"><i class="fa fa-check"></i><b>7.2</b> Yapısal Değişimdeki Rolü</a></li>
+<li class="chapter" data-level="7.3" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#mevsimsellikteki-rolü"><i class="fa fa-check"></i><b>7.3</b> Mevsimsellikteki Rolü</a></li>
+<li class="chapter" data-level="7.4" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#parçalı-doğrusal-regresyondaki-rolü"><i class="fa fa-check"></i><b>7.4</b> Parçalı Doğrusal Regresyondaki Rolü</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html"><i class="fa fa-check"></i><b>8</b> Çoklu Doğrusal Bağlantı</a><ul>
+<li class="chapter" data-level="8.1" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#temel-bileşenler-analiziregresyonu"><i class="fa fa-check"></i><b>8.1</b> Temel Bileşenler Analizi/Regresyonu</a></li>
+<li class="chapter" data-level="8.2" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#ridge-regresyon"><i class="fa fa-check"></i><b>8.2</b> Ridge Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html"><i class="fa fa-check"></i><b>9</b> Değişen Varyans</a><ul>
+<li class="chapter" data-level="9.1" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#breusch-pagan"><i class="fa fa-check"></i><b>9.1</b> Breusch-Pagan</a></li>
+<li class="chapter" data-level="9.2" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#white"><i class="fa fa-check"></i><b>9.2</b> White</a></li>
+<li class="chapter" data-level="9.3" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#robust-standart-hatalar"><i class="fa fa-check"></i><b>9.3</b> Robust Standart Hatalar</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="otokorelasyon.html"><a href="otokorelasyon.html"><i class="fa fa-check"></i><b>10</b> Otokorelasyon</a><ul>
+<li class="chapter" data-level="10.1" data-path="otokorelasyon.html"><a href="otokorelasyon.html#durbin-watson-d"><i class="fa fa-check"></i><b>10.1</b> Durbin-Watson d</a></li>
+<li class="chapter" data-level="10.2" data-path="otokorelasyon.html"><a href="otokorelasyon.html#breusch-godfrey"><i class="fa fa-check"></i><b>10.2</b> Breusch-Godfrey</a></li>
+<li class="chapter" data-level="10.3" data-path="otokorelasyon.html"><a href="otokorelasyon.html#hac-yöntemi"><i class="fa fa-check"></i><b>10.3</b> HAC Yöntemi</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html"><i class="fa fa-check"></i><b>11</b> Model Tanımlama Hataları</a><ul>
+<li class="chapter" data-level="11.1" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#eksik-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.1</b> Eksik Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.2" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aşırı-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.2</b> Aşırı Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.3" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#yanlış-fonksiyon-yapısı"><i class="fa fa-check"></i><b>11.3</b> Yanlış Fonksiyon Yapısı</a></li>
+<li class="chapter" data-level="11.4" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#ölçüm-hataları"><i class="fa fa-check"></i><b>11.4</b> Ölçüm Hataları</a></li>
+<li class="chapter" data-level="11.5" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aykırı-değer-yüksek-kaldıraç-etkisi-baskın-nokta-ve-simüle-edilmiş-veriler"><i class="fa fa-check"></i><b>11.5</b> Aykırı Değer, Yüksek Kaldıraç Etkisi, Baskın Nokta ve Simüle Edilmiş Veriler</a></li>
+<li class="chapter" data-level="11.6" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#hata-teriminin-olasılık-dağılımı"><i class="fa fa-check"></i><b>11.6</b> Hata Teriminin Olasılık Dağılımı</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><i class="fa fa-check"></i><b>12</b> Doğrusal Olasılık, Logit ve Probit Modeller</a><ul>
+<li class="chapter" data-level="12.1" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#doğrusal-olasılık"><i class="fa fa-check"></i><b>12.1</b> Doğrusal Olasılık</a></li>
+<li class="chapter" data-level="12.2" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#logit-modeli"><i class="fa fa-check"></i><b>12.2</b> Logit Modeli</a></li>
+<li class="chapter" data-level="12.3" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#probit-model"><i class="fa fa-check"></i><b>12.3</b> Probit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>13</b> Çok Terimli Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="13.1" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#çok-terimli-logit-model"><i class="fa fa-check"></i><b>13.1</b> Çok Terimli Logit Model</a></li>
+<li class="chapter" data-level="13.2" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#koşullu-logit-model"><i class="fa fa-check"></i><b>13.2</b> Koşullu Logit Model</a></li>
+<li class="chapter" data-level="13.3" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#karma-logit-model"><i class="fa fa-check"></i><b>13.3</b> Karma Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html"><i class="fa fa-check"></i><b>14</b> Sıralamalı Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="14.1" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html#sıralı-logit-model"><i class="fa fa-check"></i><b>14.1</b> Sıralı Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><a href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>15</b> Sınırlı Bağımlı Değişkenli Regresyon Modelleri</a></li>
+<li class="chapter" data-level="16" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html"><i class="fa fa-check"></i><b>16</b> Sayma Verilerini Modelleme</a><ul>
+<li class="chapter" data-level="16.1" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#poisson-regresyon"><i class="fa fa-check"></i><b>16.1</b> Poisson Regresyon</a></li>
+<li class="chapter" data-level="16.2" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#negatif-binom-regresyon"><i class="fa fa-check"></i><b>16.2</b> Negatif Binom Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html"><i class="fa fa-check"></i><b>17</b> Dinamik Ekonometri Modelleri</a><ul>
+<li class="chapter" data-level="17.1" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html#otoregresif-dağıtılmış-gecikme-modelleri-ardl"><i class="fa fa-check"></i><b>17.1</b> Otoregresif Dağıtılmış Gecikme Modelleri (ARDL)</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="dilim-kantil-regresyon.html"><a href="dilim-kantil-regresyon.html"><i class="fa fa-check"></i><b>18</b> Dilim (Kantil) Regresyon</a></li>
+<li class="chapter" data-level="19" data-path="yararlan-lan-kaynaklar.html"><a href="yararlan-lan-kaynaklar.html"><i class="fa fa-check"></i><b>19</b> Yararlanılan Kaynaklar</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rpydaneogrendim" target="blank">Github profilimi ziyaret edin.</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R’da Ekonometri Uygulamaları</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="sıralamalı-regresyon-modelleri" class="section level1">
+<h1><span class="header-section-number">Konu 14</span> Sıralamalı Regresyon Modelleri</h1>
+<div class="sourceCode" id="cb333"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb333-1" title="1"><span class="kw">library</span>(readxl);<span class="kw">library</span>(tidyverse);<span class="kw">library</span>(magrittr);<span class="kw">library</span>(MASS);<span class="kw">library</span>(stargazer);<span class="kw">library</span>(VGAM)</a>
+<a class="sourceLine" id="cb333-2" title="2"></a>
+<a class="sourceLine" id="cb333-3" title="3"><span class="kw">setwd</span>(<span class="st">&quot;C:/Users/datanerd/Desktop/Github/rEkonometri/data&quot;</span>)</a>
+<a class="sourceLine" id="cb333-4" title="4">df &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table10_4_data.xls&quot;</span>)</a></code></pre></div>
+<div id="sıralı-logit-model" class="section level2">
+<h2><span class="header-section-number">14.1</span> Sıralı Logit Model</h2>
+<div class="sourceCode" id="cb334"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb334-1" title="1"><span class="kw">str</span>(df)</a></code></pre></div>
+<pre><code>## tibble [400 x 4] (S3: tbl_df/tbl/data.frame)
+##  $ apply : chr [1:400] &quot;very likely&quot; &quot;somewhat likely&quot; &quot;unlikely&quot; &quot;somewhat likely&quot; ...
+##  $ pared : num [1:400] 0 1 1 0 0 0 0 0 0 1 ...
+##  $ public: num [1:400] 0 0 1 0 0 1 0 0 0 0 ...
+##  $ gpa   : num [1:400] 3.26 3.21 3.94 2.81 2.53 ...</code></pre>
+<p>Üniversite son sınıf öğrencilerinin yüksek lisansa başvurmaları ne durumdadır?</p>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>apply:</strong> 1: ihtimal dışı, 2: muhtemel, 3: kuvvetle muhtemel</li>
+</ul>
+<p>Bağımsız değişken(ler):</p>
+<ul>
+<li><p><strong>pared:</strong> En az bir ebeveynin yüksek lisans eğitimi varsa 1</p></li>
+<li><p><strong>public:</strong> Devlet üniversite ise 1</p></li>
+<li><p><strong>gpa:</strong> Öğrencinin not ortalaması</p></li>
+</ul>
+<p>Modeli kurmadan önce factor olacak apply bağımlı değişkeninin kategorilerini sıralayalım.</p>
+<div class="sourceCode" id="cb336"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb336-1" title="1">df<span class="op">$</span>apply &lt;-<span class="st"> </span><span class="kw">factor</span>(df<span class="op">$</span>apply, <span class="dt">levels =</span> <span class="kw">c</span>(<span class="st">&quot;unlikely&quot;</span>,<span class="st">&quot;somewhat likely&quot;</span>,<span class="st">&quot;very likely&quot;</span>))</a></code></pre></div>
+<p>Modeli kuralım.</p>
+<div class="sourceCode" id="cb337"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb337-1" title="1">ologitmodel &lt;-<span class="st"> </span><span class="kw">polr</span>(apply <span class="op">~</span><span class="st"> </span>pared <span class="op">+</span><span class="st"> </span>public <span class="op">+</span><span class="st"> </span>gpa, <span class="dt">data =</span> df, <span class="dt">Hess =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb337-2" title="2"><span class="kw">summary</span>(ologitmodel)</a></code></pre></div>
+<pre><code>## Call:
+## polr(formula = apply ~ pared + public + gpa, data = df, Hess = TRUE)
+## 
+## Coefficients:
+##           Value Std. Error t value
+## pared   1.04769     0.2658  3.9418
+## public -0.05879     0.2979 -0.1974
+## gpa     0.61594     0.2606  2.3632
+## 
+## Intercepts:
+##                             Value   Std. Error t value
+## unlikely|somewhat likely     2.2039  0.7795     2.8272
+## somewhat likely|very likely  4.2994  0.8043     5.3453
+## 
+## Residual Deviance: 717.0249 
+## AIC: 727.0249</code></pre>
+<div class="sourceCode" id="cb339"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb339-1" title="1"><span class="kw">stargazer</span>(ologitmodel, <span class="dt">type =</span> <span class="st">&quot;text&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+## ========================================
+##                  Dependent variable:    
+##              ---------------------------
+##                         apply           
+## ----------------------------------------
+## pared                 1.048***          
+##                        (0.266)          
+##                                         
+## public                 -0.059           
+##                        (0.298)          
+##                                         
+## gpa                    0.616**          
+##                        (0.261)          
+##                                         
+## ----------------------------------------
+## Observations             400            
+## ========================================
+## Note:        *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>pared ve gpa değişkenleri istatistiksel olarak anlamlı çıkarken public aynı sonucu göstermemiştir.</p>
+<div class="sourceCode" id="cb341"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb341-1" title="1"><span class="kw">exp</span>(ologitmodel<span class="op">$</span>coefficients) <span class="co">#Nispi bahis oranları</span></a></code></pre></div>
+<pre><code>##     pared    public       gpa 
+## 2.8510579 0.9429088 1.8513972</code></pre>
+<p>Diğer faktörler sabit tutulduğunda;</p>
+<p>pared değişkenini 1 birim artırdığımızda (0’dan 1’e) unlikely ve somewhat likely başvuru bileşimine göre very likely başvuru bahis oranı hiçbir ebeveynin yüksek lisans eğitimi almaması durumunda 2.85 kez büyük olur.</p>
+<p>Unlikely ve somewhat likely başvuru kategorilerine göre very likely başvuru kategorisinin bahis oranı gpa’deki 1 birimlik artış için gpa’in artmamış olmasından 1.85 kez daha büyüktür.</p>
+<p>Oransal odds varsayım modeli, logit regresyonun sıralı sonuçlara göre genelleştirilmesini sağlayan bir karşılaştırma yaklaşımının kümülatif model türüdür. Oransal odds modelinde bağımlı değişken, kümülatif olasılıklara dayanmakta ve paralel eğimler varsayımı denmektedir. Sıralı logit modelinin temelinde paralel eğimler varsayımı vardır. Bu varsayım, parametrelerin farklı kategorik düzeyler için regresyon eğrilerinin paralel olduğu yani değişmediği kabul eder. Şöyle ki, bağımlı değişken ile bağımsız değişkenler arasındaki korelasyon, bağımlı değişkenin farklı kategorik düzeyleri için değişmez ve parametre tahminleri eşik noktaları için de değişmez. Sıralı logit modelde paralel eğimler varsayımının sağlanıp sağlanmadığını anlamak için Brant’in Wald testi kullanılmaktadır. Burada, paralel eğimler varsayımının çoğunlukla sağlanmadığını ve araştırmacıların bu konuyu ihmal ettiği görülmektedir. Varsayımın sağlanmaması sıralı logit model sonuçlarını güvenilmez yapmaktadır. Biz aşağıda oransallık testi yaptık.</p>
+<p>Aynı sonuçları şöyle de alabiliriz:</p>
+<div class="sourceCode" id="cb343"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb343-1" title="1">paralelreg &lt;-<span class="st"> </span><span class="kw">vglm</span>(apply <span class="op">~</span><span class="st"> </span>pared <span class="op">+</span><span class="st"> </span>public <span class="op">+</span><span class="st"> </span>gpa, df, <span class="dt">family =</span> <span class="kw">cumulative</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>, <span class="dt">parallel =</span> <span class="ot">TRUE</span>, <span class="dt">reverse =</span> <span class="ot">TRUE</span>))</a>
+<a class="sourceLine" id="cb343-2" title="2"><span class="kw">summary</span>(paralelreg)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## vglm(formula = apply ~ pared + public + gpa, family = cumulative(link = &quot;logit&quot;, 
+##     parallel = TRUE, reverse = TRUE), data = df)
+## 
+## Pearson residuals:
+##                        Min      1Q  Median      3Q   Max
+## logitlink(P[Y&gt;=2]) -1.8059 -0.8247 -0.6756  1.1309 1.671
+## logitlink(P[Y&gt;=3]) -0.7532 -0.4554 -0.2040 -0.1806 4.057
+## 
+## Coefficients: 
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept):1 -2.20335    0.78440  -2.809  0.00497 ** 
+## (Intercept):2 -4.29879    0.80915  -5.313 1.08e-07 ***
+## pared          1.04766    0.26845   3.903 9.52e-05 ***
+## public        -0.05867    0.28861  -0.203  0.83891    
+## gpa            0.61575    0.26258   2.345  0.01903 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Names of linear predictors: logitlink(P[Y&gt;=2]), logitlink(P[Y&gt;=3])
+## 
+## Residual deviance: 717.0249 on 795 degrees of freedom
+## 
+## Log-likelihood: -358.5124 on 795 degrees of freedom
+## 
+## Number of Fisher scoring iterations: 4 
+## 
+## No Hauck-Donner effect found in any of the estimates
+## 
+## 
+## Exponentiated coefficients:
+##     pared    public       gpa 
+## 2.8509581 0.9430165 1.8510513</code></pre>
+<p>Oransallık testi için paralel (az önce kurduk) ve paralel olmayan iki regresyon kuruyoruz.</p>
+<div class="sourceCode" id="cb345"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb345-1" title="1">paraleldegilreg &lt;-<span class="st"> </span><span class="kw">vglm</span>(apply <span class="op">~</span><span class="st"> </span>pared <span class="op">+</span><span class="st"> </span>public <span class="op">+</span><span class="st"> </span>gpa, df, <span class="dt">family =</span> <span class="kw">cumulative</span>(<span class="dt">link =</span> <span class="st">&quot;logit&quot;</span>, <span class="dt">parallel =</span> <span class="ot">FALSE</span>, <span class="dt">reverse =</span> <span class="ot">TRUE</span>))</a></code></pre></div>
+<p>Olasılığı elde etmek için;</p>
+<div class="sourceCode" id="cb346"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb346-1" title="1"><span class="kw">pchisq</span>(<span class="dt">q =</span> <span class="dv">-2</span><span class="op">*</span>(<span class="kw">logLik</span>(paralelreg) <span class="op">-</span><span class="st"> </span><span class="kw">logLik</span>(paraleldegilreg)),</a>
+<a class="sourceLine" id="cb346-2" title="2">       <span class="dt">df =</span> <span class="kw">df.residual</span>(paralelreg) <span class="op">-</span><span class="st"> </span><span class="kw">df.residual</span>(paraleldegilreg),</a>
+<a class="sourceLine" id="cb346-3" title="3">       <span class="dt">lower.tail =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<pre><code>## [1] 0.2599823</code></pre>
+<p>Yüksek bir olasılık elde ettiğimizi için oransal bahis oranı varsayımının geçerli olduğunu görmekteyiz.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="çok-terimli-regresyon-modelleri.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["rEkonometri.pdf", "rEkonometri.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

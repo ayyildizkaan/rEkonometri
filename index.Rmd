@@ -1,0 +1,67 @@
+--- 
+title: "R'da Ekonometri Uygulamaları"
+author: "Ahmet Akgül (rpydaneogrendim)"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+documentclass: book
+bibliography: [book.bib]
+biblio-style: apalike
+link-citations: yes
+description: "Ekonometri uygulamalarını R'da yapın."
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+# Nelere İhtiyacınız Olacak?
+
+Öncelikle R ve tavsiye olarak RStudio IDE'sini indirmenizi ve bu programlama dili hakkında bir miktar bilgi sahibi olmanızı tavsiye ederim. Çünkü bu kitapta R hakkında herhangi bir konu anlatımı olmayacaktır.
+
+Ekonometri konularını akademik bir anlatımdan uzak tutmaya çalıştım fakat bu ezberci bir sistem ile öğreneceğiniz anlamına gelmeyecek. Her konu hakkında temel bir bilginiz olacak ve mutlaka en az bir uygulama yapmış olacaksınız.
+
+Öğrenmek dinamik bir süreçtir. Temel bilgileri alır ve yaşamınız boyunca üzerine katarak ilerlemeye çalışırsınız. Bu kitap temel bir bilgi sahibi olmanızı amaçlamaktadır. Sonrası okuyucunun kendine kattıkları olacaktır.
+
+> *İlim ve fennin yaşadığımız her dakikadaki safhalarının gelişmesini kavramak ve izlemek şarttır.* -Mustafa Kemal ATATÜRK
+
+## Kullanılan Kütüphaneler
+
+Kitap boyunca kullanacağımız kütüphaneler aşağıda verilmiştir:
+
+```{r}
+
+library(readxl)
+library(tidyverse)
+library(magrittr)
+library(HistData)
+library(moments)
+library(segmented)
+library(corrplot)
+library(psych)
+library(car)
+library(factoextra)
+library(FactoMineR)
+library(lmridge)
+library(AER)
+library(lmtest)
+library(estimatr)
+library(sandwich)
+library(nnet)
+library(mlogit)
+library(stargazer)
+library(Epi)
+library(MASS)
+library(VGAM)
+library(truncreg)
+library(ARDL)
+library(quantreg)
+
+```
+
+## Kullanılan Veri Setleri
+
+Kitap boyunca kullanılan veri setleri Github'da verilmiştir. Öncelikli olarak bu dosyayı indirmenizi tavsiye ederim.
+
+* [<u>Buraya tıklayın</u>.](https://github.com/rpydaneogrendim/rEkonometri)
+
+* *Clone or download* bölümünden *Download ZIP* seçeneği ile dosyaları indirebilirsiniz. Hedef dosya: **data**

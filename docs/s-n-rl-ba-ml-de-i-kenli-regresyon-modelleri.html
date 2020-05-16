@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Konu 15 Sınırlı Bağımlı Değişkenli Regresyon Modelleri | R’da Ekonometri Uygulamaları</title>
+  <meta name="description" content="Ekonometri uygulamalarını R’da yapın." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Konu 15 Sınırlı Bağımlı Değişkenli Regresyon Modelleri | R’da Ekonometri Uygulamaları" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Konu 15 Sınırlı Bağımlı Değişkenli Regresyon Modelleri | R’da Ekonometri Uygulamaları" />
+  
+  <meta name="twitter:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+<meta name="author" content="Ahmet Akgül (rpydaneogrendim)" />
+
+
+<meta name="date" content="2020-05-16" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="s-ralamal-regresyon-modelleri.html"/>
+<link rel="next" href="sayma-verilerini-modelleme.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R'da Ekonometri Uygulamaları</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Nelere İhtiyacınız Olacak?</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#kullanılan-kütüphaneler"><i class="fa fa-check"></i><b>1.1</b> Kullanılan Kütüphaneler</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#kullanılan-veri-setleri"><i class="fa fa-check"></i><b>1.2</b> Kullanılan Veri Setleri</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html"><i class="fa fa-check"></i><b>2</b> Veri ve Model Çeşitleri</a><ul>
+<li class="chapter" data-level="2.1" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#veri-çeşitleri"><i class="fa fa-check"></i><b>2.1</b> Veri Çeşitleri</a></li>
+<li class="chapter" data-level="2.2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#model-çeşitleri"><i class="fa fa-check"></i><b>2.2</b> Model Çeşitleri</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="do-rusal-regresyon-modeli.html"><a href="do-rusal-regresyon-modeli.html"><i class="fa fa-check"></i><b>3</b> Doğrusal Regresyon Modeli</a></li>
+<li class="chapter" data-level="4" data-path="regresyon-modelleriyle-öngörü.html"><a href="regresyon-modelleriyle-öngörü.html"><i class="fa fa-check"></i><b>4</b> Regresyon Modelleriyle Öngörü</a></li>
+<li class="chapter" data-level="5" data-path="francis-galton-ve-regresyon-terimi.html"><a href="francis-galton-ve-regresyon-terimi.html"><i class="fa fa-check"></i><b>5</b> Francis Galton ve Regresyon Terimi</a></li>
+<li class="chapter" data-level="6" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><i class="fa fa-check"></i><b>6</b> Değişkenleri Doğrusal Olmayan Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="6.1" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-doğrusal-ya-da-çift-log-modeller"><i class="fa fa-check"></i><b>6.1</b> Log-Doğrusal ya da Çift-Log Modeller</a></li>
+<li class="chapter" data-level="6.2" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-lin-ya-da-yarı-logaritmik-modeller"><i class="fa fa-check"></i><b>6.2</b> Log-Lin ya da Yarı-Logaritmik Modeller</a></li>
+<li class="chapter" data-level="6.3" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#lin-log-modeller"><i class="fa fa-check"></i><b>6.3</b> Lin-Log Modeller</a></li>
+<li class="chapter" data-level="6.4" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#ters-modeller"><i class="fa fa-check"></i><b>6.4</b> Ters Modeller</a></li>
+<li class="chapter" data-level="6.5" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#polinom-regresyon-modelleri"><i class="fa fa-check"></i><b>6.5</b> Polinom Regresyon Modelleri</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html"><i class="fa fa-check"></i><b>7</b> Kukla Değişkenli Regresyon Modeli</a><ul>
+<li class="chapter" data-level="7.1" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#kukla-değişkenlerin-yorumu"><i class="fa fa-check"></i><b>7.1</b> Kukla Değişkenlerin Yorumu</a></li>
+<li class="chapter" data-level="7.2" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#yapısal-değişimdeki-rolü"><i class="fa fa-check"></i><b>7.2</b> Yapısal Değişimdeki Rolü</a></li>
+<li class="chapter" data-level="7.3" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#mevsimsellikteki-rolü"><i class="fa fa-check"></i><b>7.3</b> Mevsimsellikteki Rolü</a></li>
+<li class="chapter" data-level="7.4" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#parçalı-doğrusal-regresyondaki-rolü"><i class="fa fa-check"></i><b>7.4</b> Parçalı Doğrusal Regresyondaki Rolü</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html"><i class="fa fa-check"></i><b>8</b> Çoklu Doğrusal Bağlantı</a><ul>
+<li class="chapter" data-level="8.1" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#temel-bileşenler-analiziregresyonu"><i class="fa fa-check"></i><b>8.1</b> Temel Bileşenler Analizi/Regresyonu</a></li>
+<li class="chapter" data-level="8.2" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#ridge-regresyon"><i class="fa fa-check"></i><b>8.2</b> Ridge Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html"><i class="fa fa-check"></i><b>9</b> Değişen Varyans</a><ul>
+<li class="chapter" data-level="9.1" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#breusch-pagan"><i class="fa fa-check"></i><b>9.1</b> Breusch-Pagan</a></li>
+<li class="chapter" data-level="9.2" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#white"><i class="fa fa-check"></i><b>9.2</b> White</a></li>
+<li class="chapter" data-level="9.3" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#robust-standart-hatalar"><i class="fa fa-check"></i><b>9.3</b> Robust Standart Hatalar</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="otokorelasyon.html"><a href="otokorelasyon.html"><i class="fa fa-check"></i><b>10</b> Otokorelasyon</a><ul>
+<li class="chapter" data-level="10.1" data-path="otokorelasyon.html"><a href="otokorelasyon.html#durbin-watson-d"><i class="fa fa-check"></i><b>10.1</b> Durbin-Watson d</a></li>
+<li class="chapter" data-level="10.2" data-path="otokorelasyon.html"><a href="otokorelasyon.html#breusch-godfrey"><i class="fa fa-check"></i><b>10.2</b> Breusch-Godfrey</a></li>
+<li class="chapter" data-level="10.3" data-path="otokorelasyon.html"><a href="otokorelasyon.html#hac-yöntemi"><i class="fa fa-check"></i><b>10.3</b> HAC Yöntemi</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html"><i class="fa fa-check"></i><b>11</b> Model Tanımlama Hataları</a><ul>
+<li class="chapter" data-level="11.1" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#eksik-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.1</b> Eksik Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.2" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aşırı-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.2</b> Aşırı Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.3" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#yanlış-fonksiyon-yapısı"><i class="fa fa-check"></i><b>11.3</b> Yanlış Fonksiyon Yapısı</a></li>
+<li class="chapter" data-level="11.4" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#ölçüm-hataları"><i class="fa fa-check"></i><b>11.4</b> Ölçüm Hataları</a></li>
+<li class="chapter" data-level="11.5" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aykırı-değer-yüksek-kaldıraç-etkisi-baskın-nokta-ve-simüle-edilmiş-veriler"><i class="fa fa-check"></i><b>11.5</b> Aykırı Değer, Yüksek Kaldıraç Etkisi, Baskın Nokta ve Simüle Edilmiş Veriler</a></li>
+<li class="chapter" data-level="11.6" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#hata-teriminin-olasılık-dağılımı"><i class="fa fa-check"></i><b>11.6</b> Hata Teriminin Olasılık Dağılımı</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><i class="fa fa-check"></i><b>12</b> Doğrusal Olasılık, Logit ve Probit Modeller</a><ul>
+<li class="chapter" data-level="12.1" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#doğrusal-olasılık"><i class="fa fa-check"></i><b>12.1</b> Doğrusal Olasılık</a></li>
+<li class="chapter" data-level="12.2" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#logit-modeli"><i class="fa fa-check"></i><b>12.2</b> Logit Modeli</a></li>
+<li class="chapter" data-level="12.3" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#probit-model"><i class="fa fa-check"></i><b>12.3</b> Probit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>13</b> Çok Terimli Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="13.1" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#çok-terimli-logit-model"><i class="fa fa-check"></i><b>13.1</b> Çok Terimli Logit Model</a></li>
+<li class="chapter" data-level="13.2" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#koşullu-logit-model"><i class="fa fa-check"></i><b>13.2</b> Koşullu Logit Model</a></li>
+<li class="chapter" data-level="13.3" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#karma-logit-model"><i class="fa fa-check"></i><b>13.3</b> Karma Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html"><i class="fa fa-check"></i><b>14</b> Sıralamalı Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="14.1" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html#sıralı-logit-model"><i class="fa fa-check"></i><b>14.1</b> Sıralı Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><a href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>15</b> Sınırlı Bağımlı Değişkenli Regresyon Modelleri</a></li>
+<li class="chapter" data-level="16" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html"><i class="fa fa-check"></i><b>16</b> Sayma Verilerini Modelleme</a><ul>
+<li class="chapter" data-level="16.1" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#poisson-regresyon"><i class="fa fa-check"></i><b>16.1</b> Poisson Regresyon</a></li>
+<li class="chapter" data-level="16.2" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#negatif-binom-regresyon"><i class="fa fa-check"></i><b>16.2</b> Negatif Binom Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html"><i class="fa fa-check"></i><b>17</b> Dinamik Ekonometri Modelleri</a><ul>
+<li class="chapter" data-level="17.1" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html#otoregresif-dağıtılmış-gecikme-modelleri-ardl"><i class="fa fa-check"></i><b>17.1</b> Otoregresif Dağıtılmış Gecikme Modelleri (ARDL)</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="dilim-kantil-regresyon.html"><a href="dilim-kantil-regresyon.html"><i class="fa fa-check"></i><b>18</b> Dilim (Kantil) Regresyon</a></li>
+<li class="chapter" data-level="19" data-path="yararlan-lan-kaynaklar.html"><a href="yararlan-lan-kaynaklar.html"><i class="fa fa-check"></i><b>19</b> Yararlanılan Kaynaklar</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rpydaneogrendim" target="blank">Github profilimi ziyaret edin.</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R’da Ekonometri Uygulamaları</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="sınırlı-bağımlı-değişkenli-regresyon-modelleri" class="section level1">
+<h1><span class="header-section-number">Konu 15</span> Sınırlı Bağımlı Değişkenli Regresyon Modelleri</h1>
+<p>Artık, bağımlı değişkenin aldığı değerlere sınırlama gelecek.</p>
+<div class="sourceCode" id="cb348"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb348-1" title="1"><span class="kw">library</span>(readxl);<span class="kw">library</span>(tidyverse);<span class="kw">library</span>(magrittr);<span class="kw">library</span>(VGAM);<span class="kw">library</span>(truncreg)</a>
+<a class="sourceLine" id="cb348-2" title="2"></a>
+<a class="sourceLine" id="cb348-3" title="3"><span class="kw">setwd</span>(<span class="st">&quot;C:/Users/datanerd/Desktop/Github/rEkonometri/data&quot;</span>)</a>
+<a class="sourceLine" id="cb348-4" title="4">df1 &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table11_1.xls&quot;</span>)</a>
+<a class="sourceLine" id="cb348-5" title="5">df2 &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table11_7.xls&quot;</span>)</a></code></pre></div>
+<p>Bir uygulama ile gösterelim. Yapılan bir ampirik çalışma ile çeşitli sosyoekonomik değişkenlerin evli kadınların işgücü piyasasındaki çalışma süreleri üzerindeki etkileri belirlenmeye çalışılmış. Veriler 753 evli kadına aittir. İşgücü piyasası dedik ama bu 753 evli kadının 428’i çalışıyor. Kalan 325’i için çalışma saatleri sıfır diyebiliriz. İşte konu burada başlıyor.</p>
+<div class="sourceCode" id="cb349"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb349-1" title="1">df1 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb349-2" title="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(hours,age,educ,exper,expersq,faminc,kidsl6,hwage,lfp)</a>
+<a class="sourceLine" id="cb349-3" title="3"></a>
+<a class="sourceLine" id="cb349-4" title="4"><span class="kw">str</span>(df1)</a></code></pre></div>
+<pre><code>## tibble [753 x 9] (S3: tbl_df/tbl/data.frame)
+##  $ hours  : num [1:753] 1610 1656 1980 456 1568 ...
+##  $ age    : num [1:753] 32 30 35 34 31 54 37 54 48 39 ...
+##  $ educ   : num [1:753] 12 12 12 12 14 12 16 12 12 12 ...
+##  $ exper  : num [1:753] 14 5 15 6 7 33 11 35 24 21 ...
+##  $ expersq: num [1:753] 196 25 225 36 49 ...
+##  $ faminc : num [1:753] 16310 21800 21040 7300 27300 ...
+##  $ kidsl6 : num [1:753] 1 0 1 0 1 0 0 0 0 0 ...
+##  $ hwage  : num [1:753] 4.03 8.44 3.58 3.54 10 ...
+##  $ lfp    : num [1:753] 1 1 1 1 1 1 1 1 1 1 ...</code></pre>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>hours:</strong> Saatlik çalışma süresi</li>
+</ul>
+<p>Bağımsız değişken(ler):</p>
+<ul>
+<li><p><strong>age:</strong> Yaş</p></li>
+<li><p><strong>educ:</strong> Eğitim süresi</p></li>
+<li><p><strong>exper:</strong> Deneyim</p></li>
+<li><p><strong>expersq:</strong> Deneyimin karesi</p></li>
+<li><p><strong>faminc:</strong> Aile geliri</p></li>
+<li><p><strong>kidsl6:</strong> 6 yaş altı çocuk sayısı</p></li>
+<li><p><strong>hwage:</strong> Kocanın ücreti</p></li>
+</ul>
+<p>Sıradan En Küçük Kareler uygulayalım.</p>
+<div class="sourceCode" id="cb351"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb351-1" title="1">olsmodel &lt;-<span class="st"> </span><span class="kw">lm</span>(hours <span class="op">~</span>., <span class="dt">data =</span> df1 <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>lfp))</a>
+<a class="sourceLine" id="cb351-2" title="2"><span class="kw">summary</span>(olsmodel)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = hours ~ ., data = df1 %&gt;% dplyr::select(-lfp))
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1619.1  -491.5   -80.5   484.0  3636.3 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  1.298e+03  2.319e+02   5.597 3.06e-08 ***
+## age         -2.955e+01  3.864e+00  -7.648 6.32e-14 ***
+## educ         5.064e+00  1.256e+01   0.403   0.6868    
+## exper        6.852e+01  9.399e+00   7.290 7.91e-13 ***
+## expersq     -7.792e-01  3.085e-01  -2.525   0.0118 *  
+## faminc       2.899e-02  3.201e-03   9.057  &lt; 2e-16 ***
+## kidsl6      -3.956e+02  5.564e+01  -7.110 2.73e-12 ***
+## hwage       -7.051e+01  9.025e+00  -7.814 1.89e-14 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 712 on 745 degrees of freedom
+## Multiple R-squared:  0.3385, Adjusted R-squared:  0.3323 
+## F-statistic: 54.47 on 7 and 745 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>İlk aşamada sonuçların iyi çıktığını görüyoruz ama 325 kadının çalışmadığını göz önüne alarak temkinli yaklaşmalıyız.</p>
+<p>Şimdi bir de çalışan 428 kadına ait verileri kullanarak model kuralım.</p>
+<div class="sourceCode" id="cb353"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb353-1" title="1">olsmodel &lt;-<span class="st"> </span><span class="kw">lm</span>(hours <span class="op">~</span>., <span class="dt">data =</span> df1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(lfp <span class="op">==</span><span class="st"> </span><span class="dv">1</span>))</a>
+<a class="sourceLine" id="cb353-2" title="2"><span class="kw">summary</span>(olsmodel)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = hours ~ ., data = df1 %&gt;% filter(lfp == 1))
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -1646.7  -517.6    59.9   462.2  3439.6 
+## 
+## Coefficients: (1 not defined because of singularities)
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  1.817e+03  2.964e+02   6.130 2.02e-09 ***
+## age         -1.646e+01  5.365e+00  -3.067 0.002301 ** 
+## educ        -3.836e+01  1.607e+01  -2.388 0.017398 *  
+## exper        4.949e+01  1.373e+01   3.603 0.000352 ***
+## expersq     -5.510e-01  4.169e-01  -1.322 0.187010    
+## faminc       2.739e-02  3.995e-03   6.855 2.55e-11 ***
+## kidsl6      -2.438e+02  9.216e+01  -2.646 0.008455 ** 
+## hwage       -6.651e+01  1.284e+01  -5.179 3.47e-07 ***
+## lfp                 NA         NA      NA       NA    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 691.8 on 420 degrees of freedom
+## Multiple R-squared:  0.2188, Adjusted R-squared:  0.2058 
+## F-statistic: 16.81 on 7 and 420 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Önceki modelde educ parametresi anlamlı değilken bu modelde anlamlı çıktı. Tabi sansürlenmiş olsa da bu sonuçlara da temkinli yaklaşmamız gerekiyor. Çünkü sansürlenmiş regresyon modellerine ait Sıradan En Küçük Kareler tahminleri yanlı olup tutarlı değildir.</p>
+<p>İki modelin eğim parametrelerinin neden farklı olabileceğini grafikler ile gösterelim. Bunun için hours ile faminc değişkenlerini alalım.</p>
+<div class="sourceCode" id="cb355"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb355-1" title="1"><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb355-2" title="2"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> df1, <span class="kw">aes</span>(<span class="dt">x =</span> faminc, <span class="dt">y =</span> hours), <span class="dt">size =</span> <span class="dv">1</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb355-3" title="3"><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">data =</span> df1, <span class="kw">aes</span>(<span class="dt">x =</span> faminc, <span class="dt">y =</span> hours), <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">formula =</span> y<span class="op">~</span>x, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>) <span class="op">+</span><span class="st"> </span><span class="co">#325 gözlem yatay eksenin üzerinde = 0</span></a>
+<a class="sourceLine" id="cb355-4" title="4"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">data =</span> df1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(lfp <span class="op">==</span><span class="st"> </span><span class="dv">1</span>), <span class="kw">aes</span>(<span class="dt">x =</span> faminc, <span class="dt">y =</span> hours), <span class="dt">size =</span> <span class="dv">1</span>, <span class="dt">color =</span> <span class="st">&quot;blue&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb355-5" title="5"><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">data =</span> df1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(lfp <span class="op">==</span><span class="st"> </span><span class="dv">1</span>), <span class="kw">aes</span>(<span class="dt">x =</span> faminc, <span class="dt">y =</span> hours), <span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">formula =</span> y<span class="op">~</span>x, <span class="dt">color =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb355-6" title="6"><span class="st">  </span><span class="kw">theme_minimal</span>()</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-194-1.png" width="672" /></p>
+<p>Sansürlenmiş örneklemleri aşmak için tobit modelini kullanacağız.</p>
+<p>Kısa bir bilgi: Tobin (tobit regresyon modeli geliştiricisi), ilk kez dayanıklı tüketim malları üzerine hane halkı harcamalarını analiz ederken, kimi ailelerin dayanıklı tüketim malı harcaması gibi bir harcama kaleminin olmaması sebebiyle bağımlı değişkeni negatif çıkan bir regresyon türü ile karşılaşmıştır. Tobin bu çalışmasında, harcamanın hiçbir zaman negatif olmayacağı gerçeğinden hareketle hane halkı geliri, belli bir düzeyi geçene kadar bu değişkene sıfır değeri atamıştır. O yıllarda tanımladığı bu model sansürlü regresyon modeline klasik bir örnektir.</p>
+<div class="sourceCode" id="cb356"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb356-1" title="1">tobitmodel &lt;-<span class="st"> </span><span class="kw">vglm</span>(hours <span class="op">~</span>., tobit, <span class="dt">data =</span> df1 <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>lfp))</a>
+<a class="sourceLine" id="cb356-2" title="2"><span class="kw">summary</span>(tobitmodel)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## vglm(formula = hours ~ ., family = tobit, data = df1 %&gt;% dplyr::select(-lfp))
+## 
+## Pearson residuals:
+##                  Min      1Q  Median     3Q    Max
+## mu          -10.1977 -0.7731 -0.1636 0.7504  4.053
+## loglink(sd)  -0.9917 -0.5884 -0.2539 0.1925 13.300
+## 
+## Coefficients: 
+##                 Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept):1  1.126e+03  3.796e+02   2.967 0.003010 ** 
+## (Intercept):2  6.964e+00  3.557e-02 195.793  &lt; 2e-16 ***
+## age           -5.411e+01  6.549e+00  -8.262  &lt; 2e-16 ***
+## educ           3.865e+01  2.063e+01   1.873 0.061019 .  
+## exper          1.298e+02  1.597e+01   8.131 4.24e-16 ***
+## expersq       -1.845e+00  5.012e-01  -3.681 0.000233 ***
+## faminc         4.077e-02  5.275e-03   7.729 1.09e-14 ***
+## kidsl6        -7.824e+02  1.024e+02  -7.637 2.22e-14 ***
+## hwage         -1.055e+02  1.571e+01  -6.718 1.84e-11 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Names of linear predictors: mu, loglink(sd)
+## 
+## Log-likelihood: -3789.858 on 1497 degrees of freedom
+## 
+## Number of Fisher scoring iterations: 6 
+## 
+## No Hauck-Donner effect found in any of the estimates</code></pre>
+<p>Bir bağımsız değişkenin tobit parametresinin bu bağımsız değişkenin gözlenen bağımlı değişken ortalama değeri üzerindeki marjinal etkisini verdiği şeklinde yorumlayamayız. Yani, Sıradan En Küçük Kareler yorumu geçerli değildir. Nedeni ise tobit türündeki sansürlenmiş regresyon modellerinde bağımsız değişken değerindeki 1 birimlik değişimin iki tane olan etkisindendir. Bu iki etkiden birincisi, gözlenen bağımlı değişkenin ortalama değere; ikincisi, gizli değişkenin gerçekte gözlenme olasılığına etkisidir. Örnek olarak age değişkenini alalım. Parametresi 54’tür. Diğer değişkenler sabit tutulduğunda, yaştaki 1 yıllık artışın yıllık çalışma saati olan hours’a doğrudan etkisi 54 saatlik düşüştür. Bunun yanında evli bir kadının işgücüne katılma olasılığının da azalması anlamındadır. Bu nedenle bizim 54’ü bunun gerçekleşme olasılığı ile çarpmamız gerekiyor.</p>
+<p>Tobit modelde hata teriminin sıfır ortalamalı ve sabit varyanslı normal dağılım izlediği varsayılır.</p>
+<p>Şimdi başa dönelim. 753 kadın değil de 428’i üzerinden Sıradan En Küçük Kareler yöntemini çalıştırmak istemediğimizi söylemiştik. Dolayısıyla örneklem kırpılmış olduğundan kırpılmış normal dağılımı kullanmamız gerekir. Bu modeli kurmak için de en çok olabilirlik gibi doğrusal olmayan bir tahmin yöntemi kullanmalıyız.</p>
+<div class="sourceCode" id="cb358"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb358-1" title="1">mlmodel &lt;-<span class="st"> </span><span class="kw">truncreg</span>(hours <span class="op">~</span>., <span class="dt">data =</span> df1 <span class="op">%&gt;%</span><span class="st"> </span><span class="kw">filter</span>(lfp <span class="op">==</span><span class="st"> </span><span class="dv">1</span>) <span class="op">%&gt;%</span><span class="st"> </span>dplyr<span class="op">::</span><span class="kw">select</span>(<span class="op">-</span>lfp), <span class="dt">scaled =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb358-2" title="2"><span class="kw">summary</span>(mlmodel)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## truncreg(formula = hours ~ ., data = df1 %&gt;% filter(lfp == 1) %&gt;% 
+##     dplyr::select(-lfp), scaled = TRUE)
+## 
+## BFGS maximization method
+## 0 iterations, 0h:0m:0s 
+## g&#39;(-H)^-1g = 0.000217 
+##  
+## 
+## 
+## Coefficients :
+##                Estimate  Std. Error t-value  Pr(&gt;|t|)    
+## (Intercept)  1.8637e+03  4.0429e+02  4.6098 4.030e-06 ***
+## age         -2.2892e+01  7.3239e+00 -3.1257 0.0017739 ** 
+## educ        -5.0796e+01  2.1568e+01 -2.3552 0.0185143 *  
+## exper        7.3749e+01  1.9167e+01  3.8477 0.0001193 ***
+## expersq     -9.5576e-01  5.5560e-01 -1.7202 0.0853915 .  
+## faminc       3.6207e-02  5.3203e-03  6.8054 1.008e-11 ***
+## kidsl6      -3.9196e+02  1.3940e+02 -2.8118 0.0049272 ** 
+## hwage       -9.3575e+01  1.8413e+01 -5.0820 3.736e-07 ***
+## sigma        7.9519e+02  3.8983e+01 20.3985 &lt; 2.2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Log-Likelihood: -3370 on 9 Df</code></pre>
+<p>428 kadın üzerinden modeli kurmuş olduk. En başta Sıradan En Küçük Kareler yöntemi ile de model kurmuştuk. Parametre büyüklükleri ve istatistiksel anlamlılıklarda farklılıklar göreceğiz. Örneğin, sansürlenmiş modelde educ parametresi pozitifti. Kırpılmış regresyonda ise educ parametresi negatif çıktı.</p>
+<p>O halde sansürlenmiş ve kırpılmış regresyon modellerinden hangisi daha uygundur? <em>Tobit model (753 gözlem) kırpılmış regresyon modelinden (428 gözlem) daha fazla bilgi kullandığından, tobit modelden elde edilen tahminlerin daha etkin olacağı beklenir</em> der Gujarati.</p>
+<p>Bir uygulama daha yapacağız. Fakat uygulamaya geçmeden önce iki kavramı biraz daha açalım: Sansürlenmiş, kırpılmış.</p>
+<p>Kırpılmış regresyon modeli sansürlenmiş regresyon modelinden önemli bir noktada ayrılır. Veri sansürleme durumunda rassal çekilen her bir birim için hep bağımsız değişkenleri gözlerken veri yalnızca bir eşiğin altında veya üstünde sansürlenmediği zaman Y’nin sonucunu gözleriz. Veri budama ile dikkatimizi örnekleme öncesi anakütlenin bir alt setine sınırlıyoruz; böylece bilgi gözlemediğimiz anakütlenin bir parçası mevcuttur. Bir kırpılmış regresyon modeli örneklemimizdeki anakütlenin bir alt setini dışladığımızda ortaya çıkar. Bağımlı değişkenin değişim aralığının herhangi bir şekilde sınırlandırıldığı regresyon modellerinde eğer belirli bir aralığın dışındaki gözlemler tamamen kaybedilmekte ise kırpılmış model, en azından bağımsız değişkenler gözlenebiliyorsa sansürlü model söz konusu olmaktadır.</p>
+<p>İlk evliliklerindeki 601 kadın ve erkeğe ait bir örneklemde evlilik dışı ilişki hakkında sorular sorulmuş ve tepkileri ölçülmüş.</p>
+<div class="sourceCode" id="cb360"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb360-1" title="1">df2 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb360-2" title="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(naffairs, age, male, educ, kids, ratemarr, relig, yrsmarr)</a></code></pre></div>
+<ul>
+<li><p><strong>naffairs:</strong> Bağımlı değişkendir. Geçmiş yıldaki evlilik dışı ilişki sayısı</p></li>
+<li><p><strong>age:</strong> Yaş</p></li>
+<li><p><strong>male:</strong> Erkek ise 1</p></li>
+<li><p><strong>educ:</strong> Eğitim yılı</p></li>
+<li><p><strong>kids:</strong> Çocuk varsa 1</p></li>
+<li><p><strong>ratemarr:</strong> Evlilik değerlendirmesi (çok mutsuz 1, .., çok mutlu 5)</p></li>
+<li><p><strong>relig:</strong> Dindarlık seviyesi (dindar değil 1, .., çok dindar 5)</p></li>
+<li><p><strong>yrsmarr:</strong> Evlilik yılı</p></li>
+</ul>
+<p>Referans olması açısından Sıradan En Küçük Kareler yöntemi ile bir model kuralım.</p>
+<div class="sourceCode" id="cb361"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb361-1" title="1">modelref &lt;-<span class="st"> </span><span class="kw">lm</span>(naffairs <span class="op">~</span>., <span class="dt">data =</span> df2)</a>
+<a class="sourceLine" id="cb361-2" title="2"><span class="kw">summary</span>(modelref)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = naffairs ~ ., data = df2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -4.8606 -1.7508 -0.7755  0.1734 12.6532 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  5.75759    1.13373   5.078 5.10e-07 ***
+## age         -0.04910    0.02257  -2.176    0.030 *  
+## male         0.16970    0.28417   0.597    0.551    
+## educ         0.01799    0.05825   0.309    0.758    
+## kids        -0.21898    0.34428  -0.636    0.525    
+## ratemarr    -0.71671    0.11998  -5.974 4.00e-09 ***
+## relig       -0.48251    0.11169  -4.320 1.83e-05 ***
+## yrsmarr      0.17125    0.04121   4.155 3.73e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 3.096 on 593 degrees of freedom
+## Multiple R-squared:  0.1297, Adjusted R-squared:  0.1194 
+## F-statistic: 12.62 on 7 and 593 DF,  p-value: 3.841e-15</code></pre>
+<p>age, ratemarr, relig ve yrsmarr değişkenlerinin işaretleri beklentilere paraleldir. Ayrıca istatistiksel olarak da anlamlı çıkmışlardır. Fakat bu veriler sansürlenmiştir. Bu nedenle tahmin edilen parametreler muhtemelen yanlıdır ve tutarlı değildir. Sansürlemeyi hesaba katmak için tobit modelini tahmin edelim. İki modeli de yan yana koyduğumuz zaman tahmin edilen parametrelerinde ve istatistiksel anlamlılıklarında farklılıklar olduğunu göreceğiz.</p>
+<div class="sourceCode" id="cb363"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb363-1" title="1">tobitmodel &lt;-<span class="st"> </span><span class="kw">vglm</span>(naffairs <span class="op">~</span>., tobit, <span class="dt">data =</span> df2)</a>
+<a class="sourceLine" id="cb363-2" title="2"><span class="kw">summary</span>(tobitmodel)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## vglm(formula = naffairs ~ ., family = tobit, data = df2)
+## 
+## Pearson residuals:
+##                 Min      1Q  Median      3Q    Max
+## mu          -11.720 -0.5219 -0.3157 -0.1020  5.142
+## loglink(sd)  -1.009 -0.2831 -0.2551 -0.1405 11.546
+## 
+## Coefficients: 
+##               Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept):1  7.36529    3.93373   1.872 0.061159 .  
+## (Intercept):2  2.11272    0.06573  32.142  &lt; 2e-16 ***
+## age           -0.19042    0.08101  -2.351 0.018743 *  
+## male           1.18311    1.00894   1.173 0.240943    
+## educ           0.09239    0.20369   0.454 0.650135    
+## kids           0.89845    1.27896   0.702 0.482375    
+## ratemarr      -2.28996    0.41493  -5.519 3.41e-08 ***
+## relig         -1.70985    0.40944  -4.176 2.97e-05 ***
+## yrsmarr        0.53799    0.14696   3.661 0.000251 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Names of linear predictors: mu, loglink(sd)
+## 
+## Log-likelihood: -704.9511 on 1193 degrees of freedom
+## 
+## Number of Fisher scoring iterations: 7 
+## 
+## No Hauck-Donner effect found in any of the estimates</code></pre>
+<p>Uygulamada sansürlenmiş regresyon modeller budanmış regresyon modellere tercih edilebilir. Çünkü ilkinde örneklemdeki bütün gözlemleri; ikincisinde sadece budanmışları dahil ederiz.</p>
+
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="s-ralamal-regresyon-modelleri.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="sayma-verilerini-modelleme.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["rEkonometri.pdf", "rEkonometri.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

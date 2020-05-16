@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Konu 7 Kukla Değişkenli Regresyon Modeli | R’da Ekonometri Uygulamaları</title>
+  <meta name="description" content="Ekonometri uygulamalarını R’da yapın." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Konu 7 Kukla Değişkenli Regresyon Modeli | R’da Ekonometri Uygulamaları" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Konu 7 Kukla Değişkenli Regresyon Modeli | R’da Ekonometri Uygulamaları" />
+  
+  <meta name="twitter:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+<meta name="author" content="Ahmet Akgül (rpydaneogrendim)" />
+
+
+<meta name="date" content="2020-05-16" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"/>
+<link rel="next" href="çoklu-do-rusal-ba-lant-.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R'da Ekonometri Uygulamaları</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Nelere İhtiyacınız Olacak?</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#kullanılan-kütüphaneler"><i class="fa fa-check"></i><b>1.1</b> Kullanılan Kütüphaneler</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#kullanılan-veri-setleri"><i class="fa fa-check"></i><b>1.2</b> Kullanılan Veri Setleri</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html"><i class="fa fa-check"></i><b>2</b> Veri ve Model Çeşitleri</a><ul>
+<li class="chapter" data-level="2.1" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#veri-çeşitleri"><i class="fa fa-check"></i><b>2.1</b> Veri Çeşitleri</a></li>
+<li class="chapter" data-level="2.2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#model-çeşitleri"><i class="fa fa-check"></i><b>2.2</b> Model Çeşitleri</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="do-rusal-regresyon-modeli.html"><a href="do-rusal-regresyon-modeli.html"><i class="fa fa-check"></i><b>3</b> Doğrusal Regresyon Modeli</a></li>
+<li class="chapter" data-level="4" data-path="regresyon-modelleriyle-öngörü.html"><a href="regresyon-modelleriyle-öngörü.html"><i class="fa fa-check"></i><b>4</b> Regresyon Modelleriyle Öngörü</a></li>
+<li class="chapter" data-level="5" data-path="francis-galton-ve-regresyon-terimi.html"><a href="francis-galton-ve-regresyon-terimi.html"><i class="fa fa-check"></i><b>5</b> Francis Galton ve Regresyon Terimi</a></li>
+<li class="chapter" data-level="6" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><i class="fa fa-check"></i><b>6</b> Değişkenleri Doğrusal Olmayan Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="6.1" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-doğrusal-ya-da-çift-log-modeller"><i class="fa fa-check"></i><b>6.1</b> Log-Doğrusal ya da Çift-Log Modeller</a></li>
+<li class="chapter" data-level="6.2" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-lin-ya-da-yarı-logaritmik-modeller"><i class="fa fa-check"></i><b>6.2</b> Log-Lin ya da Yarı-Logaritmik Modeller</a></li>
+<li class="chapter" data-level="6.3" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#lin-log-modeller"><i class="fa fa-check"></i><b>6.3</b> Lin-Log Modeller</a></li>
+<li class="chapter" data-level="6.4" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#ters-modeller"><i class="fa fa-check"></i><b>6.4</b> Ters Modeller</a></li>
+<li class="chapter" data-level="6.5" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#polinom-regresyon-modelleri"><i class="fa fa-check"></i><b>6.5</b> Polinom Regresyon Modelleri</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html"><i class="fa fa-check"></i><b>7</b> Kukla Değişkenli Regresyon Modeli</a><ul>
+<li class="chapter" data-level="7.1" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#kukla-değişkenlerin-yorumu"><i class="fa fa-check"></i><b>7.1</b> Kukla Değişkenlerin Yorumu</a></li>
+<li class="chapter" data-level="7.2" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#yapısal-değişimdeki-rolü"><i class="fa fa-check"></i><b>7.2</b> Yapısal Değişimdeki Rolü</a></li>
+<li class="chapter" data-level="7.3" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#mevsimsellikteki-rolü"><i class="fa fa-check"></i><b>7.3</b> Mevsimsellikteki Rolü</a></li>
+<li class="chapter" data-level="7.4" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#parçalı-doğrusal-regresyondaki-rolü"><i class="fa fa-check"></i><b>7.4</b> Parçalı Doğrusal Regresyondaki Rolü</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html"><i class="fa fa-check"></i><b>8</b> Çoklu Doğrusal Bağlantı</a><ul>
+<li class="chapter" data-level="8.1" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#temel-bileşenler-analiziregresyonu"><i class="fa fa-check"></i><b>8.1</b> Temel Bileşenler Analizi/Regresyonu</a></li>
+<li class="chapter" data-level="8.2" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#ridge-regresyon"><i class="fa fa-check"></i><b>8.2</b> Ridge Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html"><i class="fa fa-check"></i><b>9</b> Değişen Varyans</a><ul>
+<li class="chapter" data-level="9.1" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#breusch-pagan"><i class="fa fa-check"></i><b>9.1</b> Breusch-Pagan</a></li>
+<li class="chapter" data-level="9.2" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#white"><i class="fa fa-check"></i><b>9.2</b> White</a></li>
+<li class="chapter" data-level="9.3" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#robust-standart-hatalar"><i class="fa fa-check"></i><b>9.3</b> Robust Standart Hatalar</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="otokorelasyon.html"><a href="otokorelasyon.html"><i class="fa fa-check"></i><b>10</b> Otokorelasyon</a><ul>
+<li class="chapter" data-level="10.1" data-path="otokorelasyon.html"><a href="otokorelasyon.html#durbin-watson-d"><i class="fa fa-check"></i><b>10.1</b> Durbin-Watson d</a></li>
+<li class="chapter" data-level="10.2" data-path="otokorelasyon.html"><a href="otokorelasyon.html#breusch-godfrey"><i class="fa fa-check"></i><b>10.2</b> Breusch-Godfrey</a></li>
+<li class="chapter" data-level="10.3" data-path="otokorelasyon.html"><a href="otokorelasyon.html#hac-yöntemi"><i class="fa fa-check"></i><b>10.3</b> HAC Yöntemi</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html"><i class="fa fa-check"></i><b>11</b> Model Tanımlama Hataları</a><ul>
+<li class="chapter" data-level="11.1" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#eksik-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.1</b> Eksik Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.2" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aşırı-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.2</b> Aşırı Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.3" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#yanlış-fonksiyon-yapısı"><i class="fa fa-check"></i><b>11.3</b> Yanlış Fonksiyon Yapısı</a></li>
+<li class="chapter" data-level="11.4" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#ölçüm-hataları"><i class="fa fa-check"></i><b>11.4</b> Ölçüm Hataları</a></li>
+<li class="chapter" data-level="11.5" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aykırı-değer-yüksek-kaldıraç-etkisi-baskın-nokta-ve-simüle-edilmiş-veriler"><i class="fa fa-check"></i><b>11.5</b> Aykırı Değer, Yüksek Kaldıraç Etkisi, Baskın Nokta ve Simüle Edilmiş Veriler</a></li>
+<li class="chapter" data-level="11.6" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#hata-teriminin-olasılık-dağılımı"><i class="fa fa-check"></i><b>11.6</b> Hata Teriminin Olasılık Dağılımı</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><i class="fa fa-check"></i><b>12</b> Doğrusal Olasılık, Logit ve Probit Modeller</a><ul>
+<li class="chapter" data-level="12.1" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#doğrusal-olasılık"><i class="fa fa-check"></i><b>12.1</b> Doğrusal Olasılık</a></li>
+<li class="chapter" data-level="12.2" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#logit-modeli"><i class="fa fa-check"></i><b>12.2</b> Logit Modeli</a></li>
+<li class="chapter" data-level="12.3" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#probit-model"><i class="fa fa-check"></i><b>12.3</b> Probit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>13</b> Çok Terimli Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="13.1" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#çok-terimli-logit-model"><i class="fa fa-check"></i><b>13.1</b> Çok Terimli Logit Model</a></li>
+<li class="chapter" data-level="13.2" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#koşullu-logit-model"><i class="fa fa-check"></i><b>13.2</b> Koşullu Logit Model</a></li>
+<li class="chapter" data-level="13.3" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#karma-logit-model"><i class="fa fa-check"></i><b>13.3</b> Karma Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html"><i class="fa fa-check"></i><b>14</b> Sıralamalı Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="14.1" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html#sıralı-logit-model"><i class="fa fa-check"></i><b>14.1</b> Sıralı Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><a href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>15</b> Sınırlı Bağımlı Değişkenli Regresyon Modelleri</a></li>
+<li class="chapter" data-level="16" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html"><i class="fa fa-check"></i><b>16</b> Sayma Verilerini Modelleme</a><ul>
+<li class="chapter" data-level="16.1" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#poisson-regresyon"><i class="fa fa-check"></i><b>16.1</b> Poisson Regresyon</a></li>
+<li class="chapter" data-level="16.2" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#negatif-binom-regresyon"><i class="fa fa-check"></i><b>16.2</b> Negatif Binom Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html"><i class="fa fa-check"></i><b>17</b> Dinamik Ekonometri Modelleri</a><ul>
+<li class="chapter" data-level="17.1" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html#otoregresif-dağıtılmış-gecikme-modelleri-ardl"><i class="fa fa-check"></i><b>17.1</b> Otoregresif Dağıtılmış Gecikme Modelleri (ARDL)</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="dilim-kantil-regresyon.html"><a href="dilim-kantil-regresyon.html"><i class="fa fa-check"></i><b>18</b> Dilim (Kantil) Regresyon</a></li>
+<li class="chapter" data-level="19" data-path="yararlan-lan-kaynaklar.html"><a href="yararlan-lan-kaynaklar.html"><i class="fa fa-check"></i><b>19</b> Yararlanılan Kaynaklar</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rpydaneogrendim" target="blank">Github profilimi ziyaret edin.</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R’da Ekonometri Uygulamaları</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="kukla-değişkenli-regresyon-modeli" class="section level1">
+<h1><span class="header-section-number">Konu 7</span> Kukla Değişkenli Regresyon Modeli</h1>
+<div id="kukla-değişkenlerin-yorumu" class="section level2">
+<h2><span class="header-section-number">7.1</span> Kukla Değişkenlerin Yorumu</h2>
+<p>Kukla değişken derken aynı zamanda nitel değişkenlerden bahsediyoruz. Nitel değişkenlerin belirli bir sayısal değeri yoktur. Yani, nominal ölçek değişkenlerdir. Ama biz 0 ve 1 değerleri ile sayısallaştırıp kukla değişkenler oluşturuyoruz.</p>
+<p>Üç tane kukla değişkenimiz vardı: female (kadın ise 1; değilse 0), nonwhite (beyaz olmayan işçi ise 1; değilse 0), union (sendikalı bir iş ise 1; değilse 0).</p>
+<p>Kukla değişkeni D (dummy) ile ifade edelim. wage fonksiyonunu şöyle yazabiliriz:</p>
+<p><span class="math inline">\(wage_i = \beta_1 + \beta_2D_{2i} + \beta_3D_{3i} + \beta_4D_{4i} + \beta_5education_i + \beta_6exper_i + \epsilon_i\)</span></p>
+<p><span class="math inline">\(D_{2i}: kadın = 1; erkek = 0\)</span></p>
+<p><span class="math inline">\(D_{3i}: beyaz değil = 1; beyaz = 0\)</span></p>
+<p><span class="math inline">\(D_{4i}: sendikalı = 1; sendikasız = 0\)</span></p>
+<div class="sourceCode" id="cb100"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb100-1" title="1"><span class="kw">library</span>(readxl);<span class="kw">library</span>(tidyverse);<span class="kw">library</span>(magrittr);<span class="kw">library</span>(segmented)</a>
+<a class="sourceLine" id="cb100-2" title="2"></a>
+<a class="sourceLine" id="cb100-3" title="3"><span class="kw">setwd</span>(<span class="st">&quot;C:/Users/datanerd/Desktop/Github/rEkonometri/data&quot;</span>)</a>
+<a class="sourceLine" id="cb100-4" title="4">df1 &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table1_1.xls&quot;</span>)</a>
+<a class="sourceLine" id="cb100-5" title="5">df2 &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table3_6.xls&quot;</span>)</a>
+<a class="sourceLine" id="cb100-6" title="6">df3 &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table3_10.xls&quot;</span>)</a></code></pre></div>
+<div class="sourceCode" id="cb101"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb101-1" title="1">df1 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb101-2" title="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(wage, female, nonwhite, union, education, exper)</a>
+<a class="sourceLine" id="cb101-3" title="3"></a>
+<a class="sourceLine" id="cb101-4" title="4">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> wage <span class="op">~</span><span class="st"> </span>female <span class="op">+</span><span class="st"> </span>nonwhite <span class="op">+</span><span class="st"> </span>union <span class="op">+</span><span class="st"> </span>education <span class="op">+</span><span class="st"> </span>exper, <span class="dt">data =</span> df1)</a>
+<a class="sourceLine" id="cb101-5" title="5"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = wage ~ female + nonwhite + union + education + exper, 
+##     data = df1)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -20.781  -3.760  -1.044   2.418  50.414 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -7.18334    1.01579  -7.072 2.51e-12 ***
+## female      -3.07488    0.36462  -8.433  &lt; 2e-16 ***
+## nonwhite    -1.56531    0.50919  -3.074  0.00216 ** 
+## union        1.09598    0.50608   2.166  0.03052 *  
+## education    1.37030    0.06590  20.792  &lt; 2e-16 ***
+## exper        0.16661    0.01605  10.382  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.508 on 1283 degrees of freedom
+## Multiple R-squared:  0.3233, Adjusted R-squared:  0.3207 
+## F-statistic: 122.6 on 5 and 1283 DF,  p-value: &lt; 2.2e-16</code></pre>
+<ul>
+<li><p>Eğer modele kesme terimi dahil ettiysek ve bir nitel değişkenin m sayıda kategorisi varsa bu durumda m-1 adet kukla değişken belirleriz. Örnek olarak nonwhite değişkenine bakalım. Eğer işçi beyaz değilse 1 olarak kodladık. Zorunlu olarak beyaz olanları da 0 olarak kodlamalıyız. Bu durumda nonwhite’ın iki kategorisi olduğu için 1 tane kukla değişken belirleriz. Burada hangisine 0-1 verildiğinin bir önemi yoktur. Peki, kategorisi ikiden fazla olan bir nitel değişken olsaydı? Örneğin, 3 tane. Bu durumda en fazla iki (3-1) kukla değişkenimiz olabilir. Bu kuralı izlemezsek kukla değişken tuzağına yakalanırız. Yani, tam doğrusal bağlantı durumu. Eğer üç kategori için üç kukla değişkenimiz ve bir de kesme terimimiz varsa bu üç kukla değişkenin toplamı 1 olup bu da 1 olan kesme terimine eşit olacaktır. İşte tam doğrusallık. female örneğine bakalım. Bu örnekte kadınlar için 1; erkekler için 0 idi. Erkekler için 1; kadınlar için 0 değerini alan erkek kukla değişkenini de modele neden dahil etmiyoruz diye sorabiliriz. Bu gereksizdir. Çünkü, erkekler için kesme terimi <span class="math inline">\(\beta_1\)</span>; kadınlar için kesme terimi <span class="math inline">\(\beta_1 + \beta_2\)</span>’dir. Sadece iki kategori olduğu için sadece iki farklı kesme terimine ihtiyacımız vardır. Bu da şu anlama gelir: <span class="math inline">\(\beta_1\)</span>’in yanı sıra sadece bir tane kukla değişken kullanmamız gerekir. Biz de ilk başta kadınlar için bir kukla değişken kullanmayı tercih ettik.</p></li>
+<li><p>Eğer bir nitel değişkenin m kategorisi varsa, kesme terimi dahil etmemek koşuluyla m adet kukla değişken ekleyebiliriz.</p></li>
+<li><p>0 değerini alan kategori referanstır. Tüm karşılaştırmalar bu referansa göre yapılır.</p></li>
+<li><p>Kukla değişkenler logaritmik yapıda belirlenemez. Çünkü, 0-1 olarak belirleniyorlar.</p></li>
+<li><p>Her kukla parametresi bir serbestlik derecesine mal olur. Bu nedenle küçük örneklemlerde fazla kukla parametresi belirlemekten kaçınmalıyız.</p></li>
+</ul>
+<p>Kukla değişkenler ile ilgili yorumları vermiştik. Diğer değişkenler sabit tutulduğunda;</p>
+<p>Kuklaların yorumu:</p>
+<p>Kadınların ortalama wage’i erkeklerin ortalama wage’inden 3.08 $ daha düşüktür (female).</p>
+<p>Beyaz olmayan bir işçinin ortalama wage’i beyaz bir işçinin ortalama wage’inden 1.57 $ daha düşüktür (nonwhite).</p>
+<p>Sendikalı bir işte çalışanın ortalama wage’i sendikalı bir işte çalışmayanın ortalama wage’inden 1.1 $ daha fazladır (union).</p>
+<p>Kukla olmayanların yorumu:</p>
+<p>Her ilave eğitim yılı için ortalama wage 1.37 $ artmaktadır (education).</p>
+<p>Her ilave deneyim için ortalama wage 0.17 $ artmaktadır (exper).</p>
+<p>Örneğin, female için ne dedik? Kadınların ortalama wage’i erkeklerin ortalama wage’inden… Burada erkeklere sıfır dediğimiz için referans erkek kategorisi oldu.</p>
+<p>-7.18334 olan kesme terimi ise sıfır değeri alan tüm kategorileri işaret etmektedir. Yani, erkek, beyaz, sendikalı olmayan işçilerin beklenen ücreti. Ücret eksi çıkar mı? Yorumlarken tabi ki dikkat edeceğiz. Bunun iktisadi açıdan bir anlamı yoktur.</p>
+<p>Bir kadın işçinin erkek işçiye göre ortalama wage’inin ne kadar düşük olduğunu biliyoruz. Ya da beyaz olmayan bir işçinin beyaz işçiye göre… Ya da sendika üyesi bir işçinin sendika üyesi olmayan bir işçiye göre… Peki, beyaz olmayan bir kadın işçinin ortalama wage’inin, sadece kadın bir işçinin veya sadece beyaz olmayan bir işçinin ortalama wage’inden farklı olması mümkün müdür?</p>
+<p>Bunu belirlemek için kadın ve beyaz olmayan kuklaların çarpımını wage fonksiyonuna ekleriz. Bu tür çarpıma etkileşimli kukla diyeceğiz.</p>
+<div class="sourceCode" id="cb103"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb103-1" title="1">df1 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb103-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">female_nonwhite =</span> female <span class="op">*</span><span class="st"> </span>nonwhite)</a>
+<a class="sourceLine" id="cb103-3" title="3"></a>
+<a class="sourceLine" id="cb103-4" title="4">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> wage <span class="op">~</span><span class="st"> </span>female <span class="op">+</span><span class="st"> </span>nonwhite <span class="op">+</span><span class="st"> </span>union <span class="op">+</span><span class="st"> </span>education <span class="op">+</span><span class="st"> </span>exper <span class="op">+</span><span class="st"> </span>female_nonwhite, <span class="dt">data =</span> df1)</a>
+<a class="sourceLine" id="cb103-5" title="5"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = wage ~ female + nonwhite + union + education + exper + 
+##     female_nonwhite, data = df1)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -20.844  -3.746  -1.016   2.452  50.497 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)     -7.08873    1.01948  -6.953 5.67e-12 ***
+## female          -3.24015    0.39533  -8.196 5.96e-16 ***
+## nonwhite        -2.15853    0.74843  -2.884  0.00399 ** 
+## union            1.11504    0.50635   2.202  0.02783 *  
+## education        1.37011    0.06590  20.791  &lt; 2e-16 ***
+## exper            0.16586    0.01606  10.326  &lt; 2e-16 ***
+## female_nonwhite  1.09537    1.01290   1.081  0.27971    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.508 on 1282 degrees of freedom
+## Multiple R-squared:  0.324,  Adjusted R-squared:  0.3208 
+## F-statistic: 102.4 on 6 and 1282 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Diğer faktörler sabit tutulduğunda, kadın olmanın 3.24 $ daha düşük ortalama wage’i vardır. Beyaz olmamanın ortalama 2.16 $ daha düşük ortalama wage’i vardır. Hem kadın hem de beyaz olmamanın ise female + nonwhite + female_nonwhite = – 3.24 – 2.16 + 1.10 = -4.30 $ daha düşük ortalama wage’i vardır. Başka bir ifade ile, beyaz olmayan bir kadın sadece kadın olmaktan veya sadece beyaz olmamaktan daha düşük bir ortalama wage elde eder.</p>
+<p>Kukla değişken olmayan örneğin, education için şu yorumu yapmıştık: Her ilave eğitim yılı için ortalama wage 1.37 $ artmaktadır. Bunu derken aslında kadın ile erkek arasında, beyaz olmayan ile beyaz arasında ve sendikalı ile sendikasız arasında aynı olduğunu kabul ediyoruz.</p>
+<p>Ücret fonksiyonunu şöyle ifade edelim:</p>
+<p><span class="math inline">\(wage_i = \beta_1 + \beta_2D_{2i} + \beta_3D_{3i} + \beta_4D_{4i} + \beta_5education_i + \beta_6exper_i + \beta_7(D_{2i}*education_i) +\)</span></p>
+<p><span class="math inline">\(\beta_8(D_{3i}*education_i) + \beta_9(D_{4i}*education_i) + \beta_{10}(D_{2i}*exper_i) + \beta_{11}(D_{3i}*exper_i) +\)</span></p>
+<p><span class="math inline">\(\beta_{12}(D_{4i}*exper_i) + \epsilon_i\)</span></p>
+<p><span class="math inline">\(\beta_2, \beta_3, \beta_4\)</span>’ü yazmıştık; önceden biliyoruz. <span class="math inline">\(\beta_7\)</span> ile <span class="math inline">\(\beta_{11}\)</span> arasını ise aşağıdaki gibi yorumlayacağız.</p>
+<div class="sourceCode" id="cb105"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb105-1" title="1">df1 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb105-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">female_educ =</span> female <span class="op">*</span><span class="st"> </span>education,</a>
+<a class="sourceLine" id="cb105-3" title="3">         <span class="dt">nonwhite_educ =</span> nonwhite <span class="op">*</span><span class="st"> </span>education,</a>
+<a class="sourceLine" id="cb105-4" title="4">         <span class="dt">union_educ =</span> union <span class="op">*</span><span class="st"> </span>education,</a>
+<a class="sourceLine" id="cb105-5" title="5">         <span class="dt">female_exper =</span> female <span class="op">*</span><span class="st"> </span>exper,</a>
+<a class="sourceLine" id="cb105-6" title="6">         <span class="dt">nonwhite_exper =</span> nonwhite <span class="op">*</span><span class="st"> </span>exper,</a>
+<a class="sourceLine" id="cb105-7" title="7">         <span class="dt">union_exper =</span> union <span class="op">*</span><span class="st"> </span>exper)</a>
+<a class="sourceLine" id="cb105-8" title="8"></a>
+<a class="sourceLine" id="cb105-9" title="9">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> wage <span class="op">~</span><span class="st"> </span>female <span class="op">+</span><span class="st"> </span>nonwhite <span class="op">+</span><span class="st"> </span>union <span class="op">+</span><span class="st"> </span>education <span class="op">+</span><span class="st"> </span>exper <span class="op">+</span><span class="st"> </span>female_educ <span class="op">+</span><span class="st"> </span>nonwhite_educ <span class="op">+</span><span class="st"> </span>union_educ <span class="op">+</span><span class="st"> </span>female_exper <span class="op">+</span><span class="st"> </span>nonwhite_exper <span class="op">+</span><span class="st"> </span>union_exper, <span class="dt">data =</span> df1)</a>
+<a class="sourceLine" id="cb105-10" title="10"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = wage ~ female + nonwhite + union + education + exper + 
+##     female_educ + nonwhite_educ + union_educ + female_exper + 
+##     nonwhite_exper + union_exper, data = df1)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -23.164  -3.570  -1.070   2.337  50.496 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)    -11.09129    1.42185  -7.801 1.27e-14 ***
+## female           3.17416    1.96646   1.614  0.10674    
+## nonwhite         2.90913    2.78007   1.046  0.29556    
+## union            4.45421    2.97349   1.498  0.13439    
+## education        1.58712    0.09382  16.917  &lt; 2e-16 ***
+## exper            0.22091    0.02511   8.799  &lt; 2e-16 ***
+## female_educ     -0.33689    0.13199  -2.552  0.01082 *  
+## nonwhite_educ   -0.32186    0.19535  -1.648  0.09968 .  
+## union_educ      -0.19832    0.19137  -1.036  0.30025    
+## female_exper    -0.09612    0.03181  -3.022  0.00257 ** 
+## nonwhite_exper  -0.02204    0.04438  -0.497  0.61949    
+## union_exper     -0.03345    0.04605  -0.726  0.46772    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.478 on 1277 degrees of freedom
+## Multiple R-squared:  0.3328, Adjusted R-squared:  0.3271 
+## F-statistic: 57.91 on 11 and 1277 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>female_educ ve female_exper parametreleri negatif ve istatistiksel olarak anlamlıdır. Bu da education ve exper’e göre kadın işçiler için ortalama saatlik wage artış hızı, erkek işçilere göre daha düşük demektir. Aynı şekilde nonwhite_educ için yorum education’a göre wage artış hızı beyaz olmayan işçiler için negatiftir; beyaz işçilerinkinden daha düşüktür. Bu parametre %10 seviyesinde istatistiksel olarak anlamlıdır. Diğer parametreler istatistiksel olarak anlamlı değildir. Bunları modelden çıkartıp modeli yeniden kuralım.</p>
+<div class="sourceCode" id="cb107"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb107-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> wage <span class="op">~</span><span class="st"> </span>female <span class="op">+</span><span class="st"> </span>nonwhite <span class="op">+</span><span class="st"> </span>union <span class="op">+</span><span class="st"> </span>education <span class="op">+</span><span class="st"> </span>exper <span class="op">+</span><span class="st"> </span>female_educ <span class="op">+</span><span class="st"> </span>nonwhite_educ <span class="op">+</span><span class="st"> </span>female_exper, <span class="dt">data =</span> df1)</a>
+<a class="sourceLine" id="cb107-2" title="2"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = wage ~ female + nonwhite + union + education + exper + 
+##     female_educ + nonwhite_educ + female_exper, data = df1)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -22.885  -3.552  -1.109   2.389  50.553 
+## 
+## Coefficients:
+##                Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   -10.64520    1.37180  -7.760 1.73e-14 ***
+## female          3.25747    1.95925   1.663  0.09664 .  
+## nonwhite        2.62695    2.41787   1.086  0.27747    
+## union           1.07851    0.50540   2.134  0.03303 *  
+## education       1.56580    0.09181  17.054  &lt; 2e-16 ***
+## exper           0.21262    0.02277   9.338  &lt; 2e-16 ***
+## female_educ    -0.34695    0.13149  -2.639  0.00842 ** 
+## nonwhite_educ  -0.32937    0.18663  -1.765  0.07783 .  
+## female_exper   -0.09491    0.03156  -3.007  0.00269 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.474 on 1280 degrees of freedom
+## Multiple R-squared:  0.332,  Adjusted R-squared:  0.3278 
+## F-statistic: 79.52 on 8 and 1280 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Kategorinin 0 ve 1 olmasına göre aldığımız aksiyonlara dikkat edin.</p>
+<p>Beyaz, erkek, sendikalı olmayan işçilerin (hepsi sıfırı temsil ediyor) ücret fonksiyonu:</p>
+<p><span class="math inline">\(\hat{wage_i} = -10.6452 + 1.5658education_i + 0.21262exper_i\)</span></p>
+<p>Beyaz, kadın, sendikalı olmayan işçilerin ücret fonksiyonu:</p>
+<p><span class="math inline">\(\hat{wage_i} = (-10.6452 + 3.2574) + (1.5658 – 0.34695)education_i + (0.21262 – 0.0949)exper_i\)</span></p>
+<p><span class="math inline">\(\hat{wage_i} = -7.3878 + 1.21885education_i + 0.11772exper_i\)</span></p>
+<p>Beyaz olmayan, erkek, sendikalı olmayan işçilerin ücret fonksiyonu:</p>
+<p><span class="math inline">\(\hat{wage_i} = (-10.6452 + 2.62695) + (1.5658 – 0.32937)education_i + 0.21262exper_i\)</span></p>
+<p><span class="math inline">\(\hat{wage_i} = -8.01825 + 1.23643education_i + 0.21262exper_i\)</span></p>
+<p>Beyaz, erkek, sendikalı işçilerin ücret fonksiyonu:</p>
+<p><span class="math inline">\(\hat{wage_i} = (-10.6452 + 1.07851) + 1.5658education_i + 0.21262exper_i\)</span></p>
+<p><span class="math inline">\(\hat{wage_i} = -9.56669 + 1.5658education_i + 0.21262exper_i\)</span></p>
+<p>Bağımlı değişken logaritmik olsaydı kukla değişkenleri nasıl yorumlayacaktık?</p>
+<div class="sourceCode" id="cb109"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb109-1" title="1">df1 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb109-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">lnwage =</span> <span class="kw">log</span>(wage))</a>
+<a class="sourceLine" id="cb109-3" title="3"></a>
+<a class="sourceLine" id="cb109-4" title="4">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> lnwage <span class="op">~</span><span class="st"> </span>female <span class="op">+</span><span class="st"> </span>nonwhite <span class="op">+</span><span class="st"> </span>union <span class="op">+</span><span class="st"> </span>education <span class="op">+</span><span class="st"> </span>exper, <span class="dt">data =</span> df1)</a>
+<a class="sourceLine" id="cb109-5" title="5"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = lnwage ~ female + nonwhite + union + education + 
+##     exper, data = df1)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -2.51287 -0.28288  0.00345  0.30683  1.79761 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  0.905504   0.074175  12.208  &lt; 2e-16 ***
+## female      -0.249154   0.026625  -9.358  &lt; 2e-16 ***
+## nonwhite    -0.133535   0.037182  -3.591 0.000341 ***
+## union        0.180204   0.036955   4.876 1.22e-06 ***
+## education    0.099870   0.004812  20.752  &lt; 2e-16 ***
+## exper        0.012760   0.001172  10.889  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.4752 on 1283 degrees of freedom
+## Multiple R-squared:  0.3457, Adjusted R-squared:  0.3431 
+## F-statistic: 135.5 on 5 and 1283 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Ortalama kadın işçinin ücret oranı ortalama erkek işçinin ücret oranına göre %24.92 daha düşüktür (female). Ancak doğru olan yüzde değişimi bulmak için parametrenin ters logaritmasını alıp 1’den çıkarıyoruz.</p>
+<div class="sourceCode" id="cb111"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb111-1" title="1"><span class="kw">exp</span>(<span class="kw">as.numeric</span>(model<span class="op">$</span>coefficients[<span class="dv">2</span>])) <span class="op">-</span><span class="st"> </span><span class="dv">1</span> <span class="co">#%24.92 yerine %22.05 koyun.</span></a></code></pre></div>
+<pre><code>## [1] -0.2205401</code></pre>
+<p>Ortalama beyaz olmayan işçinin ücret oranı ortalama beyaz olan işçinin ücret oranına göre %13.35 daha düşüktür (nonwhite). Doğru değer için;</p>
+<div class="sourceCode" id="cb113"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb113-1" title="1"><span class="kw">exp</span>(<span class="kw">as.numeric</span>(model<span class="op">$</span>coefficients[<span class="dv">3</span>])) <span class="op">-</span><span class="st"> </span><span class="dv">1</span> <span class="co">#%13.35 yerine %12.50 koyun.</span></a></code></pre></div>
+<pre><code>## [1] -0.1250032</code></pre>
+<p>Ortalama sendikalı olan işçinin ücret oranı ortalama sendikalı olmayan işçinin ücret oranına göre %18.02 daha yüksektir (union). Doğru değer için;</p>
+<div class="sourceCode" id="cb115"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb115-1" title="1"><span class="kw">exp</span>(<span class="kw">as.numeric</span>(model<span class="op">$</span>coefficients[<span class="dv">4</span>])) <span class="op">-</span><span class="st"> </span><span class="dv">1</span> <span class="co">#%18.02 yerine %19.75 koyun.</span></a></code></pre></div>
+<pre><code>## [1] 0.1974611</code></pre>
+</div>
+<div id="yapısal-değişimdeki-rolü" class="section level2">
+<h2><span class="header-section-number">7.2</span> Yapısal Değişimdeki Rolü</h2>
+<p>Kukla değişkenleri yapısal değişimlerde kullanabiliriz.</p>
+<div class="sourceCode" id="cb117"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb117-1" title="1">df2 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb117-2" title="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(obs, gps, gpi)</a>
+<a class="sourceLine" id="cb117-3" title="3"></a>
+<a class="sourceLine" id="cb117-4" title="4"><span class="kw">str</span>(df2)</a></code></pre></div>
+<pre><code>## tibble [49 x 3] (S3: tbl_df/tbl/data.frame)
+##  $ obs: num [1:49] 1959 1960 1961 1962 1963 ...
+##  $ gps: num [1:49] 84.6 84.8 91.8 100.7 104.6 ...
+##  $ gpi: num [1:49] 78.5 78.9 78.2 88.1 93.8 ...</code></pre>
+<p>ABD için brüt özel yatırımlar (GPI) ile brüt özel tasarruflar (GPS) arasındaki ilişkiyi inceleyelim.</p>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>gpi:</strong> Brüt özel yatırımlar</li>
+</ul>
+<p>Bağımsız değişken(ler):</p>
+<ul>
+<li><strong>gps:</strong> Brüt özel tasarruflar</li>
+</ul>
+<p>Yatırım fonksiyonu şudur:</p>
+<p><span class="math inline">\(GPI_t = \beta_1 + \beta_2GPS_t + u_t, \beta_2 &gt; 0\)</span></p>
+<p><span class="math inline">\(\beta_2\)</span>, marjinal yatırım eğilimidir. Yani, 1 $ fazla tasarruf sonucunda oluşan ek yatırımdır.</p>
+<p>ABD’nin 1981-82 döneminde girdiği resesyon yapısal bir değişim yaratmış olabilir.</p>
+<p>Önce bunu dikkate almadan modelimizi kuralım.</p>
+<div class="sourceCode" id="cb119"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb119-1" title="1">df2 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb119-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">r81 =</span> <span class="kw">ifelse</span>(obs <span class="op">&gt;</span><span class="st"> </span><span class="dv">1980</span>, <span class="dv">1</span>, <span class="dv">0</span>))</a>
+<a class="sourceLine" id="cb119-3" title="3"></a>
+<a class="sourceLine" id="cb119-4" title="4">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> gpi <span class="op">~</span><span class="st"> </span>gps, <span class="dt">data =</span> df2)</a>
+<a class="sourceLine" id="cb119-5" title="5"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = gpi ~ gps, data = df2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -275.06  -65.89   29.12   55.31  336.84 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -78.72105   27.48474  -2.864  0.00623 ** 
+## gps           1.10740    0.02908  38.081  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 114.9 on 47 degrees of freedom
+## Multiple R-squared:  0.9686, Adjusted R-squared:  0.9679 
+## F-statistic:  1450 on 1 and 47 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Marjinal yatırım eğilimi 1.10 çıktı. Bu da brüt özel tasarruflar 1 $ arttığında brüt özel yatırımların 1.10 $ artacağını söyler.</p>
+<p>Şimdi yapısal kırılmayı da dikkate alacağız. Bunun için yatırım fonksiyonunu şöyle yazalım:</p>
+<p><span class="math inline">\(GPI_t = \beta_1 + \beta_2GPS_t + \beta_3R1981_t + \epsilon_t\)</span></p>
+<p>R1981, resesyonu ifade etmektedir ve 1981’den sonraki gözlemler 1 olacak anlamını taşır.</p>
+<div class="sourceCode" id="cb121"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb121-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> gpi <span class="op">~</span><span class="st"> </span>gps <span class="op">+</span><span class="st"> </span>r81, <span class="dt">data =</span> df2)</a>
+<a class="sourceLine" id="cb121-2" title="2"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = gpi ~ gps + r81, data = df2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -228.98  -42.82    0.73   37.82  340.56 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  -83.48603   23.15913  -3.605 0.000765 ***
+## gps            1.28867    0.04707  27.380  &lt; 2e-16 ***
+## r81         -240.78785   53.39663  -4.509 4.46e-05 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 96.69 on 46 degrees of freedom
+## Multiple R-squared:  0.9782, Adjusted R-squared:  0.9773 
+## F-statistic:  1034 on 2 and 46 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Kukla parametresi -240.8 istatistiksel olarak anlamlıdır ve öncesi-sonrasında ciddi bir fark olduğunu gösterir.</p>
+<p>Kesme terimi sıfır değeri alan tüm kategorileri işaret etmektedir. Yani, 1981 öncesini. Buradan yola çıkarak -83.5 - 240.8 = -324.3 bulabiliriz. Bu da resesyon öncesi seviyesine göre çok daha düşük olduğunu gösterir.</p>
+<p>Sadece kesme terimi değil; eğimde de değişim olabilir. Bunun için kukla değişkenini brüt özel tasarruflarla etkileşime sokup modele dahil edelim.</p>
+<div class="sourceCode" id="cb123"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb123-1" title="1">df2 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb123-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">gps_r81 =</span> gps <span class="op">*</span><span class="st"> </span>r81)</a>
+<a class="sourceLine" id="cb123-3" title="3"></a>
+<a class="sourceLine" id="cb123-4" title="4">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> gpi <span class="op">~</span><span class="st"> </span>gps <span class="op">+</span><span class="st"> </span>r81 <span class="op">+</span><span class="st"> </span>gps_r81, <span class="dt">data =</span> df2)</a>
+<a class="sourceLine" id="cb123-5" title="5"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = gpi ~ gps + r81 + gps_r81, data = df2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -225.79  -25.14    1.95    9.19  335.72 
+## 
+## Coefficients:
+##              Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   -7.7799    38.4496  -0.202   0.8406    
+## gps            0.9511     0.1475   6.450 6.69e-08 ***
+## r81         -357.4587    70.2863  -5.086 6.91e-06 ***
+## gps_r81        0.3719     0.1548   2.403   0.0204 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 92.03 on 45 degrees of freedom
+## Multiple R-squared:  0.9807, Adjusted R-squared:  0.9794 
+## F-statistic: 762.5 on 3 and 45 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>1981 öncesine ait model:</p>
+<p><span class="math inline">\(\hat{GPI_t} = -7.7799 + 0.9511GPS_t\)</span></p>
+<p>1981 sonrasına ait model ise şöyle olur:</p>
+<p><span class="math inline">\(\hat{GPI_t} = (-7.7799 - 357.4587) + (0.9511 + 0.3719)GPS_t\)</span></p>
+<p><span class="math inline">\(\hat{GPI_t} = -365.2386 + 1.323GPS_t\)</span></p>
+<p>İki dönem arasında iki değişken arasındaki ilişkinin değişimini göstermiş olduk.</p>
+</div>
+<div id="mevsimsellikteki-rolü" class="section level2">
+<h2><span class="header-section-number">7.3</span> Mevsimsellikteki Rolü</h2>
+<p>Mevsimsel etkiler, yıl içinde meydana gelen, sistematik, istikrarlı, genellikle takvimle ilgili dönemsel ve devri karakterdeki etkilerdir. Aylık, üç aylık hatta haftalık veya günlük dalgalanmalar halinde görülebilirler.</p>
+<p>Kullanacağımız veriler moda giyim satışlarına aittir.</p>
+<div class="sourceCode" id="cb125"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb125-1" title="1">df3 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb125-2" title="2"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(sales, d2, d3, d4, rpdi, conf)</a>
+<a class="sourceLine" id="cb125-3" title="3"></a>
+<a class="sourceLine" id="cb125-4" title="4"><span class="kw">str</span>(df3)</a></code></pre></div>
+<pre><code>## tibble [28 x 6] (S3: tbl_df/tbl/data.frame)
+##  $ sales: num [1:28] 53.7 71.5 96.4 125 78.6 ...
+##  $ d2   : num [1:28] 0 1 0 0 0 1 0 0 0 1 ...
+##  $ d3   : num [1:28] 0 0 1 0 0 0 1 0 0 0 ...
+##  $ d4   : num [1:28] 0 0 0 1 0 0 0 1 0 0 ...
+##  $ rpdi : num [1:28] 84.2 85 84.6 83.6 87.5 ...
+##  $ conf : num [1:28] 287 290 284 276 271 ...</code></pre>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>sales:</strong> Bin fit-karelik perakende alanı başına reel satışlar</li>
+</ul>
+<p>Bağımsız değişken(ler):</p>
+<ul>
+<li><p><strong>d2:</strong> İkinci çeyrek için kukla</p></li>
+<li><p><strong>d3:</strong> Üçüncü çeyrek için kukla</p></li>
+<li><p><strong>d4:</strong> Dördüncü çeyrek için kukla</p></li>
+</ul>
+<p>Yılın ilk çeyreğini referans olarak aldık.</p>
+<p>Modeli kuralım.</p>
+<div class="sourceCode" id="cb127"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb127-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> sales <span class="op">~</span><span class="st"> </span>d2 <span class="op">+</span><span class="st"> </span>d3 <span class="op">+</span><span class="st"> </span>d4, <span class="dt">data =</span> df3)</a>
+<a class="sourceLine" id="cb127-2" title="2"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = sales ~ d2 + d3 + d4, data = df3)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -21.740  -5.511   1.340   7.193  17.587 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   73.183      3.977  18.399 1.18e-15 ***
+## d2            14.692      5.625   2.612   0.0153 *  
+## d3            27.965      5.625   4.971 4.47e-05 ***
+## d4            57.115      5.625  10.154 3.65e-10 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 10.52 on 24 degrees of freedom
+## Multiple R-squared:  0.8235, Adjusted R-squared:  0.8014 
+## F-statistic: 37.32 on 3 and 24 DF,  p-value: 3.372e-09</code></pre>
+<p>Çıktılardan görebileceğimiz üzere moda satışları Noel ve diğer tatilleri içeren dördüncü çeyrekte en fazladır. Yorumlayalım: Dördüncü çeyrekteki ortalama satış değeri birinci (referans) çeyrekteki ortalama satışlardan 57 birim daha yüksektir. Dördüncü çeyrek ortalama satış değeri 73.183 + 57.115 = 130.298’dir. Diğer iki çeyrek de aynı şekilde yorumlanabilir.</p>
+<p>Bizim amacımız bu değerleri mevsimsellikten arındırmaktı.</p>
+<p>Adım-1: Modelden satış hacmi tahminlerini bulalım.</p>
+<div class="sourceCode" id="cb129"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb129-1" title="1">df3<span class="op">$</span>tahmin &lt;-<span class="st"> </span>model<span class="op">$</span>fitted.values</a></code></pre></div>
+<p>Adım-2: Gerçek satış hacminden tahminleri çıkararak kalıntıları bulalım.</p>
+<div class="sourceCode" id="cb130"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb130-1" title="1">df3<span class="op">$</span>kalinti &lt;-<span class="st"> </span>df3<span class="op">$</span>sales <span class="op">-</span><span class="st"> </span>df3<span class="op">$</span>tahmin</a></code></pre></div>
+<p>Adım-3: Ortalama satış değerini tahmin edilen kalıntılara ekleyelim.</p>
+<div class="sourceCode" id="cb131"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb131-1" title="1">df3<span class="op">$</span>arindirilmis &lt;-<span class="st"> </span><span class="kw">mean</span>(df3<span class="op">$</span>sales) <span class="op">+</span><span class="st"> </span>df3<span class="op">$</span>kalinti</a></code></pre></div>
+<p>Mevsimsel arındırmayı gerçekleştirdik. Şimdi hem gerçek değerleri hem de arındırılmış değerleri grafiğe aktaralım.</p>
+<div class="sourceCode" id="cb132"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb132-1" title="1"><span class="kw">ggplot</span>(df3, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">as.numeric</span>(<span class="kw">row.names</span>(df3)))) <span class="op">+</span></a>
+<a class="sourceLine" id="cb132-2" title="2"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> sales), <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb132-3" title="3"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">y =</span> arindirilmis), <span class="dt">color =</span> <span class="st">&quot;blue&quot;</span>, <span class="dt">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb132-4" title="4"><span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb132-5" title="5"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title =</span> <span class="kw">element_blank</span>()) <span class="op">+</span></a>
+<a class="sourceLine" id="cb132-6" title="6"><span class="st">  </span><span class="kw">scale_y_continuous</span>(<span class="dt">limits =</span> <span class="kw">c</span>(<span class="dv">0</span>,<span class="ot">NA</span>))</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-71-1.png" width="672" /></p>
+<p>Modeli daha da genişletebiliriz. Aşağıdaki bağımsız değişkenleri modele ekleyelim:</p>
+<ul>
+<li><p><strong>rpdi:</strong> Reel kişisel harcanabilir gelir</p></li>
+<li><p><strong>conf:</strong> Tüketici güven endeksi</p></li>
+</ul>
+<div class="sourceCode" id="cb133"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb133-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> sales <span class="op">~</span><span class="st"> </span>d2 <span class="op">+</span><span class="st"> </span>d3 <span class="op">+</span><span class="st"> </span>d4 <span class="op">+</span><span class="st"> </span>rpdi <span class="op">+</span><span class="st"> </span>conf, <span class="dt">data =</span> df3)</a>
+<a class="sourceLine" id="cb133-2" title="2"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = sales ~ d2 + d3 + d4 + rpdi + conf, data = df3)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -13.5677  -5.8781   0.0709   5.1689  11.8362 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -152.92922   52.59149  -2.908 0.008157 ** 
+## d2            15.04522    4.31538   3.486 0.002091 ** 
+## d3            26.00247    4.32524   6.012 4.74e-06 ***
+## d4            60.87226    4.42744  13.749 2.80e-12 ***
+## rpdi           1.59890    0.37016   4.320 0.000276 ***
+## conf           0.29391    0.08438   3.483 0.002107 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 8.048 on 22 degrees of freedom
+## Multiple R-squared:  0.9054, Adjusted R-squared:  0.8839 
+## F-statistic:  42.1 on 5 and 22 DF,  p-value: 1.532e-10</code></pre>
+<p>Bu eklediğimiz değişkenler mevsimsel etkilerden arındırıldı mı?</p>
+<p>Frisch-Waugh teoremine göre evet. Yani, modele mevimsel kuklaları katarak aslında bütün zaman serilerini mevsimsellikten arındırmış oluyoruz.</p>
+<p>Yukarıdaki çıktı bize mevsimsel faktörleri yansıtan kesmelerin çeyrekten çeyreğe değiştiğini fakat rpdi ve conf eğim parametrelerinin baştan sona sabit kaldığını varsaymaktadır. Bu varsayımı kademeli eğim kuklaları ile test edelim.</p>
+<p><span class="math inline">\(Sales_t = \beta_1 + \beta_2D_{2t} + \beta_3D_{t3} + \beta_4RPDI_t + \beta_5CONF_t + \beta_6(D_2*RPDI_t) + \beta_7(D_3*RPDI_t) +\)</span></p>
+<p><span class="math inline">\(\beta_8(D_4*RPDI_t) + \beta_9(D_2*CONF_t) + \beta_{10}(D_3*CONF_t) + \beta_{11}(D_4*CONF_t) + \epsilon_t\)</span></p>
+<p>Varsayımı test etmemizi sağlayacak olan <span class="math inline">\(\beta_6\)</span>’dan <span class="math inline">\(\beta_{11}\)</span>’e kadar olan kademeli eğim parametreleridir.</p>
+<div class="sourceCode" id="cb135"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb135-1" title="1">df3 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb135-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">d2_rpdi =</span> d2<span class="op">*</span>rpdi,</a>
+<a class="sourceLine" id="cb135-3" title="3">         <span class="dt">d3_rpdi =</span> d3<span class="op">*</span>rpdi,</a>
+<a class="sourceLine" id="cb135-4" title="4">         <span class="dt">d4_rpdi =</span> d4<span class="op">*</span>rpdi,</a>
+<a class="sourceLine" id="cb135-5" title="5">         <span class="dt">d2_conf =</span> d2<span class="op">*</span>conf,</a>
+<a class="sourceLine" id="cb135-6" title="6">         <span class="dt">d3_conf =</span> d3<span class="op">*</span>conf,</a>
+<a class="sourceLine" id="cb135-7" title="7">         <span class="dt">d4_conf =</span> d4<span class="op">*</span>conf)</a>
+<a class="sourceLine" id="cb135-8" title="8"></a>
+<a class="sourceLine" id="cb135-9" title="9">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> sales <span class="op">~</span><span class="st"> </span>d2 <span class="op">+</span><span class="st"> </span>d3 <span class="op">+</span><span class="st"> </span>d4 <span class="op">+</span><span class="st"> </span>rpdi <span class="op">+</span><span class="st"> </span>conf <span class="op">+</span><span class="st"> </span>d2_rpdi <span class="op">+</span><span class="st"> </span>d3_rpdi <span class="op">+</span><span class="st"> </span>d4_rpdi <span class="op">+</span><span class="st"> </span>d2_conf <span class="op">+</span><span class="st"> </span>d3_conf <span class="op">+</span><span class="st"> </span>d4_conf, <span class="dt">data =</span> df3)</a>
+<a class="sourceLine" id="cb135-10" title="10"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = sales ~ d2 + d3 + d4 + rpdi + conf + d2_rpdi + d3_rpdi + 
+##     d4_rpdi + d2_conf + d3_conf + d4_conf, data = df3)
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -11.2537  -4.0821   0.0971   3.1040  14.5502 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)  
+## (Intercept) -191.58462  107.98136  -1.774   0.0951 .
+## d2           196.70196  221.26332   0.889   0.3872  
+## d3           123.13869  163.43984   0.753   0.4621  
+## d4            50.96447  134.78844   0.378   0.7103  
+## rpdi           2.04979    0.79989   2.563   0.0209 *
+## conf           0.28094    0.15690   1.791   0.0923 .
+## d2_rpdi       -1.11058    1.40395  -0.791   0.4405  
+## d3_rpdi       -1.21807    1.13419  -1.074   0.2988  
+## d4_rpdi       -0.04987    1.01416  -0.049   0.9614  
+## d2_conf       -0.29482    0.38178  -0.772   0.4512  
+## d3_conf        0.06524    0.25986   0.251   0.8050  
+## d4_conf        0.05787    0.20107   0.288   0.7772  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 8.157 on 16 degrees of freedom
+## Multiple R-squared:  0.9293, Adjusted R-squared:  0.8807 
+## F-statistic: 19.12 on 11 and 16 DF,  p-value: 3.777e-07</code></pre>
+<p>Kademeli eğim parametrelerinin hiçbiri istatistiksel olarak anlamlı çıkmamıştır. Bu bize rpdi ile conf parametrelerinin sezonlar arasında değişmediğini göstermektedir. Bunun yanında mevsimsel kuklaların da istatistiksel olarak anlamlı çıkmadığını görüyoruz. Dolayısıyla, moda satışlarında mevsimsel değişimler yoktur deriz ancak kademeli eğim parametrelerini modelden çıkardığımızda (bir önceki çıktı) güçlü bir mevimsel faktör olduğunu görürüz.</p>
+</div>
+<div id="parçalı-doğrusal-regresyondaki-rolü" class="section level2">
+<h2><span class="header-section-number">7.4</span> Parçalı Doğrusal Regresyondaki Rolü</h2>
+<p>Parçalı doğrusal regresyonu anlamak için Türkiye’ye ait Covid-19 verilerini kullanacağız. Bu veriler 98 vaka ve sonrasına ait 13 günü kapsamaktadır.</p>
+<div class="sourceCode" id="cb137"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb137-1" title="1">zaman &lt;-<span class="st"> </span><span class="kw">seq</span>(<span class="dv">1</span>,<span class="dv">13</span>,<span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb137-2" title="2">vaka &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">98</span>, <span class="dv">192</span>, <span class="dv">359</span>, <span class="dv">670</span>, <span class="dv">947</span>, <span class="dv">1236</span>, <span class="dv">1529</span>, <span class="dv">1872</span>, <span class="dv">2433</span>, <span class="dv">3629</span>, <span class="dv">5698</span>, <span class="dv">7402</span>, <span class="dv">9217</span>)</a>
+<a class="sourceLine" id="cb137-3" title="3">df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">zaman =</span> zaman, <span class="dt">vaka =</span> vaka)</a>
+<a class="sourceLine" id="cb137-4" title="4"></a>
+<a class="sourceLine" id="cb137-5" title="5"><span class="kw">ggplot</span>(df, <span class="kw">aes</span>(<span class="dt">x =</span> <span class="kw">factor</span>(zaman), <span class="dt">y =</span> vaka)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb137-6" title="6"><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb137-7" title="7"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="dv">9</span>, <span class="dt">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb137-8" title="8"><span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb137-9" title="9"><span class="st">  </span><span class="kw">labs</span>(<span class="dt">x =</span> <span class="st">&quot;zaman&quot;</span>)</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-74-1.png" width="672" /></p>
+<p>Vaka sayısının 9. güne kadar normal bir seyirde giderken bundan sonra yönünü yukarı kırdığını görüyoruz. Yani, iki farklı doğru görmekteyiz. 9. gün için eşik değer diyebiliriz. İşte bu bir parçalı doğrusal regresyondur ve bu parçaların kendilerine ait eğimleri vardır. Bu ayrıklığı hesaba katmak için kukla değişkenlerden yararlanacağız:</p>
+<p><span class="math inline">\(Y_i = \beta_1 + \beta_2X_i + \beta_3(X_i - X^*)D_i + \epsilon_i\)</span></p>
+<p>Burada, Y vaka sayısı; X zaman ya da gündür. <span class="math inline">\(X^*\)</span> zamanın önceden bilinen eşik değeridir ve D = 1 (<span class="math inline">\(X_i &gt; X^*\)</span>), D = 0 (<span class="math inline">\(X_i &lt; X^*\)</span>) olur. <span class="math inline">\(\beta_3\)</span> istatistiksel olarak anlamlı ise farklı eğimler olduğu sonucuna ulaşırız.</p>
+<p>Parçalara ayrılmış regresyon doğruları şöyle olur:</p>
+<p><span class="math inline">\(E(Y_i) = \beta_1 + \beta_2X_i, D_i = 0\)</span> için</p>
+<p><span class="math inline">\(E(Y_i) = (\beta_1 - \beta_3X^*) + (\beta_2 + \beta_3)X_i, D_i = 1\)</span> için</p>
+<p><span class="math inline">\(\beta_2\)</span> eşikten önceki regresyon doğrusunun; <span class="math inline">\(\beta_2 + \beta_3\)</span> ise eşikten sonraki regresyon doğrusunun eğimini verir.</p>
+<div class="sourceCode" id="cb138"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb138-1" title="1">df<span class="op">$</span>A &lt;-<span class="st"> </span>df<span class="op">$</span>zaman <span class="op">-</span><span class="st"> </span><span class="dv">9</span> <span class="co">#eşik değerden çıkar.</span></a>
+<a class="sourceLine" id="cb138-2" title="2">df<span class="op">$</span>D &lt;-<span class="st"> </span><span class="kw">ifelse</span>(df<span class="op">$</span>A <span class="op">&gt;</span><span class="st"> </span><span class="dv">0</span>, <span class="dv">1</span>, <span class="dv">0</span>) <span class="co">#0&#39;dan büyükse 1; değilse 0 ata.</span></a>
+<a class="sourceLine" id="cb138-3" title="3">df<span class="op">$</span>AD &lt;-<span class="st"> </span>df<span class="op">$</span>A <span class="op">*</span><span class="st"> </span>df<span class="op">$</span>D <span class="co">#her iki sütunu çarp.</span></a>
+<a class="sourceLine" id="cb138-4" title="4"></a>
+<a class="sourceLine" id="cb138-5" title="5">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> vaka <span class="op">~</span><span class="st"> </span>zaman <span class="op">+</span><span class="st"> </span>AD, <span class="dt">data =</span> df)</a>
+<a class="sourceLine" id="cb138-6" title="6"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = vaka ~ zaman + AD, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -257.84  -71.39   -7.90   45.57  307.69 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  -365.27     106.90  -3.417  0.00658 ** 
+## zaman         276.73      18.05  15.329 2.84e-08 ***
+## AD           1484.80      51.56  28.796 5.94e-11 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 151 on 10 degrees of freedom
+## Multiple R-squared:  0.9978, Adjusted R-squared:  0.9974 
+## F-statistic:  2286 on 2 and 10 DF,  p-value: 4.948e-14</code></pre>
+<p>Tahmin edilen bütün regresyon parametreleri tek tek (t) ve toplu (F) olarak istatistiksel açıdan anlamlıdır. İki regresyon doğrusunun da eğim parametrelerinin farklı olduğunu söyleyebiliriz.</p>
+<p>Ortalama Vaka Sayısı = -365.27 + 276.73Zaman, Zaman &lt; 9</p>
+<p>Ortalama Vaka Sayısı = (-365.27 - 1484.80*9) + (276.73 + 1484.80)Zaman, Zaman &gt; 9</p>
+<p>Ortalama Vaka sayısı = -13728.47 + 1761.53Zaman, Zaman &gt; 9</p>
+<p>Eşik güne kadar zamandaki birim artış başına birim vaka sayısı 277 artarken; eşikten sonra 1762 artmıştır.</p>
+<div class="sourceCode" id="cb140"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb140-1" title="1"><span class="co">#Paket yardımı ile aşağıdaki gibi bulunabilir:</span></a>
+<a class="sourceLine" id="cb140-2" title="2">model &lt;-<span class="st"> </span><span class="kw">segmented</span>(<span class="dt">obj =</span> <span class="kw">lm</span>(vaka <span class="op">~</span><span class="st"> </span>zaman, <span class="dt">data =</span> df), <span class="dt">seg.Z =</span> <span class="op">~</span>zaman, <span class="dt">psi =</span> <span class="kw">list</span>(<span class="dt">zaman =</span> <span class="dv">9</span>)) <span class="co">#Kırılma birden fazla ise c(...) ile eklenebilir.</span></a>
+<a class="sourceLine" id="cb140-3" title="3"><span class="co">#summary(model)</span></a>
+<a class="sourceLine" id="cb140-4" title="4"><span class="co">#slope(model)</span></a></code></pre></div>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="çoklu-do-rusal-ba-lant-.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["rEkonometri.pdf", "rEkonometri.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

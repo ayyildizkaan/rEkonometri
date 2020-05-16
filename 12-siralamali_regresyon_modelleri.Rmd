@@ -1,0 +1,100 @@
+# Sıralamalı Regresyon Modelleri
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr);library(MASS);library(stargazer);library(VGAM)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df <- read_excel("Table10_4_data.xls")
+
+```
+
+## Sıralı Logit Model
+
+```{r}
+
+str(df)
+
+```
+
+Üniversite son sınıf öğrencilerinin yüksek lisansa başvurmaları ne durumdadır?
+
+Bağımlı değişken:
+
+* **apply:** 1: ihtimal dışı, 2: muhtemel, 3: kuvvetle muhtemel
+
+Bağımsız değişken(ler):
+
+* **pared:** En az bir ebeveynin yüksek lisans eğitimi varsa 1
+
+* **public:** Devlet üniversite ise 1
+
+* **gpa:** Öğrencinin not ortalaması
+
+Modeli kurmadan önce factor olacak apply bağımlı değişkeninin kategorilerini sıralayalım.
+
+```{r}
+
+df$apply <- factor(df$apply, levels = c("unlikely","somewhat likely","very likely"))
+
+```
+
+Modeli kuralım.
+
+```{r}
+
+ologitmodel <- polr(apply ~ pared + public + gpa, data = df, Hess = TRUE)
+summary(ologitmodel)
+
+```
+
+```{r}
+
+stargazer(ologitmodel, type = "text")
+
+```
+
+pared ve gpa değişkenleri istatistiksel olarak anlamlı çıkarken public aynı sonucu göstermemiştir.
+
+```{r}
+
+exp(ologitmodel$coefficients) #Nispi bahis oranları
+
+```
+
+Diğer faktörler sabit tutulduğunda;
+
+pared değişkenini 1 birim artırdığımızda (0'dan 1'e) unlikely ve somewhat likely başvuru bileşimine göre very likely başvuru bahis oranı hiçbir ebeveynin yüksek lisans eğitimi almaması durumunda 2.85 kez büyük olur.
+
+Unlikely ve somewhat likely başvuru kategorilerine göre very likely başvuru kategorisinin bahis oranı gpa'deki 1 birimlik artış için gpa'in artmamış olmasından 1.85 kez daha büyüktür.
+
+Oransal odds varsayım modeli, logit regresyonun sıralı sonuçlara göre genelleştirilmesini sağlayan bir karşılaştırma yaklaşımının kümülatif model türüdür. Oransal odds modelinde bağımlı değişken, kümülatif olasılıklara dayanmakta ve paralel eğimler varsayımı denmektedir. Sıralı logit modelinin temelinde paralel eğimler varsayımı vardır. Bu varsayım, parametrelerin farklı kategorik düzeyler için regresyon eğrilerinin paralel olduğu yani değişmediği kabul eder. Şöyle ki, bağımlı değişken ile bağımsız değişkenler arasındaki korelasyon, bağımlı değişkenin farklı kategorik düzeyleri için değişmez ve parametre tahminleri eşik noktaları için de değişmez. Sıralı logit modelde paralel eğimler varsayımının sağlanıp sağlanmadığını anlamak için Brant'in Wald testi kullanılmaktadır. Burada, paralel eğimler varsayımının çoğunlukla sağlanmadığını ve araştırmacıların bu konuyu ihmal ettiği görülmektedir. Varsayımın sağlanmaması sıralı logit model sonuçlarını güvenilmez yapmaktadır. Biz aşağıda oransallık testi yaptık.
+
+Aynı sonuçları şöyle de alabiliriz:
+
+```{r}
+
+paralelreg <- vglm(apply ~ pared + public + gpa, df, family = cumulative(link = "logit", parallel = TRUE, reverse = TRUE))
+summary(paralelreg)
+
+```
+
+Oransallık testi için paralel (az önce kurduk) ve paralel olmayan iki regresyon kuruyoruz.
+
+```{r}
+
+paraleldegilreg <- vglm(apply ~ pared + public + gpa, df, family = cumulative(link = "logit", parallel = FALSE, reverse = TRUE))
+
+```
+
+Olasılığı elde etmek için;
+
+```{r}
+
+pchisq(q = -2*(logLik(paralelreg) - logLik(paraleldegilreg)),
+       df = df.residual(paralelreg) - df.residual(paraleldegilreg),
+       lower.tail = FALSE)
+
+```
+
+Yüksek bir olasılık elde ettiğimizi için oransal bahis oranı varsayımının geçerli olduğunu görmekteyiz.

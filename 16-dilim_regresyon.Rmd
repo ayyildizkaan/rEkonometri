@@ -1,0 +1,116 @@
+# Dilim (Kantil) Regresyon
+
+*Bazen klasik modelin varsayım ihlallerine karşı, Sıradan En Küçük Kareler'den daha az duyarlı alternatifler olup olmadığına bakmak akıllıca olabilir* diyor Gujarati.
+
+Biz bir olasılık dağılımının temel özelliklerini genellikle ortalama (beklenen değer), varyans, çarpıklık (simetri ölçüsü) ve basıklık (sivrilik derecesi) gibi momentler denilen özet nicelikler açısından ele alırız fakat dilim regresyon ile bunlara bakmak yerine bunları dilimler olarak adlandırılan dağılımın çeşitli segmentleri içinde inceleyebiliriz.
+
+Dilim dediğimiz şey şunlardır: Dörttebirlikler, beştebirlikler, ondabirlikler, yüzdebirlikler/yüzdelikler. Gözlem sayısını belirtilen sayılarda eşit gruplara böleriz. Örneğin, bir arabanın fiyatının 75. yüzdelik dilimde olduğunu söylemek bu arabanın fiyatının diğer arabaların fiyatlarının %75'ini aştığı anlamına gelir ya da aynı anlama gelecek şekilde %75'inin x fiyatına veya x fiyatından daha az fiyata sahip olduğunu söyleyebiliriz. Bir olasılık dağılımının %50 dilimi medyandır.
+
+Y, kümülatif dağılım fonksiyonu ya da CDF'i F olan sürekli bir rassal değişken; p ise 0-1 arasında bir sayı olsun. Y'nin p. dilimi $Q_p$ değeridir. Yani;
+
+Pr(Y ≤ $Q_p$) = F($Q_p$) = p
+
+Örneğin, $Q_{0.75}$ = 5 ise Y ≤ 5 olma olasılığı 0.75'e eşittir. CDF'in altında ve $Q_p$'nin solunda kalan kısmın alanı p; $Q_p$'nin sağında kalan kısmın alanı ise 1-p'dir.
+
+Şimdi dilim regresyon modeline bakabiliriz.
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr);library(quantreg)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df <- read_excel("Table1_1.xls")
+
+```
+
+```{r}
+
+df %<>% 
+  dplyr::select(wage, female, nonwhite, union, education, exper)
+
+```
+
+Sıradan En Küçük Kareler çıktısını hatırlayalım:
+
+```{r}
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper, data = df)
+summary(model)
+
+```
+
+wage değişkeninin dağılımına bakalım.
+
+```{r}
+
+ggplot(df, aes(x = wage)) +
+  geom_histogram() +
+  theme_minimal()
+
+```
+
+wage denilen saatlik ücretin sağa doğru uzanan bir kuyruğu olduğunu görüyoruz. Yani, veriler sağa çarpıktır. Buna bakmanın diğer iki yolu aşağıdaki gibidir.
+
+Kümülatif dağılım:
+
+```{r}
+
+ggplot(df, aes(x = wage)) +
+  stat_ecdf(geom = "step", pad = FALSE) +
+  theme_minimal()
+
+```
+
+Kümülatif dağılım fonksiyonun tersi dilimlerdir ($Q_p = F^{-1}$).
+
+```{r}
+
+ggplot(df, aes(x = wage)) +
+  stat_ecdf(geom = "step", pad = FALSE) +
+  theme_minimal() +
+  coord_flip()
+
+```
+
+Modeli kurabiliriz. İlk olarak 50. yüzdelik dilimin (medyan) sonuçlarına bakalım.
+
+```{r}
+
+model50 <- rq(formula = wage ~., tau = 0.5, data = df)
+summary.rq(model50)
+
+```
+
+education'daki 1 birimlik değişim ortalama saatlik ücrette 1.37 $'lık (bir önceki çıktıya bakın) artışa neden olmaktadır şeklinde yorumluyorduk. Bunu artık 1 birimlik bir değişime karşın medyan ücret oranındaki değişim olarak yorumlayacağız.
+
+exper 1 yıl arttığında medyan ücret 0.15 $ artar (bir önceki çıktıyla neredeyse aynı).
+
+Kadınların medyan ücreti erkeklerden 2.78 $ daha düşüktür (female).
+
+Sendikalı işçilerin medyan ücreti sendikalı olmayan işçilerden 1.68 $ daha yüksektir (union).
+
+Beyaz olmayanların medyan ücreti beyaz işçilerden 0.82 $ daha düşüktür (nonwhite).
+
+Karşılaştırma yapmak amacıyla 25. ve 75. dilimleri de ekleyelim. regresyon istenilen bir dilimde kurulabilir.
+
+```{r}
+
+model25 <- rq(formula = wage ~., tau = 0.25, data = df)
+summary.rq(model25)
+
+```
+
+```{r}
+
+model75 <- rq(formula = wage ~., tau = 0.75, data = df)
+summary.rq(model75)
+
+```
+
+Dilim parametreleri kendi aralarında istatistiksel olarak farklılaşır mı? Aşağıdaki test ile parametre değerlerinin dilimler arasında aynı olduğu hipotezini güçlü bir şekilde reddediyoruz.
+
+```{r}
+
+anova.rq(model25, model50, model75)
+
+```

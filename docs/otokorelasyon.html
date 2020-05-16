@@ -1,0 +1,487 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Konu 10 Otokorelasyon | R’da Ekonometri Uygulamaları</title>
+  <meta name="description" content="Ekonometri uygulamalarını R’da yapın." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Konu 10 Otokorelasyon | R’da Ekonometri Uygulamaları" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Konu 10 Otokorelasyon | R’da Ekonometri Uygulamaları" />
+  
+  <meta name="twitter:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+<meta name="author" content="Ahmet Akgül (rpydaneogrendim)" />
+
+
+<meta name="date" content="2020-05-16" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="de-i-en-varyans.html"/>
+<link rel="next" href="model-tan-mlama-hatalar-.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R'da Ekonometri Uygulamaları</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Nelere İhtiyacınız Olacak?</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#kullanılan-kütüphaneler"><i class="fa fa-check"></i><b>1.1</b> Kullanılan Kütüphaneler</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#kullanılan-veri-setleri"><i class="fa fa-check"></i><b>1.2</b> Kullanılan Veri Setleri</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html"><i class="fa fa-check"></i><b>2</b> Veri ve Model Çeşitleri</a><ul>
+<li class="chapter" data-level="2.1" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#veri-çeşitleri"><i class="fa fa-check"></i><b>2.1</b> Veri Çeşitleri</a></li>
+<li class="chapter" data-level="2.2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#model-çeşitleri"><i class="fa fa-check"></i><b>2.2</b> Model Çeşitleri</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="do-rusal-regresyon-modeli.html"><a href="do-rusal-regresyon-modeli.html"><i class="fa fa-check"></i><b>3</b> Doğrusal Regresyon Modeli</a></li>
+<li class="chapter" data-level="4" data-path="regresyon-modelleriyle-öngörü.html"><a href="regresyon-modelleriyle-öngörü.html"><i class="fa fa-check"></i><b>4</b> Regresyon Modelleriyle Öngörü</a></li>
+<li class="chapter" data-level="5" data-path="francis-galton-ve-regresyon-terimi.html"><a href="francis-galton-ve-regresyon-terimi.html"><i class="fa fa-check"></i><b>5</b> Francis Galton ve Regresyon Terimi</a></li>
+<li class="chapter" data-level="6" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><i class="fa fa-check"></i><b>6</b> Değişkenleri Doğrusal Olmayan Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="6.1" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-doğrusal-ya-da-çift-log-modeller"><i class="fa fa-check"></i><b>6.1</b> Log-Doğrusal ya da Çift-Log Modeller</a></li>
+<li class="chapter" data-level="6.2" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-lin-ya-da-yarı-logaritmik-modeller"><i class="fa fa-check"></i><b>6.2</b> Log-Lin ya da Yarı-Logaritmik Modeller</a></li>
+<li class="chapter" data-level="6.3" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#lin-log-modeller"><i class="fa fa-check"></i><b>6.3</b> Lin-Log Modeller</a></li>
+<li class="chapter" data-level="6.4" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#ters-modeller"><i class="fa fa-check"></i><b>6.4</b> Ters Modeller</a></li>
+<li class="chapter" data-level="6.5" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#polinom-regresyon-modelleri"><i class="fa fa-check"></i><b>6.5</b> Polinom Regresyon Modelleri</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html"><i class="fa fa-check"></i><b>7</b> Kukla Değişkenli Regresyon Modeli</a><ul>
+<li class="chapter" data-level="7.1" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#kukla-değişkenlerin-yorumu"><i class="fa fa-check"></i><b>7.1</b> Kukla Değişkenlerin Yorumu</a></li>
+<li class="chapter" data-level="7.2" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#yapısal-değişimdeki-rolü"><i class="fa fa-check"></i><b>7.2</b> Yapısal Değişimdeki Rolü</a></li>
+<li class="chapter" data-level="7.3" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#mevsimsellikteki-rolü"><i class="fa fa-check"></i><b>7.3</b> Mevsimsellikteki Rolü</a></li>
+<li class="chapter" data-level="7.4" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#parçalı-doğrusal-regresyondaki-rolü"><i class="fa fa-check"></i><b>7.4</b> Parçalı Doğrusal Regresyondaki Rolü</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html"><i class="fa fa-check"></i><b>8</b> Çoklu Doğrusal Bağlantı</a><ul>
+<li class="chapter" data-level="8.1" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#temel-bileşenler-analiziregresyonu"><i class="fa fa-check"></i><b>8.1</b> Temel Bileşenler Analizi/Regresyonu</a></li>
+<li class="chapter" data-level="8.2" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#ridge-regresyon"><i class="fa fa-check"></i><b>8.2</b> Ridge Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html"><i class="fa fa-check"></i><b>9</b> Değişen Varyans</a><ul>
+<li class="chapter" data-level="9.1" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#breusch-pagan"><i class="fa fa-check"></i><b>9.1</b> Breusch-Pagan</a></li>
+<li class="chapter" data-level="9.2" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#white"><i class="fa fa-check"></i><b>9.2</b> White</a></li>
+<li class="chapter" data-level="9.3" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#robust-standart-hatalar"><i class="fa fa-check"></i><b>9.3</b> Robust Standart Hatalar</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="otokorelasyon.html"><a href="otokorelasyon.html"><i class="fa fa-check"></i><b>10</b> Otokorelasyon</a><ul>
+<li class="chapter" data-level="10.1" data-path="otokorelasyon.html"><a href="otokorelasyon.html#durbin-watson-d"><i class="fa fa-check"></i><b>10.1</b> Durbin-Watson d</a></li>
+<li class="chapter" data-level="10.2" data-path="otokorelasyon.html"><a href="otokorelasyon.html#breusch-godfrey"><i class="fa fa-check"></i><b>10.2</b> Breusch-Godfrey</a></li>
+<li class="chapter" data-level="10.3" data-path="otokorelasyon.html"><a href="otokorelasyon.html#hac-yöntemi"><i class="fa fa-check"></i><b>10.3</b> HAC Yöntemi</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html"><i class="fa fa-check"></i><b>11</b> Model Tanımlama Hataları</a><ul>
+<li class="chapter" data-level="11.1" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#eksik-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.1</b> Eksik Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.2" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aşırı-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.2</b> Aşırı Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.3" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#yanlış-fonksiyon-yapısı"><i class="fa fa-check"></i><b>11.3</b> Yanlış Fonksiyon Yapısı</a></li>
+<li class="chapter" data-level="11.4" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#ölçüm-hataları"><i class="fa fa-check"></i><b>11.4</b> Ölçüm Hataları</a></li>
+<li class="chapter" data-level="11.5" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aykırı-değer-yüksek-kaldıraç-etkisi-baskın-nokta-ve-simüle-edilmiş-veriler"><i class="fa fa-check"></i><b>11.5</b> Aykırı Değer, Yüksek Kaldıraç Etkisi, Baskın Nokta ve Simüle Edilmiş Veriler</a></li>
+<li class="chapter" data-level="11.6" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#hata-teriminin-olasılık-dağılımı"><i class="fa fa-check"></i><b>11.6</b> Hata Teriminin Olasılık Dağılımı</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><i class="fa fa-check"></i><b>12</b> Doğrusal Olasılık, Logit ve Probit Modeller</a><ul>
+<li class="chapter" data-level="12.1" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#doğrusal-olasılık"><i class="fa fa-check"></i><b>12.1</b> Doğrusal Olasılık</a></li>
+<li class="chapter" data-level="12.2" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#logit-modeli"><i class="fa fa-check"></i><b>12.2</b> Logit Modeli</a></li>
+<li class="chapter" data-level="12.3" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#probit-model"><i class="fa fa-check"></i><b>12.3</b> Probit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>13</b> Çok Terimli Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="13.1" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#çok-terimli-logit-model"><i class="fa fa-check"></i><b>13.1</b> Çok Terimli Logit Model</a></li>
+<li class="chapter" data-level="13.2" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#koşullu-logit-model"><i class="fa fa-check"></i><b>13.2</b> Koşullu Logit Model</a></li>
+<li class="chapter" data-level="13.3" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#karma-logit-model"><i class="fa fa-check"></i><b>13.3</b> Karma Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html"><i class="fa fa-check"></i><b>14</b> Sıralamalı Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="14.1" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html#sıralı-logit-model"><i class="fa fa-check"></i><b>14.1</b> Sıralı Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><a href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>15</b> Sınırlı Bağımlı Değişkenli Regresyon Modelleri</a></li>
+<li class="chapter" data-level="16" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html"><i class="fa fa-check"></i><b>16</b> Sayma Verilerini Modelleme</a><ul>
+<li class="chapter" data-level="16.1" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#poisson-regresyon"><i class="fa fa-check"></i><b>16.1</b> Poisson Regresyon</a></li>
+<li class="chapter" data-level="16.2" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#negatif-binom-regresyon"><i class="fa fa-check"></i><b>16.2</b> Negatif Binom Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html"><i class="fa fa-check"></i><b>17</b> Dinamik Ekonometri Modelleri</a><ul>
+<li class="chapter" data-level="17.1" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html#otoregresif-dağıtılmış-gecikme-modelleri-ardl"><i class="fa fa-check"></i><b>17.1</b> Otoregresif Dağıtılmış Gecikme Modelleri (ARDL)</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="dilim-kantil-regresyon.html"><a href="dilim-kantil-regresyon.html"><i class="fa fa-check"></i><b>18</b> Dilim (Kantil) Regresyon</a></li>
+<li class="chapter" data-level="19" data-path="yararlan-lan-kaynaklar.html"><a href="yararlan-lan-kaynaklar.html"><i class="fa fa-check"></i><b>19</b> Yararlanılan Kaynaklar</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rpydaneogrendim" target="blank">Github profilimi ziyaret edin.</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R’da Ekonometri Uygulamaları</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="otokorelasyon" class="section level1">
+<h1><span class="header-section-number">Konu 10</span> Otokorelasyon</h1>
+<p>Hata terimleri korelasyonsuzdur. Yani, bir hata teriminin bir önceki ya da geçmiş dönemlerdeki hata terimiyle korelasyonlu olmamasıdır.</p>
+<p>Otokorelasyon aşağıdaki nedenler dolayı ortaya çıkabilir.</p>
+<ul>
+<li><p>Dışlanan değişkenler.</p></li>
+<li><p>Yanlış belirlenen fonksiyon kalıbı.</p></li>
+<li><p>Ölçme hataları.</p></li>
+<li><p>Tesadüfi olarak ortaya çıkan savaş, kuraklık gibi olaylar etkilerini ortaya çıktıkları dönemlerden sonra da sürdürebilirler. Bu durum hata terimini etkileyceğinden otokorelasyona neden olabilir.</p></li>
+</ul>
+<p>Otokorelasyon varsa neler olur?</p>
+<ul>
+<li><p>Sıradan En Küçük Kareler tahmincileri yansız ve tutarlı olmayı sürdürecektir. Aynı zamanda tahminciler büyük örneklemlerde normal dağılımlı olmayı da sürdürücektir.</p></li>
+<li><p>Fakat tahminciler artık etkin olmayacaktır. Çoğu durumda Sıradan En Küçük Kareler standart hataları düşük tahmin edilmiş olacak. Bu, tahmini t değerlerinin şişirilmesidir. Bu ise bir parametrenin gerçekte olması gerekenden daha anlamlı görünmesini sağlayacaktır. Sonuç olarak güven azalacağından t ve F testleri geçerliliğini kaybedebilir (değişen varyansta da aynısı söylemiştik).</p></li>
+</ul>
+<div class="sourceCode" id="cb213"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb213-1" title="1"><span class="kw">library</span>(readxl);<span class="kw">library</span>(tidyverse);<span class="kw">library</span>(magrittr);<span class="kw">library</span>(lmtest);<span class="kw">library</span>(sandwich);<span class="kw">library</span>(car)</a></code></pre></div>
+<div class="sourceCode" id="cb214"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb214-1" title="1"><span class="kw">setwd</span>(<span class="st">&quot;C:/Users/datanerd/Desktop/Github/rEkonometri/data&quot;</span>)</a>
+<a class="sourceLine" id="cb214-2" title="2">df &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table6_1.xls&quot;</span>)</a>
+<a class="sourceLine" id="cb214-3" title="3">df <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb214-4" title="4"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(consumption, income, wealth, interest)</a>
+<a class="sourceLine" id="cb214-5" title="5"></a>
+<a class="sourceLine" id="cb214-6" title="6"><span class="kw">str</span>(df)</a></code></pre></div>
+<pre><code>## tibble [54 x 4] (S3: tbl_df/tbl/data.frame)
+##  $ consumption: num [1:54] 976 998 1025 1091 1107 ...
+##  $ income     : num [1:54] 1035 1090 1096 1193 1227 ...
+##  $ wealth     : num [1:54] 5167 5281 5607 5760 6086 ...
+##  $ interest   : num [1:54] -10.351 -4.72 1.044 0.407 -5.283 ...</code></pre>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>consumption:</strong> Reel tüketim harcamaları</li>
+</ul>
+<p>Bağımsız değişken(ler):</p>
+<ul>
+<li><p><strong>income:</strong> Reel harcanabilir kişisel gelir</p></li>
+<li><p><strong>wealth:</strong> Reel servet</p></li>
+<li><p><strong>interest:</strong> Reel faiz oranları</p></li>
+</ul>
+<div class="sourceCode" id="cb216"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb216-1" title="1">df <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb216-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">lnconsumption =</span> <span class="kw">log</span>(consumption),</a>
+<a class="sourceLine" id="cb216-3" title="3">         <span class="dt">lnincome =</span> <span class="kw">log</span>(income),</a>
+<a class="sourceLine" id="cb216-4" title="4">         <span class="dt">lnwealth =</span> <span class="kw">log</span>(wealth)) <span class="co">#interest değişkeni negatif değerler içerdiği için logaritması alınmadı.</span></a></code></pre></div>
+<p>Modeli kuralım.</p>
+<div class="sourceCode" id="cb217"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb217-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> lnconsumption <span class="op">~</span><span class="st"> </span>lnincome <span class="op">+</span><span class="st"> </span>lnwealth <span class="op">+</span><span class="st"> </span>interest, <span class="dt">data =</span> df)</a>
+<a class="sourceLine" id="cb217-2" title="2"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = lnconsumption ~ lnincome + lnwealth + interest, 
+##     data = df)
+## 
+## Residuals:
+##       Min        1Q    Median        3Q       Max 
+## -0.018441 -0.010001  0.000337  0.007039  0.032578 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -0.4677110  0.0427781 -10.933 7.33e-15 ***
+## lnincome     0.8048729  0.0174979  45.998  &lt; 2e-16 ***
+## lnwealth     0.2012700  0.0175926  11.441 1.43e-15 ***
+## interest    -0.0026891  0.0007619  -3.529 0.000905 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 0.01193 on 50 degrees of freedom
+## Multiple R-squared:  0.9996, Adjusted R-squared:  0.9995 
+## F-statistic: 3.783e+04 on 3 and 50 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Klasik doğrusal regresyon modelinin standart varsayımları sağlandığı kabulü altında parametrelerin tamamı istatistiksel olarak anlamlıdır (p değerleri düşük).</p>
+<p>Diğer değişkenler sabit tutulduğunda;</p>
+<p>income %1 arttığında consumption %0.8 artacaktır.</p>
+<p>wealth %1 arttığında %0.2 artacaktır.</p>
+<p>interest bir yüzdelik puan (%1 değil) arttığında consumption %0.26 azalacaktır.</p>
+<p>Yeri gelmişken belirtelim: Yüzde değişme ile yüzde puanlık değişme aynı şeyler değildir. Örneğin, işsizlik oranı %10 olsun. Bu oran %15’e çıkarsa işsizlik oranında %5 puanlık bir değişme olur. (15 - 10) / 10 ise yüzde değişmedir ki bu da %50’dir.</p>
+<p>1’e yakın <span class="math inline">\(R^2\)</span> sahte korelasyon izlenimi uyandırıyor.</p>
+<p>Modelimizde otokorelasyon olup olmadığını kontrol edelim.</p>
+<p>Chatfield, <em>bir zaman serisini çizimini yapmadan analiz etmeye çalışan kimse sorun arıyordur</em> der. Biz de testlere geçmeden önce grafik yöntemi ile otokorelasyon kovalayacağız.</p>
+<p>Otokorelasyon, hata terimleri arasındaki korelasyon olduğu için hata terimlerini kronolojik olarak grafiğe aktarabiliriz. Grafiğe aktaracağımız şey hata terimleri değil bunların temsilcileridir. Tabi örneklem büyüklüğü arttıkça gerçek değerlere yaklaşabiliriz ama bu veri setinde 54 gözlem bulunmaktadır.</p>
+<p>Aşağıdaki şekilde kırmızı düz çizgi kalıntıları temsil ederken; siyah kesikli çizgi kalıntıların regresyonun standart hatasına bölünmüş halidir. Grafikte gösterebilmek için kalıntıları 100 ile çarptık.</p>
+<div class="sourceCode" id="cb219"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb219-1" title="1">df<span class="op">$</span>res &lt;-<span class="st"> </span>model<span class="op">$</span>residuals</a>
+<a class="sourceLine" id="cb219-2" title="2">df<span class="op">$</span><span class="st">`</span><span class="dt">standartlaştırılmış</span><span class="st">`</span> &lt;-<span class="st"> </span>df<span class="op">$</span>res <span class="op">/</span><span class="st"> </span><span class="kw">summary</span>(model)<span class="op">$</span>sigma</a>
+<a class="sourceLine" id="cb219-3" title="3"></a>
+<a class="sourceLine" id="cb219-4" title="4">df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb219-5" title="5"><span class="st">  </span><span class="kw">mutate</span>(<span class="st">`</span><span class="dt">yıl</span><span class="st">`</span> =<span class="st"> </span><span class="kw">seq</span>(<span class="dv">1947</span>, <span class="dv">2000</span>, <span class="dv">1</span>)) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb219-6" title="6"><span class="st">  </span><span class="kw">ggplot</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb219-7" title="7"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="st">`</span><span class="dt">yıl</span><span class="st">`</span>, <span class="dt">y =</span> res <span class="op">*</span><span class="st"> </span><span class="dv">100</span>, <span class="dt">group =</span> <span class="dv">1</span>), <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb219-8" title="8"><span class="st">  </span><span class="kw">geom_line</span>(<span class="kw">aes</span>(<span class="dt">x =</span> <span class="st">`</span><span class="dt">yıl</span><span class="st">`</span>, <span class="dt">y =</span> <span class="st">`</span><span class="dt">standartlaştırılmış</span><span class="st">`</span>, <span class="dt">group =</span> <span class="dv">1</span>), <span class="dt">linetype =</span> <span class="st">&quot;dashed&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb219-9" title="9"><span class="st">  </span><span class="kw">theme_minimal</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb219-10" title="10"><span class="st">  </span><span class="kw">theme</span>(<span class="dt">axis.title =</span> <span class="kw">element_blank</span>())</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-120-1.png" width="672" /></p>
+<p>Yukarıdaki inişli-çıkışlı örüntü, korelasyon sergilemektedir. Ne tür bir korelasyon olduğunu görmek için kalıntıları bir dönem gecikmeleri ile serpilme grafiğine aktaracağız.</p>
+<div class="sourceCode" id="cb220"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb220-1" title="1">df<span class="op">$</span>res2 &lt;-<span class="st"> </span><span class="kw">lag</span>(df<span class="op">$</span>res)</a>
+<a class="sourceLine" id="cb220-2" title="2"></a>
+<a class="sourceLine" id="cb220-3" title="3">df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb220-4" title="4"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> res2, <span class="dt">y =</span> res)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb220-5" title="5"><span class="st">  </span><span class="kw">geom_point</span>(<span class="dt">alpha =</span> <span class="fl">0.5</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb220-6" title="6"><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb220-7" title="7"><span class="st">  </span><span class="kw">theme_minimal</span>()</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-121-1.png" width="672" /></p>
+<p>Kalıntıların pozitif korelasyonlu olduklarını görüyoruz.</p>
+<p>Bu yaptığımız ipucu verse de öznel ya da nitel testtir. Bir de nicel testler bulunmaktadır.</p>
+<div id="durbin-watson-d" class="section level2">
+<h2><span class="header-section-number">10.1</span> Durbin-Watson d</h2>
+<p>d değeri 0-4 arasındadır. 0’a yakınlık pozitif otokorelasyonun kanıtını artırır; 4’e yakınlık negatif otokorelasyonun kanıtını artırır; 2 civarı pozitif ya da negatif otokorelasyon kanıtı yoktur demektir.</p>
+<div class="sourceCode" id="cb221"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb221-1" title="1"><span class="kw">durbinWatsonTest</span>(model)</a></code></pre></div>
+<pre><code>##  lag Autocorrelation D-W Statistic p-value
+##    1       0.2977616      1.289218    0.01
+##  Alternative hypothesis: rho != 0</code></pre>
+<p>Kurduğumuz model için d istatistiğini 1.29 bulduk. Peki, nasıl karar vereceğiz?</p>
+<p><span class="math inline">\(d_L\)</span> alt sınır; <span class="math inline">\(d_U\)</span> ise üst sınır olmak üzere eğer;</p>
+<ol style="list-style-type: lower-roman">
+<li><p>d &lt; <span class="math inline">\(d_L\)</span> ise pozitif otokorelasyonun muhtemel kanıtı vardır.</p></li>
+<li><p>d &gt; <span class="math inline">\(d_U\)</span> ise pozitif otokorelasyonun muhtemel kanıtı yoktur.</p></li>
+<li><p><span class="math inline">\(d_L\)</span> &lt; d &lt; <span class="math inline">\(d_U\)</span> ise pozitif otokorelasyon ile ilgili kesin bir sonuca varılamaz.</p></li>
+<li><p><span class="math inline">\(d_U\)</span> &lt; d &lt; 4 – <span class="math inline">\(d_U\)</span> ise pozitif ya da negatif otokorelasyonun muhtemel kanıtı yoktur.</p></li>
+<li><p>4 – <span class="math inline">\(d_U\)</span> &lt; d &lt; 4 – <span class="math inline">\(d_L\)</span> ise negatif otokorelasyonla ilgili kesin bir sonuca varılamaz.</p></li>
+<li><p>4 – <span class="math inline">\(d_L\)</span> &lt; d &lt; 4 ise negatif otokorelasyonun muhtemel kanıtı vardır.</p></li>
+</ol>
+<p>Tablo değerlerine <a href="https://www3.nd.edu/~wevans1/econ30331/Durbin_Watson_tables.pdf"><u>buradan</u></a> ulaşabilirsiniz. n’i 54 alıyoruz ama tabloda n = 55 alınabilir. k ise bağımsız değişken sayısıdır ki bu da 3’tür. %5 için d değerleri 1.452 ve 1.681’dir.</p>
+<p><img src="img/durbin-watson.PNG" width="100%" /></p>
+<p>Hesapladığımız d değeri 1.29 idi. Bu da alt sınıra yakın demektir. d &lt; <span class="math inline">\(d_L\)</span> için pozitif otokorelasyonun muhtemel kanıtı vardır demiştik. Grafik ile de aynı sonuca ulaşmıştık.</p>
+<p>Tabi d istatistiğinin varsayımlarını atlamamak gerekiyor:</p>
+<ol style="list-style-type: lower-roman">
+<li><p>Regresyon modeli kesme terimi içerecek.</p></li>
+<li><p>Yinelenen örneklemlerde bağımsız değişkenler sabit olacak (hata teriminden bağımsızlık).</p></li>
+<li><p>Hata terimi birinci dereceden otoregresif olacak. Yani, bugünkü hata terimi ile bir önceki hata terimi.</p></li>
+<li><p>Hata terimi normal dağılımlı olacak.</p></li>
+<li><p>Bağımsız değişkenler bağımlı değişkenin gecikmeli değerlerini içermeyecek.</p></li>
+</ol>
+<p>Durbin-Watson d testini kullanamadığımız bir durum vardır. Eğer bu modeli otoregresif model yaparsak; yani, modelde bağımsız değişkenlerden bir tanesi bağımlı değişkenin gecikmeli değerini içeriyorsa bu test kullanılamaz.</p>
+</div>
+<div id="breusch-godfrey" class="section level2">
+<h2><span class="header-section-number">10.2</span> Breusch-Godfrey</h2>
+<p>Bu test ile az önce gördüğümüz testin kısıtlarından kurtulacağız. Bu test ile bağımlı değişkenlerin gecikmeli değerleri bağımsız değişkenlere dahil edilebilecek, daha yüksek mertebeli otoregresifler olabilecek, hata teriminin hareketli ortalama terimlerine imkan tanınabilecek.</p>
+<p>Testteki ilk adım Sıradan En Küçük Kareler ile modeli oluşturmak ve kalıntıları bulmaktır. Ardından bu kalıntıların bağımsız değişkenler ile otoregresif terimlere göre regresyonu alınır. Büyük örneklemde <span class="math inline">\(\chi^2\)</span> dağılımı izler (alternatif olarak F değeri kullanılabilir). <span class="math inline">\(\chi^2\)</span> değeri belirlenen anlamlılık düzeyindeki kritik değeri aşıyorsa <span class="math inline">\(H_0\)</span> reddedilir. Bu red de otokorelasyonun varlığına işaret eder. Aynı yorum F için de geçerlidir. p değeri düşükse <span class="math inline">\(H_0\)</span>’ı reddedebiliriz.</p>
+<div class="sourceCode" id="cb223"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb223-1" title="1"><span class="kw">bgtest</span>(model, <span class="dt">order =</span> <span class="dv">1</span>, <span class="dt">type =</span> <span class="st">&quot;F&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Breusch-Godfrey test for serial correlation of order up to 1
+## 
+## data:  model
+## LM test = 5.3462, df1 = 1, df2 = 49, p-value = 0.02501</code></pre>
+<p>Sadece bir gecikmeli değer aldık ve F ve <span class="math inline">\(\chi^2\)</span> için ayrı ayrı gösterdik. p değerleri düşük olması <span class="math inline">\(H_0\)</span>’ın reddi olup otokorelasyonun varlığına işarettir. Buna ikinci ve üçüncü derecede de bakılabilir.</p>
+<div class="sourceCode" id="cb225"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb225-1" title="1"><span class="kw">bgtest</span>(model, <span class="dt">order =</span> <span class="dv">2</span>, <span class="dt">type =</span> <span class="st">&quot;F&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Breusch-Godfrey test for serial correlation of order up to 2
+## 
+## data:  model
+## LM test = 3.2541, df1 = 2, df2 = 48, p-value = 0.04728</code></pre>
+<div class="sourceCode" id="cb227"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb227-1" title="1"><span class="kw">bgtest</span>(model, <span class="dt">order =</span> <span class="dv">2</span>, <span class="dt">type =</span> <span class="st">&quot;Chisq&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Breusch-Godfrey test for serial correlation of order up to 2
+## 
+## data:  model
+## LM test = 6.4476, df = 2, p-value = 0.0398</code></pre>
+<div class="sourceCode" id="cb229"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb229-1" title="1"><span class="kw">bgtest</span>(model, <span class="dt">order =</span> <span class="dv">3</span>, <span class="dt">type =</span> <span class="st">&quot;F&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Breusch-Godfrey test for serial correlation of order up to 3
+## 
+## data:  model
+## LM test = 2.2032, df1 = 3, df2 = 47, p-value = 0.1001</code></pre>
+<div class="sourceCode" id="cb231"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb231-1" title="1"><span class="kw">bgtest</span>(model, <span class="dt">order =</span> <span class="dv">3</span>, <span class="dt">type =</span> <span class="st">&quot;Chisq&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+##  Breusch-Godfrey test for serial correlation of order up to 3
+## 
+## data:  model
+## LM test = 6.6577, df = 3, p-value = 0.08365</code></pre>
+<p>İkinci dereceden otoregresifin de istatistiksel olarak anlamlı çıkacağı görülecektir. Bu da ikinci dereceden otoregresif hata yapısının model için daha uygun olduğunu söyler.</p>
+<p>Breusch-Godfrey aşağıdaki özelliklere sahiptir:</p>
+<ol style="list-style-type: lower-roman">
+<li><p>Test, bağımsız değişken değerleri ile hata teriminin gecikmeli değerleri verildiğinde hata teriminin sabit varyanslı olduğunu varsayar.</p></li>
+<li><p>Testin uygulanmasında pratik bir sorun gecikmeli hata terimlerinin sayısının seçimidir. Bu, zaman serisinin türüne bağlı olabilmektedir. Aylık: 11, çeyrek: 3, yıllık: 1 yeterli olabilir.</p></li>
+</ol>
+<p>Otokorelasyonun varlığını ortaya koyduk. Düzeltmek için neler yapabiliriz?</p>
+<p>Birinci fark ya da genelleştirilmiş dönüşüm gibi yöntemler kullanılabilir. Bunlar deneme-yanılma yöntemleridir. Biz düzeltici önlem olarak Newey-West’in Sıradan En Küçük Kareler standart hatalarını düzeltme yöntemini göreceğiz.</p>
+</div>
+<div id="hac-yöntemi" class="section level2">
+<h2><span class="header-section-number">10.3</span> HAC Yöntemi</h2>
+<p>Buradaki şart örneklemin büyük olmasıdır. Bu yöntem ile düzeltilen standart hatalar değişen varyans ve otokorelasyon tutarlı standart hatalar (heteroskedasticity and autocorrelation consistent, hac) olarak da bilinir. Genel anlamda, eğer otokorelasyon varsa hac standart hatalarının her zamanki Sıradan En Küçük Kareler standart hatalarından daha büyük olduğu bulunmuştur.</p>
+<div class="sourceCode" id="cb233"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb233-1" title="1"><span class="kw">coeftest</span>(model, <span class="dt">vcov =</span> <span class="kw">NeweyWest</span>(model))</a></code></pre></div>
+<pre><code>## 
+## t test of coefficients:
+## 
+##                Estimate  Std. Error  t value  Pr(&gt;|t|)    
+## (Intercept) -0.46771100  0.04440193 -10.5336 2.716e-14 ***
+## lnincome     0.80487293  0.01621446  49.6392 &lt; 2.2e-16 ***
+## lnwealth     0.20126996  0.01452512  13.8567 &lt; 2.2e-16 ***
+## interest    -0.00268906  0.00082005  -3.2791    0.0019 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1</code></pre>
+<p>Hac yöntemi sadece standart hataları ve dolayısıyla t istatistiklerini ve p değerlerini değiştirir.</p>
+<p>Eğer ilk kurduğumuz model ile karşılaştırırsak aralarında önemli bir fark olmadığını göreceğiz. Bu durum değişik otokorelasyon sınamalarına dayanan otokorelasyon kanıtlarına rağmen otokorelasyon sorununun çok ciddi görünmediğini ortaya koyar.</p>
+<p>Eğer örneklem genişliği yeterince büyükse, otokorelasyon yapısıyla ilgili herhangi bir özel bilgi gerektirmeyen robust standart hataları ya da hac standart hatalarını kullanabiliriz.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="de-i-en-varyans.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="model-tan-mlama-hatalar-.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["rEkonometri.pdf", "rEkonometri.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

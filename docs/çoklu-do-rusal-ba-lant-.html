@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Konu 8 Çoklu Doğrusal Bağlantı | R’da Ekonometri Uygulamaları</title>
+  <meta name="description" content="Ekonometri uygulamalarını R’da yapın." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Konu 8 Çoklu Doğrusal Bağlantı | R’da Ekonometri Uygulamaları" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Konu 8 Çoklu Doğrusal Bağlantı | R’da Ekonometri Uygulamaları" />
+  
+  <meta name="twitter:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+<meta name="author" content="Ahmet Akgül (rpydaneogrendim)" />
+
+
+<meta name="date" content="2020-05-16" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="kukla-de-i-kenli-regresyon-modeli.html"/>
+<link rel="next" href="de-i-en-varyans.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R'da Ekonometri Uygulamaları</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Nelere İhtiyacınız Olacak?</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#kullanılan-kütüphaneler"><i class="fa fa-check"></i><b>1.1</b> Kullanılan Kütüphaneler</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#kullanılan-veri-setleri"><i class="fa fa-check"></i><b>1.2</b> Kullanılan Veri Setleri</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html"><i class="fa fa-check"></i><b>2</b> Veri ve Model Çeşitleri</a><ul>
+<li class="chapter" data-level="2.1" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#veri-çeşitleri"><i class="fa fa-check"></i><b>2.1</b> Veri Çeşitleri</a></li>
+<li class="chapter" data-level="2.2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#model-çeşitleri"><i class="fa fa-check"></i><b>2.2</b> Model Çeşitleri</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="do-rusal-regresyon-modeli.html"><a href="do-rusal-regresyon-modeli.html"><i class="fa fa-check"></i><b>3</b> Doğrusal Regresyon Modeli</a></li>
+<li class="chapter" data-level="4" data-path="regresyon-modelleriyle-öngörü.html"><a href="regresyon-modelleriyle-öngörü.html"><i class="fa fa-check"></i><b>4</b> Regresyon Modelleriyle Öngörü</a></li>
+<li class="chapter" data-level="5" data-path="francis-galton-ve-regresyon-terimi.html"><a href="francis-galton-ve-regresyon-terimi.html"><i class="fa fa-check"></i><b>5</b> Francis Galton ve Regresyon Terimi</a></li>
+<li class="chapter" data-level="6" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><i class="fa fa-check"></i><b>6</b> Değişkenleri Doğrusal Olmayan Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="6.1" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-doğrusal-ya-da-çift-log-modeller"><i class="fa fa-check"></i><b>6.1</b> Log-Doğrusal ya da Çift-Log Modeller</a></li>
+<li class="chapter" data-level="6.2" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-lin-ya-da-yarı-logaritmik-modeller"><i class="fa fa-check"></i><b>6.2</b> Log-Lin ya da Yarı-Logaritmik Modeller</a></li>
+<li class="chapter" data-level="6.3" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#lin-log-modeller"><i class="fa fa-check"></i><b>6.3</b> Lin-Log Modeller</a></li>
+<li class="chapter" data-level="6.4" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#ters-modeller"><i class="fa fa-check"></i><b>6.4</b> Ters Modeller</a></li>
+<li class="chapter" data-level="6.5" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#polinom-regresyon-modelleri"><i class="fa fa-check"></i><b>6.5</b> Polinom Regresyon Modelleri</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html"><i class="fa fa-check"></i><b>7</b> Kukla Değişkenli Regresyon Modeli</a><ul>
+<li class="chapter" data-level="7.1" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#kukla-değişkenlerin-yorumu"><i class="fa fa-check"></i><b>7.1</b> Kukla Değişkenlerin Yorumu</a></li>
+<li class="chapter" data-level="7.2" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#yapısal-değişimdeki-rolü"><i class="fa fa-check"></i><b>7.2</b> Yapısal Değişimdeki Rolü</a></li>
+<li class="chapter" data-level="7.3" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#mevsimsellikteki-rolü"><i class="fa fa-check"></i><b>7.3</b> Mevsimsellikteki Rolü</a></li>
+<li class="chapter" data-level="7.4" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#parçalı-doğrusal-regresyondaki-rolü"><i class="fa fa-check"></i><b>7.4</b> Parçalı Doğrusal Regresyondaki Rolü</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html"><i class="fa fa-check"></i><b>8</b> Çoklu Doğrusal Bağlantı</a><ul>
+<li class="chapter" data-level="8.1" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#temel-bileşenler-analiziregresyonu"><i class="fa fa-check"></i><b>8.1</b> Temel Bileşenler Analizi/Regresyonu</a></li>
+<li class="chapter" data-level="8.2" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#ridge-regresyon"><i class="fa fa-check"></i><b>8.2</b> Ridge Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html"><i class="fa fa-check"></i><b>9</b> Değişen Varyans</a><ul>
+<li class="chapter" data-level="9.1" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#breusch-pagan"><i class="fa fa-check"></i><b>9.1</b> Breusch-Pagan</a></li>
+<li class="chapter" data-level="9.2" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#white"><i class="fa fa-check"></i><b>9.2</b> White</a></li>
+<li class="chapter" data-level="9.3" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#robust-standart-hatalar"><i class="fa fa-check"></i><b>9.3</b> Robust Standart Hatalar</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="otokorelasyon.html"><a href="otokorelasyon.html"><i class="fa fa-check"></i><b>10</b> Otokorelasyon</a><ul>
+<li class="chapter" data-level="10.1" data-path="otokorelasyon.html"><a href="otokorelasyon.html#durbin-watson-d"><i class="fa fa-check"></i><b>10.1</b> Durbin-Watson d</a></li>
+<li class="chapter" data-level="10.2" data-path="otokorelasyon.html"><a href="otokorelasyon.html#breusch-godfrey"><i class="fa fa-check"></i><b>10.2</b> Breusch-Godfrey</a></li>
+<li class="chapter" data-level="10.3" data-path="otokorelasyon.html"><a href="otokorelasyon.html#hac-yöntemi"><i class="fa fa-check"></i><b>10.3</b> HAC Yöntemi</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html"><i class="fa fa-check"></i><b>11</b> Model Tanımlama Hataları</a><ul>
+<li class="chapter" data-level="11.1" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#eksik-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.1</b> Eksik Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.2" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aşırı-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.2</b> Aşırı Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.3" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#yanlış-fonksiyon-yapısı"><i class="fa fa-check"></i><b>11.3</b> Yanlış Fonksiyon Yapısı</a></li>
+<li class="chapter" data-level="11.4" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#ölçüm-hataları"><i class="fa fa-check"></i><b>11.4</b> Ölçüm Hataları</a></li>
+<li class="chapter" data-level="11.5" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aykırı-değer-yüksek-kaldıraç-etkisi-baskın-nokta-ve-simüle-edilmiş-veriler"><i class="fa fa-check"></i><b>11.5</b> Aykırı Değer, Yüksek Kaldıraç Etkisi, Baskın Nokta ve Simüle Edilmiş Veriler</a></li>
+<li class="chapter" data-level="11.6" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#hata-teriminin-olasılık-dağılımı"><i class="fa fa-check"></i><b>11.6</b> Hata Teriminin Olasılık Dağılımı</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><i class="fa fa-check"></i><b>12</b> Doğrusal Olasılık, Logit ve Probit Modeller</a><ul>
+<li class="chapter" data-level="12.1" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#doğrusal-olasılık"><i class="fa fa-check"></i><b>12.1</b> Doğrusal Olasılık</a></li>
+<li class="chapter" data-level="12.2" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#logit-modeli"><i class="fa fa-check"></i><b>12.2</b> Logit Modeli</a></li>
+<li class="chapter" data-level="12.3" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#probit-model"><i class="fa fa-check"></i><b>12.3</b> Probit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>13</b> Çok Terimli Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="13.1" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#çok-terimli-logit-model"><i class="fa fa-check"></i><b>13.1</b> Çok Terimli Logit Model</a></li>
+<li class="chapter" data-level="13.2" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#koşullu-logit-model"><i class="fa fa-check"></i><b>13.2</b> Koşullu Logit Model</a></li>
+<li class="chapter" data-level="13.3" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#karma-logit-model"><i class="fa fa-check"></i><b>13.3</b> Karma Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html"><i class="fa fa-check"></i><b>14</b> Sıralamalı Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="14.1" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html#sıralı-logit-model"><i class="fa fa-check"></i><b>14.1</b> Sıralı Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><a href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>15</b> Sınırlı Bağımlı Değişkenli Regresyon Modelleri</a></li>
+<li class="chapter" data-level="16" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html"><i class="fa fa-check"></i><b>16</b> Sayma Verilerini Modelleme</a><ul>
+<li class="chapter" data-level="16.1" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#poisson-regresyon"><i class="fa fa-check"></i><b>16.1</b> Poisson Regresyon</a></li>
+<li class="chapter" data-level="16.2" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#negatif-binom-regresyon"><i class="fa fa-check"></i><b>16.2</b> Negatif Binom Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html"><i class="fa fa-check"></i><b>17</b> Dinamik Ekonometri Modelleri</a><ul>
+<li class="chapter" data-level="17.1" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html#otoregresif-dağıtılmış-gecikme-modelleri-ardl"><i class="fa fa-check"></i><b>17.1</b> Otoregresif Dağıtılmış Gecikme Modelleri (ARDL)</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="dilim-kantil-regresyon.html"><a href="dilim-kantil-regresyon.html"><i class="fa fa-check"></i><b>18</b> Dilim (Kantil) Regresyon</a></li>
+<li class="chapter" data-level="19" data-path="yararlan-lan-kaynaklar.html"><a href="yararlan-lan-kaynaklar.html"><i class="fa fa-check"></i><b>19</b> Yararlanılan Kaynaklar</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rpydaneogrendim" target="blank">Github profilimi ziyaret edin.</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R’da Ekonometri Uygulamaları</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="çoklu-doğrusal-bağlantı" class="section level1">
+<h1><span class="header-section-number">Konu 8</span> Çoklu Doğrusal Bağlantı</h1>
+<p>Bağımsız değişkenler arasında tam ya da tama yakın doğrusal bir ilişki yoktur. Eğer bağımsız değişkenler arasında böyle bir ilişki varsa çoklu doğrusal bağlantı olarak tanımlanabilir.</p>
+<p>Öncelikle tam bir doğrusal bağlantı olduğu durumda Sıradan En Küçük Kareler tahminlerinin elde edilmesi mekanik olarak olanaksızdır. Bununla birlikte bağımsız değişkenler arasında tama yakın bir doğrusal bir ilişki de bulunabilir. Kennedy’nin altını çizdiği şu nokta önemlidir: <em>Çoklu doğrusallık bağımsız değişkenler arasındaki teorik ya da gerçek doğrusal ilişkinin var olup olmamasına bağlı değildir; varlığı üzerinde çalışılan veri kümesinde yaklaşık doğrusal bir ilişkinin var olup olmadığı ile ilgilidir.</em></p>
+<p>Çoklu doğrusal bağlantı varsa neler olur?</p>
+<ul>
+<li><p>Sıradan En Küçük Kareler tahmincileri BLUE’dur (Best Linear Unbiased Estimator, En İyi Doğrusal Yansız Tahmin Edici). Fakat hassas tahmini zorlaştıran büyük varyans ve kovaryanslar olacaktır.</p></li>
+<li><p>Güven aralıkları daha geniş olma eğiliminde olacaktır. Bunun sonucu olarak gerçek anakütle parametresinin sıfır olduğunu söyleyen <span class="math inline">\(H_0\)</span>’ı reddedemeyebiliriz.</p></li>
+<li><p>En az bir parametrenin t oranı istatistiksel olarak anlamlı çıkmama eğiliminde olacaktır.</p></li>
+<li><p>Regresyon parametreleri istatistiksel olarak anlamlı olmamasına rağmen <span class="math inline">\(R^2\)</span> değeri yüksek çıkabilir.</p></li>
+<li><p>Sıradan En Küçük Kareler tahmincileri ve bunların standart hataları verilerdeki küçük değişimlere duyarlı olabilir.</p></li>
+<li><p>Seçilen regresyon modeline doğrusal bağlantılı bir değişken eklemek modeldeki diğer değişkenlere ait parametre değerlerini değiştirebilecektir.</p></li>
+</ul>
+<div class="sourceCode" id="cb141"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb141-1" title="1"><span class="kw">library</span>(corrplot);<span class="kw">library</span>(psych);<span class="kw">library</span>(car);<span class="kw">library</span>(factoextra);<span class="kw">library</span>(FactoMineR);<span class="kw">library</span>(lmridge);<span class="kw">library</span>(tidyverse)</a>
+<a class="sourceLine" id="cb141-2" title="2"></a>
+<a class="sourceLine" id="cb141-3" title="3"><span class="kw">setwd</span>(<span class="st">&quot;C:/Users/datanerd/Desktop/Github/rEkonometri/data&quot;</span>)</a>
+<a class="sourceLine" id="cb141-4" title="4">df1 &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;yagis.txt&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb141-5" title="5">df2 &lt;-<span class="st"> </span><span class="kw">read.table</span>(<span class="st">&quot;yumurta.txt&quot;</span>, <span class="dt">sep =</span> <span class="st">&quot; &quot;</span>, <span class="dt">header =</span> <span class="ot">TRUE</span>)</a></code></pre></div>
+<p>10 tane istasyona ait yıllık yağış (mm) verileri ile havza yıllık getirisi (mm) aşağıdaki gibidir:</p>
+<div class="sourceCode" id="cb142"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb142-1" title="1">df1</a></code></pre></div>
+<pre><code>##    Year   x1   x2   x3   x4   x5   x6   x7   x8   x9  x10      y
+## 1  1979 1948 4177 5496 2922 5713 3640 3203 2739 2167 2299 3255.2
+## 2  1980 2261 3670 7797 3327 6934 4424 3692 3451 2866 2653 3682.7
+## 3  1981 1989 4353 7392 2837 6275 4827 4476 4403 3568 3241 3921.9
+## 4  1982 1999 3307 7061 3439 6641 4815 4256 4129 3447 3046 3909.3
+## 5  1983 2086 4230 6564 2987 6675 3959 3900 3559 4078 3583 3768.9
+## 6  1984 1717 2714 5919 3394 5605 3648 3085 2440 2631 2587 3106.4
+## 7  1985 1383 2357 5053 2958 5144 3106 4052 3006 3049 2890 3069.4
+## 8  1986 1470 3004 3951 2691 5116 3557 2775 1909 1952 1723 2940.2
+## 9  1987 1350 2446 4280 2397 4722 3556 2818 2945 2931 2733 3015.3
+## 10 1988 1602 4188 5910 3619 6869 5142 3190 3660 3964 3107 3953.2
+## 11 1989 1417 3631 5145 3282 5226 3793 2663 3017 2579 3367 3172.4
+## 12 1990 1662 4683 6384 6376 7313 4679 3037 3666 3142 2621 3791.0
+## 13 1991 1955 4553 5679 6141 6068 3651 2601 2791 2148 2448 3344.8
+## 14 1992 1974 3836 6021 5646 5876 4026 3037 3920 2583 2742 3650.3
+## 15 1993 2094 4183 6733 6720 6044 6573 2465 3406 2410 2539 3878.7
+## 16 1994 3149 6128 8151 9048 8384 7467 2888 3522 2496 2895 4606.2
+## 17 1995 1471 2952 4151 4975 5149 4733 2603 3493 3396 3554 3498.8
+## 18 1996 1691 3711 4200 4962 5359 3782 3185 3099 3381 2938 3241.0
+## 19 1997 2373 4836 6704 6563 6197 5001 3902 3685 3636 3365 4013.5</code></pre>
+<p>Çoklu doğrusal bağlantıyı tespit edelim.</p>
+<p>Önce bir model kuralım.</p>
+<div class="sourceCode" id="cb144"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb144-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(y <span class="op">~</span>., df1[,<span class="op">-</span><span class="dv">1</span>]) <span class="co">#yıl sütunu hariç.</span></a>
+<a class="sourceLine" id="cb144-2" title="2"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = y ~ ., data = df1[, -1])
+## 
+## Residuals:
+##      Min       1Q   Median       3Q      Max 
+## -126.482  -28.635   -0.011   21.701   72.102 
+## 
+## Coefficients:
+##               Estimate Std. Error t value Pr(&gt;|t|)   
+## (Intercept) 782.347374 209.902668   3.727  0.00581 **
+## x1            0.186129   0.112160   1.659  0.13560   
+## x2            0.048356   0.041101   1.177  0.27321   
+## x3           -0.019849   0.045533  -0.436  0.67441   
+## x4            0.001912   0.019025   0.101  0.92240   
+## x5            0.119623   0.055763   2.145  0.06426 . 
+## x6            0.155540   0.032434   4.796  0.00136 **
+## x7            0.023158   0.065288   0.355  0.73198   
+## x8            0.194765   0.061793   3.152  0.01356 * 
+## x9            0.079910   0.075390   1.060  0.32012   
+## x10          -0.004085   0.076757  -0.053  0.95886   
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 72.81 on 8 degrees of freedom
+## Multiple R-squared:  0.9877, Adjusted R-squared:  0.9723 
+## F-statistic: 64.28 on 10 and 8 DF,  p-value: 1.537e-06</code></pre>
+<ul>
+<li>Yüksek <span class="math inline">\(R^2\)</span> fakat az sayıda anlamlı t oranı ya da en az bir parametrenin t oranının istatistiksel olarak anlamlı çıkmaması:</li>
+</ul>
+<p>Uygulamamızda <span class="math inline">\(R^2\)</span> değeri olan %99 yüksektir. Birçok t oranı istatistiksel olarak anlamlı çıkmadı.</p>
+<ul>
+<li>Bağımsız değişkenler arasındaki yüksek ikili korelasyonlar:</li>
+</ul>
+<div class="sourceCode" id="cb146"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb146-1" title="1"><span class="kw">corrplot</span>(<span class="kw">cor</span>(df1[,<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">12</span>)]), <span class="dt">method =</span> <span class="st">&quot;number&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;lower&quot;</span>)</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-80-1.png" width="672" /></p>
+<p>Söylendiği üzere yüksek korelasyonlar göze çarpıyor fakat ikili değişkenli korelasyon parametrelerine ne kadar güveneceğiz? Çünkü bu korelasyonlar hesaplanırken modeldeki diğer değişkenler sabit kalmaz.</p>
+<ul>
+<li>Kısmi korelasyon parametreleri:</li>
+</ul>
+<p>Yukarıda diğer değişkenlerin sabit kalmayacağından bahsetmiştik. Üç tane değişkenimiz (<span class="math inline">\(x_1, x_2, x_3\)</span>) olduğunu varsayalım. <span class="math inline">\(x_2\)</span> ile <span class="math inline">\(x_3\)</span> arasında %90’lık bir korelasyon olabilir. Fakat burada <span class="math inline">\(x_1\)</span>’in etkisini hesaba katmadık. <span class="math inline">\(x_1\)</span> değişkeni hem <span class="math inline">\(x_2\)</span>’yi hem de <span class="math inline">\(x_3\)</span>’ü etkiliyor olabilir. Yani, <span class="math inline">\(x_2\)</span> ile <span class="math inline">\(x_3\)</span> arasındaki yüksek korelasyon <span class="math inline">\(x_1\)</span>’in her ikisini etkiliyor olmasından kaynaklı olabilir. Kısmi korelasyon ile <span class="math inline">\(x_1\)</span>’in etkisi çıkarılarak <span class="math inline">\(x_2\)</span> ve <span class="math inline">\(x_3\)</span> arasındaki korelasyon hesaplanır. Bu değer de örneğin %30’a düşebilir.</p>
+<div class="sourceCode" id="cb147"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb147-1" title="1"><span class="kw">corrplot</span>(<span class="kw">partial.r</span>(df1[,<span class="op">-</span><span class="kw">c</span>(<span class="dv">1</span>,<span class="dv">12</span>)]), <span class="dt">method =</span> <span class="st">&quot;number&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;lower&quot;</span>)</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-81-1.png" width="672" /></p>
+<p>Mesela, <span class="math inline">\(x_1\)</span>-<span class="math inline">\(x_2\)</span> korelasyonu %79 iken kısmi korelasyon ile %38’e düştü. İki değişken arasındaki basit korelasyon parametresi anlamlı, fakat kısmi korelasyon parametresi anlamsız ise bu durum çoklu doğrusal bağlantı problemi için bir işaret olabilir. Kısmi korelasyon yaklaşımı her zaman etkili olmamaktadır. Diğer bir anlatımla, kısmi korelasyon parametreleri yüksek olması durumunda bile çoklu doğrusal bağlantı problemi olabilmektedir.</p>
+<ul>
+<li>Yan regresyon hesaplamaları:</li>
+</ul>
+<p>Modele eklenen diğer bağımsız değişkenlerin hangi bağımsız değişkenlerle yüksek derecede doğrusal bağlantılı olduğunu ortaya koymak için her bir bağımsız değişkenin geriye kalan bağımsız değişkenlere göre regresyonu hesaplanır. Uygulamamızda 10 tane bağımsız değişken vardır. Bundan dolayı 10 tane yan regresyonumuz olacaktır. Burada F testi kullanılır. <span class="math inline">\(H_0\)</span> reddedilirse doğrusal bağlantı sonucuna ulaşılır. Oldukça yorucu bir yöntem olabilir.</p>
+<ul>
+<li>Varyans şişirme faktörü ve tolerans faktörü: Varyans şişirme faktörü ile parametre tahminlerinin ve varyanslarının çoklu doğrusal bağlantı nedeni ile gerçek değerlerinden ne kadar uzaklaştığı belirlenir. VIF’lerin hesaplanmasını göstermek için aşağıdaki gibi üç bağımsız değişkenli bir regresyon modelini inceleyelim:</li>
+</ul>
+<p><span class="math inline">\(Y_i = \beta_1 + \beta_2X_1 + \beta_3X_2 + \beta_4X_3 + \epsilon_i\)</span></p>
+<p>Adım-1: <span class="math inline">\(X_1\)</span> bağımlı; <span class="math inline">\(X_2\)</span> ve <span class="math inline">\(X_3\)</span> bağımsız. <span class="math inline">\(R^2\)</span> hesapla. <span class="math inline">\(X_1\)</span> için <span class="math inline">\(VIF = \frac{1}{(1 – R^2)}\)</span></p>
+<p>Adım-2: <span class="math inline">\(X_2\)</span> bağımlı; <span class="math inline">\(X_1\)</span> ve <span class="math inline">\(X_3\)</span> bağımsız. <span class="math inline">\(R^2\)</span> hesapla. <span class="math inline">\(X_2\)</span> için <span class="math inline">\(VIF = \frac{1}{(1 – R^2)}\)</span></p>
+<p>Adım-3: <span class="math inline">\(X_3\)</span> bağımlı; <span class="math inline">\(X_1\)</span> ve <span class="math inline">\(X_2\)</span> bağımsız. <span class="math inline">\(R^2\)</span> hesapla. <span class="math inline">\(X_3\)</span> için <span class="math inline">\(VIF = \frac{1}{(1 – R^2)}\)</span></p>
+<p>Bağımlı değişken ile bağımsız değişkenler arasında ilişki yoksa (bu durumda <span class="math inline">\(R^2\)</span> = 0) VIF <span class="math inline">\(\frac{1}{(1 – 0)}\)</span>’dan 1’e eşit olacaktır. Eğer tam bir ilişki varsa (bu durumda <span class="math inline">\(R^2\)</span> = 1) VIF <span class="math inline">\(\frac{1}{(1 – 1)}\)</span>’den <span class="math inline">\(\infty\)</span>’a eşit olacaktır. <span class="math inline">\(R^2\)</span> = 0.9 (ya da %90) ise VIF 10 olacaktır. Literatürde yer alan pratik bir kurala göre VIF &gt; 10 için çoklu doğrusal bağlantı deniliyor. Tolerans değeri ise 1’den <span class="math inline">\(R^2\)</span> değerinin çıkarılması ile bulunur. Daha küçük tolerans daha büyük VIF demektir. Küçük veri setlerinde VIF &gt; 5’de bile çoklu doğrusal bağlantı bulunabilir.</p>
+<div class="sourceCode" id="cb148"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb148-1" title="1">car<span class="op">::</span><span class="kw">vif</span>(model)</a></code></pre></div>
+<pre><code>##        x1        x2        x3        x4        x5        x6        x7        x8 
+##  8.057920  4.934190 11.000217  4.188910  8.837753  4.254056  5.365104  4.658428 
+##        x9       x10 
+##  7.457020  4.278819</code></pre>
+<p>Düzeltici önlemler için temel bileşenler analizi ve hemen arkasından temel bileşenler regresyonu konularını inceleyeceğiz. Akabinde de ridge regresyona bakacağız.</p>
+<p>Aslında düzeltici önemlerden biri hiçbir şey yapmamaktır. Blanchard, çoklu doğrusallık için <em>Sıradan En Küçük Kareler’in ya da daha genel olarak istatistiğin bir sorunu değil, Tanrı buyruğudur</em> der.</p>
+<p>Bu da bir seçenek olabileceği gibi biz temel bileşenler analizi ve regresyonu ile girişimizi yapalım.</p>
+<div id="temel-bileşenler-analiziregresyonu" class="section level2">
+<h2><span class="header-section-number">8.1</span> Temel Bileşenler Analizi/Regresyonu</h2>
+<p>Temel bileşenler analizi, korelasyonlu değişkenleri korelasyonsuz değişkenlere (ortogonal değişkenler) dönüştürebilmektedir. Bu şekilde elde edilen değişkenlere temel bileşenler denir. Analizin temel düşüncesi şudur: Korelasyonlu değişkenler alt gruplara ayrılır. Herhangi bir alt gruba ait olan değişkenler bunları bir arada hareket ettiren ortak bir faktöre sahip olur. Bu ortak faktör temel bileşendir.</p>
+<p>Basit bir ifade ile, 10 tane bağımsız değişkenimiz vardı. Biz boyut indirgeme yaparak daha az sayıda değişkenle (birbirleriyle korelasyonsuz) bağımlı değişkeni tahmin etmeye çalışacağız. Yani, örneğin fazla bilgi kaybetmeden birkaç GB veri boyutunu birkaç MB boyutuna düşürebiliriz.</p>
+<p>Değişkenlere boyut indirgedikten sonra elde ettiğimiz değişkenlere regresyon modeli kuracağız. Buna ise temel bileşenler regresyonu denir.</p>
+<p>Temel bileşenler analizi ile başlayalım. Burada örneğimizi basit bir şekilde anlatabilmek için değiştiriyoruz.</p>
+<p>Adım-1: Elimizde 15 yıla ait rainfall (cm) ve runoff (cm) verileri olsun. Değerler şöyle;</p>
+<div class="sourceCode" id="cb150"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb150-1" title="1">rainfall &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">105</span>,<span class="dv">115</span>,<span class="dv">103</span>,<span class="dv">94</span>,<span class="dv">95</span>,<span class="dv">104</span>,<span class="dv">120</span>,<span class="dv">121</span>,<span class="dv">127</span>,<span class="dv">79</span>,<span class="dv">133</span>,<span class="dv">111</span>,<span class="dv">127</span>,<span class="dv">108</span>,<span class="dv">85</span>)</a>
+<a class="sourceLine" id="cb150-2" title="2">runoff &lt;-<span class="st"> </span><span class="kw">c</span>(<span class="dv">42</span>,<span class="dv">46</span>,<span class="dv">26</span>,<span class="dv">39</span>,<span class="dv">29</span>,<span class="dv">33</span>,<span class="dv">48</span>,<span class="dv">58</span>,<span class="dv">45</span>,<span class="dv">20</span>,<span class="dv">54</span>,<span class="dv">37</span>,<span class="dv">39</span>,<span class="dv">34</span>,<span class="dv">25</span>)</a>
+<a class="sourceLine" id="cb150-3" title="3">df &lt;-<span class="st"> </span><span class="kw">data.frame</span>(<span class="dt">rainfall =</span> rainfall, <span class="dt">runoff =</span> runoff)</a></code></pre></div>
+<p>Adım-2: Verilerin matrise aktarılması ve ortalamadan sapmalarının alınması.</p>
+<div class="sourceCode" id="cb151"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb151-1" title="1">df<span class="op">$</span>rainfalldev &lt;-<span class="st"> </span><span class="kw">round</span>(df<span class="op">$</span>rainfall <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(df<span class="op">$</span>rainfall), <span class="dt">digits =</span> <span class="dv">1</span>)</a>
+<a class="sourceLine" id="cb151-2" title="2">df<span class="op">$</span>runoffdev &lt;-<span class="st"> </span><span class="kw">round</span>(df<span class="op">$</span>runoff <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(df<span class="op">$</span>runoff), <span class="dt">digits =</span> <span class="dv">1</span>)</a></code></pre></div>
+<p>Adım-3: Kovaryans matrisinin hesaplanması.</p>
+<div class="sourceCode" id="cb152"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb152-1" title="1">covmatrix &lt;-<span class="st"> </span><span class="kw">cov</span>(df[,<span class="kw">c</span>(<span class="dv">3</span>,<span class="dv">4</span>)])</a>
+<a class="sourceLine" id="cb152-2" title="2">covmatrix</a></code></pre></div>
+<pre><code>##             rainfalldev runoffdev
+## rainfalldev    249.9810  141.0476
+## runoffdev      141.0476  117.5238</code></pre>
+<p>Adım-4: Özdeğerler ve özvektörlerin hesaplanması.</p>
+<div class="sourceCode" id="cb154"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb154-1" title="1">A &lt;-<span class="st"> </span><span class="kw">matrix</span>(<span class="kw">c</span>(<span class="fl">249.9810</span>, <span class="fl">141.0476</span>, <span class="fl">141.0476</span>, <span class="fl">117.5238</span>), <span class="dv">2</span>, <span class="dv">2</span>, <span class="dt">byrow =</span> <span class="ot">TRUE</span>)</a>
+<a class="sourceLine" id="cb154-2" title="2">eigen &lt;-<span class="st"> </span><span class="kw">eigen</span>(A)</a>
+<a class="sourceLine" id="cb154-3" title="3">eigen</a></code></pre></div>
+<pre><code>## eigen() decomposition
+## $values
+## [1] 339.5749  27.9299
+## 
+## $vectors
+##            [,1]       [,2]
+## [1,] -0.8441048  0.5361782
+## [2,] -0.5361782 -0.8441048</code></pre>
+<p>Adım-5: Temel bileşenlerin açıklama oranlarının hesaplanması.</p>
+<div class="sourceCode" id="cb156"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb156-1" title="1">eigen<span class="op">$</span>values[<span class="dv">1</span>] <span class="op">/</span><span class="st"> </span>(eigen<span class="op">$</span>values[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>eigen<span class="op">$</span>values[<span class="dv">2</span>])</a></code></pre></div>
+<pre><code>## [1] 0.9240013</code></pre>
+<div class="sourceCode" id="cb158"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb158-1" title="1">eigen<span class="op">$</span>values[<span class="dv">2</span>] <span class="op">/</span><span class="st"> </span>(eigen<span class="op">$</span>values[<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>eigen<span class="op">$</span>values[<span class="dv">2</span>])</a></code></pre></div>
+<pre><code>## [1] 0.07599872</code></pre>
+<p>Birinci temel bileşen varyansın %92.4’ünü açıklarken; ikinci temel bileşen %7.6’sını açıklıyor. Temel bileşenler, değişkenlerin (örneğimizde rainfall ve runoff) doğrusal bir kombinasyonudur. Yani, rainfall <span class="math inline">\(λ_1\)</span> ve runoff <span class="math inline">\(λ_2\)</span>’dir ya da tam tersi.</p>
+<p>Yazının başındaki veri setine dönelim.</p>
+<p>Temel bileşenler analizinde ilk olarak standartlaştırılma işlemi yapılır (farklı ölçümlü verilerin yer alması). Yani, tüm hesaplamalar standart veriler üzerinden yapılır. Bağımlı değişken Y için ise merkezileştirme yapılır. Yani, Y değerlerinden Y ortalama değerleri çıkartılır. Bunu, model kurarken kesme terimine ihtiyacımız kalmaması için yapıyoruz. Bunu yapmak kesin bir kural değildir.</p>
+<div class="sourceCode" id="cb160"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb160-1" title="1">df1_yeni &lt;-<span class="st"> </span>df1[,<span class="kw">c</span>(<span class="dv">2</span><span class="op">:</span><span class="dv">11</span>)] <span class="co">#Sadece X&#39;ler alındı.</span></a>
+<a class="sourceLine" id="cb160-2" title="2">df1_yeni &lt;-<span class="st"> </span><span class="kw">as.data.frame</span>(<span class="kw">apply</span>(df1_yeni, <span class="dt">MARGIN =</span> <span class="dv">2</span>, <span class="dt">FUN =</span> <span class="cf">function</span>(x) <span class="kw">scale</span>(x))) <span class="co">#Standardize edildi.</span></a>
+<a class="sourceLine" id="cb160-3" title="3">df1_yeni<span class="op">$</span>y &lt;-<span class="st"> </span>df1<span class="op">$</span>y <span class="op">-</span><span class="st"> </span><span class="kw">mean</span>(df1<span class="op">$</span>y) <span class="co">#Merkezileştirildi.</span></a>
+<a class="sourceLine" id="cb160-4" title="4">df1_yeni</a></code></pre></div>
+<pre><code>##            x1           x2           x3         x4           x5         x6
+## 1   0.1721888  0.363397603 -0.343849487 -0.8200257 -0.389046112 -0.7339610
+## 2   0.8928130 -0.183230928  1.496820983 -0.6006661  0.945491926 -0.0155772
+## 3   0.2665837  0.553154253  1.172843781 -0.8660641  0.225213001  0.3536941
+## 4   0.2896068 -0.574604018  0.908062414 -0.5400037  0.625246516  0.3426984
+## 5   0.4899081  0.420540231  0.510490392 -0.7848198  0.662408100 -0.4416594
+## 6  -0.3596456 -1.213954549 -0.005473299 -0.5643770 -0.507088789 -0.7266306
+## 7  -1.1286184 -1.598858662 -0.698224549 -0.8005271 -1.010956140 -1.2232683
+## 8  -0.9283171 -0.901287342 -1.579762514 -0.9451419 -1.041559796 -0.8100144
+## 9  -1.2045947 -1.502902175 -1.316581035 -1.1043807 -1.472196968 -0.8109307
+## 10 -0.6244117  0.375257394 -0.012672792 -0.4425106  0.874447723  0.6423304
+## 11 -1.0503397 -0.225279276 -0.624629728 -0.6250394 -0.921331144 -0.5937662
+## 12 -0.4862729  0.908947972  0.366500525  1.0507595  1.359734282  0.2180808
+## 13  0.1883050  0.768786810 -0.197459789  0.9234767 -0.001035462 -0.7238816
+## 14  0.2320490 -0.004255906  0.076120959  0.6553706 -0.210889109 -0.3802669
+## 15  0.5083266  0.369866580  0.645680878  1.2370797 -0.027267168  1.9535641
+## 16  2.9372675  2.466893194  1.780001055  2.4979911  2.530324158  2.7727416
+## 17 -0.9260148 -0.957351806 -1.419773773  0.2919378 -1.005491201  0.2675613
+## 18 -0.4195058 -0.139026254 -1.380576531  0.2848966 -0.775963774 -0.6038456
+## 19  1.1506721  1.073906878  0.622482511  1.1520440  0.139959957  0.5131313
+##             x7         x8          x9         x10          y
+## 1  -0.08393555 -0.9481675 -1.29125899 -1.21196071 -314.23158
+## 2   0.71920060  0.2396101 -0.16679432 -0.44654778  113.26842
+## 3   2.00684630  1.8277621  0.96249637  0.82481608  352.46842
+## 4   1.64551715  1.3706679  0.76784655  0.40319031  339.86842
+## 5   1.06082089  0.4197786  1.78292124  1.56428282  199.46842
+## 6  -0.27773937 -1.4469674 -0.54483323 -0.58925189 -463.03158
+## 7   1.31046648 -0.5027509  0.12759342  0.06588970 -500.03158
+## 8  -0.78688499 -2.3327959 -1.63712437 -2.45737837 -629.23158
+## 9  -0.71626156 -0.6045128 -0.06223037 -0.27357310 -554.13158
+## 10 -0.10528682  0.5882695  1.59953215  0.53508350  383.76842
+## 11 -0.97083437 -0.4844004 -0.62848439  1.09725119 -397.03158
+## 12 -0.35657482  0.5982789  0.27720031 -0.51573765  221.56842
+## 13 -1.07266350 -0.8614197 -1.32182384 -0.88979538 -224.63158
+## 14 -0.35657482  1.0220085 -0.62204969 -0.25411345   80.86842
+## 15 -1.29603061  0.1645399 -0.90035067 -0.69303669  309.26842
+## 16 -0.60129320  0.3580542 -0.76200452  0.07670061 1036.76842
+## 17 -1.06937869  0.3096756  0.68580407  1.50157950  -70.63158
+## 18 -0.11349885 -0.3476058  0.66167392  0.16967450 -328.43158
+## 19  1.06410570  0.6299752  1.07188635  1.09292683  444.06842</code></pre>
+<p>Kovaryans matrisini aşağıdaki gibi oluşturalım.</p>
+<div class="sourceCode" id="cb162"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb162-1" title="1">cov_m &lt;-<span class="st"> </span><span class="kw">cov</span>(df1_yeni[,<span class="op">-</span><span class="dv">11</span>])</a>
+<a class="sourceLine" id="cb162-2" title="2">cov_m</a></code></pre></div>
+<pre><code>##              x1          x2        x3          x4        x5         x6
+## x1   1.00000000  0.79404489 0.8099080  0.63970323 0.7752141  0.7129395
+## x2   0.79404489  1.00000000 0.6463593  0.72026928 0.7965001  0.6830817
+## x3   0.80990796  0.64635934 1.0000000  0.37713523 0.8405912  0.6367616
+## x4   0.63970323  0.72026928 0.3771352  1.00000000 0.5453583  0.7086409
+## x5   0.77521414  0.79650014 0.8405912  0.54535834 1.0000000  0.7019490
+## x6   0.71293954  0.68308169 0.6367616  0.70864090 0.7019490  1.0000000
+## x7   0.17691772 -0.01513445 0.4366362 -0.35274604 0.2114573 -0.1030525
+## x8   0.37593752  0.39791947 0.6147578  0.24628053 0.5117468  0.4794635
+## x9  -0.03410999  0.03326402 0.1690332 -0.15071195 0.2054040  0.0833055
+## x10  0.08058727  0.12261396 0.1865701  0.03522937 0.1251372  0.1797110
+##              x7        x8          x9        x10
+## x1   0.17691772 0.3759375 -0.03410999 0.08058727
+## x2  -0.01513445 0.3979195  0.03326402 0.12261396
+## x3   0.43663616 0.6147578  0.16903324 0.18657010
+## x4  -0.35274604 0.2462805 -0.15071195 0.03522937
+## x5   0.21145731 0.5117468  0.20540401 0.12513717
+## x6  -0.10305249 0.4794635  0.08330550 0.17971098
+## x7   1.00000000 0.5187275  0.59255388 0.36865464
+## x8   0.51872746 1.0000000  0.63756523 0.63699489
+## x9   0.59255388 0.6375652  1.00000000 0.78544619
+## x10  0.36865464 0.6369949  0.78544619 1.00000000</code></pre>
+<p>Özdeğerler ve özvektörler hesaplaması aşağıdaki gibi yapılır.</p>
+<div class="sourceCode" id="cb164"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb164-1" title="1"><span class="kw">eigen</span>(cov_m)</a></code></pre></div>
+<pre><code>## eigen() decomposition
+## $values
+##  [1] 4.94476901 2.63104132 1.04707047 0.36402519 0.30691960 0.25645457
+##  [7] 0.20463143 0.13990933 0.06291811 0.04226097
+## 
+## $vectors
+##             [,1]        [,2]        [,3]       [,4]        [,5]        [,6]
+##  [1,] -0.3897876 -0.16522080 -0.21072082 -0.1907845  0.45066908 -0.30387108
+##  [2,] -0.3806454 -0.18765072  0.05328529 -0.5433636 -0.12726090  0.21447465
+##  [3,] -0.3930604  0.02940564 -0.38219638  0.2353422  0.07436552 -0.12807793
+##  [4,] -0.2978787 -0.32096244  0.39009458 -0.1108429  0.24606337  0.40030428
+##  [5,] -0.4041200 -0.06517945 -0.17945998 -0.1208066 -0.58928364 -0.05631499
+##  [6,] -0.3707026 -0.16101943  0.22862469  0.5460864 -0.11565508 -0.39407656
+##  [7,] -0.1218575  0.46239873 -0.52101492 -0.1169524  0.23664377  0.14770144
+##  [8,] -0.3166949  0.33762572  0.12164964  0.4435065  0.06946022  0.60350442
+##  [9,] -0.1355743  0.52896578  0.23733692 -0.2013530 -0.41206563 -0.11032524
+## [10,] -0.1602741  0.44251959  0.47691763 -0.1922543  0.35124100 -0.35824970
+##              [,7]        [,8]        [,9]       [,10]
+##  [1,]  0.14927571 -0.04272884  0.64354163  0.07918716
+##  [2,] -0.26478207 -0.57367594 -0.18937047 -0.15666345
+##  [3,] -0.32839220  0.31886083 -0.22727222 -0.60006525
+##  [4,]  0.42508300  0.43628024 -0.20996465 -0.08876735
+##  [5,] -0.09260475  0.39273797  0.01335586  0.52174210
+##  [6,]  0.30058576 -0.40178728 -0.24126430  0.08664306
+##  [7,]  0.42828739 -0.13571246 -0.39282174  0.22854077
+##  [8,] -0.24112450 -0.13427020  0.33293430  0.13475719
+##  [9,]  0.38790353  0.03103737  0.27474898 -0.44277958
+## [10,] -0.35791414  0.15482791 -0.23500463  0.23465300</code></pre>
+<p>10 tane özvektör elde ettik. Bu özvektörler varyansın yüzde kaçını açıklıyor? Örneğin, <span class="math inline">\(λ_1\)</span> olan 4.94476901’i tüm λ’ların toplamına bölerek yüzdeleri bulabiliyorduk.</p>
+<div class="sourceCode" id="cb166"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb166-1" title="1"><span class="kw">summary</span>(<span class="kw">princomp</span>(df1_yeni[,<span class="op">-</span><span class="dv">11</span>]))</a></code></pre></div>
+<pre><code>## Importance of components:
+##                           Comp.1    Comp.2    Comp.3     Comp.4     Comp.5
+## Standard deviation     2.1643747 1.5787861 0.9959726 0.58725290 0.53922717
+## Proportion of Variance 0.4944769 0.2631041 0.1047070 0.03640252 0.03069196
+## Cumulative Proportion  0.4944769 0.7575810 0.8622881 0.89869060 0.92938256
+##                            Comp.6     Comp.7     Comp.8      Comp.9     Comp.10
+## Standard deviation     0.49290664 0.44029690 0.36406824 0.244144693 0.200091760
+## Proportion of Variance 0.02564546 0.02046314 0.01399093 0.006291811 0.004226097
+## Cumulative Proportion  0.95502802 0.97549116 0.98948209 0.995773903 1.000000000</code></pre>
+<p>Bu sonuçları görselleştirebiliriz.</p>
+<div class="sourceCode" id="cb168"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb168-1" title="1"><span class="kw">fviz_eig</span>(<span class="kw">PCA</span>(df1_yeni[,<span class="op">-</span><span class="dv">11</span>], <span class="dt">scale.unit =</span> <span class="ot">TRUE</span>, <span class="dt">ncp =</span> <span class="dv">10</span>, <span class="dt">graph =</span> <span class="ot">FALSE</span>), <span class="dt">addlabels =</span> <span class="ot">TRUE</span>, <span class="dt">ylim =</span> <span class="kw">c</span>(<span class="dv">0</span>, <span class="dv">100</span>))</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-92-1.png" width="672" /></p>
+<p>Mesela burada ilk altısı bizi tatmin ediyor. Çünkü kümülatife baktığımızda %95.5’ini açıklıyor. Bu durumda kalan dördünü atabiliriz.</p>
+<p>İlk altı özvektörü kullanalım. Standardize edilmiş veri seti ile skorları (ilk altısı) çarpıp yeni bir matris elde edeceğiz.</p>
+<div class="sourceCode" id="cb169"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb169-1" title="1">pcr &lt;-<span class="st"> </span><span class="kw">princomp</span>(df1_yeni[,<span class="op">-</span><span class="dv">11</span>])</a>
+<a class="sourceLine" id="cb169-2" title="2">df_ &lt;-<span class="st"> </span><span class="kw">lm</span>(df1_yeni<span class="op">$</span>y <span class="op">~</span><span class="st"> </span><span class="dv">0</span> <span class="op">+</span><span class="st"> </span>pcr<span class="op">$</span>scores[,<span class="dv">1</span>] <span class="op">+</span><span class="st"> </span>pcr<span class="op">$</span>scores[,<span class="dv">2</span>] <span class="op">+</span><span class="st"> </span>pcr<span class="op">$</span>scores[,<span class="dv">3</span>] <span class="op">+</span><span class="st"> </span>pcr<span class="op">$</span>scores[,<span class="dv">4</span>] <span class="op">+</span><span class="st"> </span>pcr<span class="op">$</span>scores[,<span class="dv">5</span>] <span class="op">+</span><span class="st"> </span>pcr<span class="op">$</span>scores[,<span class="dv">6</span>])</a>
+<a class="sourceLine" id="cb169-3" title="3"><span class="kw">summary</span>(df_)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = df1_yeni$y ~ 0 + pcr$scores[, 1] + pcr$scores[, 
+##     2] + pcr$scores[, 3] + pcr$scores[, 4] + pcr$scores[, 5] + 
+##     pcr$scores[, 6])
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -91.680 -50.984  -8.005  45.460 133.215 
+## 
+## Coefficients:
+##                 Estimate Std. Error t value Pr(&gt;|t|)    
+## pcr$scores[, 1]  192.162      8.041  23.896 3.98e-12 ***
+## pcr$scores[, 2]  -13.275     11.024  -1.204   0.2500    
+## pcr$scores[, 3]  -33.127     17.475  -1.896   0.0805 .  
+## pcr$scores[, 4]  -73.941     29.637  -2.495   0.0268 *  
+## pcr$scores[, 5]  -64.063     32.277  -1.985   0.0687 .  
+## pcr$scores[, 6]   15.674     35.310   0.444   0.6644    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 75.87 on 13 degrees of freedom
+## Multiple R-squared:  0.9783, Adjusted R-squared:  0.9683 
+## F-statistic: 97.74 on 6 and 13 DF,  p-value: 4.701e-10</code></pre>
+<p>Bu sonuçlardan bağımlı değişken Y’yi en iyi PC1 ile PC4’ün açıkladığını söyleyebiliriz. Gujarati şöyle der: <em>Kuşkusuz buradaki güçlük bu temel bileşenleri nasıl yorumlamamız gerektiğini bilmiyor olmamızdandır. Ancak temel bileşenler yöntemi korelasyonlu açıklayıcı değişken sayısını korelasyonsuz birkaç değişkene indirgemede kullanışlı bir yoldur. Sonuç olarak doğrusal bağlantı sorunuyla karşılaşmayız.</em></p>
+</div>
+<div id="ridge-regresyon" class="section level2">
+<h2><span class="header-section-number">8.2</span> Ridge Regresyon</h2>
+<p>Bu konuyu, <em>Yumurta tavukçuluğunda gelirin Ridge Regresyon analizi ile tahmini</em> çalışmasından faydalanarak inceleyeceğiz.</p>
+<div class="sourceCode" id="cb171"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb171-1" title="1">df2<span class="op">$</span>yas_hafta &lt;-<span class="st"> </span><span class="ot">NULL</span> <span class="co">#Buradaki yaş, ay ile ilgilidir. O nedenle hafta sütunu atıldı.</span></a>
+<a class="sourceLine" id="cb171-2" title="2"><span class="kw">head</span>(df2, <span class="dv">10</span>)</a></code></pre></div>
+<pre><code>##    yas_ay yasama_gucu yumurta_verimi yumurta_agirligi gelir
+## 1       1        99.9            1.0             43.0    78
+## 2       1        99.8           11.0             44.4   839
+## 3       1        99.7           35.0             45.4  3257
+## 4       1        99.6           53.0             47.9  4927
+## 5       2        99.5           77.0             49.1  7061
+## 6       2        99.4           91.0             50.4 10078
+## 7       2        99.3           92.0             52.5  9779
+## 8       2        99.2           93.0             53.6  9929
+## 9       3        99.1           94.0             54.6 10080
+## 10      3        99.0           94.5             55.4 10587</code></pre>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>gelir</strong></li>
+</ul>
+<p>Bağımsız değişken(ler):</p>
+<ul>
+<li><p><strong>yasama_gucu</strong></p></li>
+<li><p><strong>yumurta_verimi</strong></p></li>
+<li><p><strong>yumurta_agirligi</strong></p></li>
+<li><p><strong>yas_ay</strong></p></li>
+</ul>
+<p>Ridge regresyon bir sapmalı tahmin yöntemidir. Sapmalı tahmin yöntemi, parametrelerde gerçekleşmesi beklenen sonuçlara ulaşmayı ve bu sonuçlara ulaşırken varyansların küçülmesini sağlar.</p>
+<p>Kısa bir hatırlatma:</p>
+<p>Matrisler ile parametre tahminini <span class="math inline">\(\hat{\beta} = (X&#39;X)^{-1} (X&#39;Y)\)</span> eşitliği ile buluyorduk.</p>
+<p>Çoklu doğrusal bağlantı sözkonusu olduğunda <span class="math inline">\((X&#39;X)^{-1}\)</span> matrisinin köşegen elemanları çok büyük değerler almaktadır. Bu sorunu giderebilmek için <span class="math inline">\(X&#39;X\)</span> matrisinin köşegen elemanlarına bir sabitin eklenmesi ile <span class="math inline">\((X&#39;X + kI)^{-1}\)</span> şeklinde ridge tahmincisi oluşturulmuş olur. Bu sabit k’dır. Bu değer seçilirken <span class="math inline">\(\frac{1}{n}\sum (Y_i - \hat{Y_i})^2\)</span> ile bulunan ortalama hata kareyi azaltmaya ve sapmayı mümkün olduğunca küçük tutmaya dikkat edilmelidir. 0-1 arasında değer alan k’nın 0’a yakın olması istenir. Eğer 0 olursa Sıradan En Küçük Kareler tahminleri ile aynı olur.</p>
+<p>Önce bildiğimiz haliyle regresyon modelini kuralım.</p>
+<div class="sourceCode" id="cb173"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb173-1" title="1">model1 &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> gelir <span class="op">~</span><span class="st"> </span>yasama_gucu <span class="op">+</span><span class="st"> </span>yumurta_verimi <span class="op">+</span><span class="st"> </span>yumurta_agirligi <span class="op">+</span><span class="st"> </span>yas_ay, <span class="dt">data =</span> df2)</a>
+<a class="sourceLine" id="cb173-2" title="2"><span class="kw">summary</span>(model1) <span class="co">#Verileri defalarca kez kontrol etmeme rağmen çalışma ile aynı çıktıyı alamadım. İşaretlerde bir problem yok.</span></a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = gelir ~ yasama_gucu + yumurta_verimi + yumurta_agirligi + 
+##     yas_ay, data = df2)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -870.50 -131.17    1.62  116.92  602.18 
+## 
+## Coefficients:
+##                   Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)      24655.490  28766.223   0.857   0.3949    
+## yasama_gucu       -270.874    285.774  -0.948   0.3471    
+## yumurta_verimi     103.992      3.634  28.616   &lt;2e-16 ***
+## yumurta_agirligi    47.181     20.534   2.298   0.0252 *  
+## yas_ay             -47.987    112.979  -0.425   0.6726    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 248 on 58 degrees of freedom
+## Multiple R-squared:  0.9857, Adjusted R-squared:  0.9848 
+## F-statistic:  1002 on 4 and 58 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Değişkenler arası korelasyonlar:</p>
+<div class="sourceCode" id="cb175"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb175-1" title="1"><span class="kw">corrplot</span>(<span class="kw">cor</span>(df2[,<span class="op">-</span><span class="dv">1</span>]), <span class="dt">method =</span> <span class="st">&quot;number&quot;</span>, <span class="dt">type =</span> <span class="st">&quot;lower&quot;</span>)</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-96-1.png" width="672" /></p>
+<p>Yüksek <span class="math inline">\(R^2\)</span>, güçlü korelasyonlar ve istatistiksel olarak anlamlı olmayan parametreler elde ettik.</p>
+<p>VIF değerleri ise aşağıdaki gibidir:</p>
+<div class="sourceCode" id="cb176"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb176-1" title="1">car<span class="op">::</span><span class="kw">vif</span>(model1)</a></code></pre></div>
+<pre><code>##      yasama_gucu   yumurta_verimi yumurta_agirligi           yas_ay 
+##       276.549977         3.943549        10.769081       270.325334</code></pre>
+<p>Yumurta verimi dışındaki değişkenlerin &gt;10 olduğunu görüyoruz.</p>
+<p>Aslında çoklu doğrusal bağlantının sinyallerini almış olduk.</p>
+<p>Modeli kurmadan önce ridge izi kavramını bilmemiz gerekiyor. Ridge regresyon yönteminde en önemli nokta olan k değerinin seçimi için çeşitli yol ve algoritmalar geliştirilmiştir. Bunlardan biri ridge izidir. Burada amaç çoklu doğrusal bağlantının etkilerini görerek uygun k değerinin seçilmesidir.</p>
+<p>Ridge regresyon modelini kuralım. Ardından hem ridge hem de VIF grafiklerine bakalım.</p>
+<div class="sourceCode" id="cb178"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb178-1" title="1">model2 &lt;-<span class="st"> </span><span class="kw">lmridge</span>(<span class="dt">formula =</span> gelir <span class="op">~</span>., <span class="dt">data =</span> df2, <span class="dt">K =</span> <span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>))</a>
+<a class="sourceLine" id="cb178-2" title="2"></a>
+<a class="sourceLine" id="cb178-3" title="3"><span class="kw">seq</span>(<span class="dv">0</span>, <span class="fl">0.1</span>, <span class="fl">0.01</span>) <span class="co">#En uygun k, şunlardan biri olacak.</span></a></code></pre></div>
+<pre><code>##  [1] 0.00 0.01 0.02 0.03 0.04 0.05 0.06 0.07 0.08 0.09 0.10</code></pre>
+<p>Aşağıdaki ridge izi grafiğinde çok küçük bir k değerinden sonra parametrelerin yataylaştığını gözlemliyoruz.</p>
+<div class="sourceCode" id="cb180"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb180-1" title="1"><span class="kw">plot</span>(model2, <span class="dt">type =</span> <span class="st">&quot;ridge&quot;</span>)</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-99-1.png" width="672" /></p>
+<p>Aşağıdaki VIF grafiğinde ise yine aynı k değerinden sonra değerler 10 sınırının altına iniyor.</p>
+<div class="sourceCode" id="cb181"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb181-1" title="1"><span class="kw">plot</span>(model2, <span class="dt">type =</span> <span class="st">&quot;vif&quot;</span>)</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-100-1.png" width="672" /></p>
+<p>Çalışmada da olduğu gibi en uygun k değerini 0.01 olarak bulduk. k = 0.01’e ait parametreler (2. sıra) şöyledir:</p>
+<div class="sourceCode" id="cb182"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb182-1" title="1"><span class="kw">coef</span>(model2)</a></code></pre></div>
+<pre><code>##         Intercept    yas_ay yasama_gucu yumurta_verimi yumurta_agirligi
+## K=0    24655.4905 -47.98664  -270.87431      103.99232         47.18072
+## K=0.01  5941.3695  11.59113   -89.39626      100.73553         62.46986
+## K=0.02  3112.2073  12.59763   -64.61345       98.16766         73.03809
+## K=0.03  1539.2932  11.25819   -51.35461       96.03373         80.98819
+## K=0.04   473.4126   9.72173   -42.46333       94.20393         87.14092
+## K=0.05  -302.4989   8.33787   -35.97024       92.59687         92.00060
+## K=0.06  -887.3391   7.16174   -31.01780       91.15870         95.89881
+## K=0.07 -1336.6124   6.18190   -27.14084       89.85224         99.06321
+## K=0.08 -1685.2260   5.37242   -24.05395       88.65103        101.65538
+## K=0.09 -1956.7308   4.70682   -21.56798       87.53565        103.79320
+## K=0.1  -2167.7917   4.16175   -19.55083       86.49155        105.56471</code></pre>
+<p>k = 0 iken parametrelerin önceki model ile aynı olduğuna dikkat edin. <em>Eğer 0 olursa Sıradan En Küçük Kareler tahminleri ile aynı olur</em> demiştik.</p>
+<p>Modeli k = 0.01 ile yeniden kuralım.</p>
+<div class="sourceCode" id="cb184"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb184-1" title="1">model2 &lt;-<span class="st"> </span><span class="kw">lmridge</span>(<span class="dt">formula =</span> gelir <span class="op">~</span><span class="st"> </span>., <span class="dt">data =</span> df2, <span class="dt">K =</span> <span class="fl">0.01</span>)</a>
+<a class="sourceLine" id="cb184-2" title="2"><span class="kw">summary</span>(model2)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lmridge.default(formula = gelir ~ ., data = df2, K = 0.01)
+## 
+## 
+## Coefficients: for Ridge parameter K= 0.01 
+##                     Estimate Estimate (Sc) StdErr (Sc) t-value (Sc) Pr(&gt;|t|)
+## Intercept         5.9414e+03   -1.1371e+06  8.6849e+04     -13.0931   &lt;2e-16
+## yas_ay            1.1591e+01    4.1838e+02  6.9544e+02       0.6016   0.5497
+## yasama_gucu      -8.9396e+01   -1.2903e+03  6.9652e+02      -1.8525   0.0690
+## yumurta_verimi    1.0074e+02    1.3653e+04  4.3104e+02      31.6751   &lt;2e-16
+## yumurta_agirligi  6.2470e+01    2.4762e+03  6.9175e+02       3.5796   0.0007
+##                     
+## Intercept        ***
+## yas_ay              
+## yasama_gucu      .  
+## yumurta_verimi   ***
+## yumurta_agirligi ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Ridge Summary
+##         R2     adj-R2   DF ridge          F        AIC        BIC 
+##    0.96990    0.96840    2.99721 1012.09783  696.71631  964.15722 
+## Ridge minimum MSE= 13680592 at K= 0.01 
+## P-value for F-test ( 2.99721 , 59.73467 ) = 3.901713e-51 
+## -------------------------------------------------------------------</code></pre>
+<p>Çalışmanın sonuç bölümünden:</p>
+<p><em>Sonuç olarak, bu çalışmada yumurta tavukçuluğunda satış gelirini etkileyebilecek değişkenler arasında, güçlü çoklu doğrusal bağlantı yapısından, RR (Ridge Regresyon) yönteminin EKK (En Küçük Kareler) yöntemine göre daha geçerli, tutarlı, durağan ve beklentilere uygun tahminler sağladığı görülmüştür. Çoklu regresyon analizinde eğer çoklu doğrusal bağlantı söz konusu ise, EKK yöntemiyle parametre tahmininde bulunmak yanlış sonuçlar alınmasına ve yorumlanmasına neden olabilir.</em></p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="kukla-de-i-kenli-regresyon-modeli.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="de-i-en-varyans.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["rEkonometri.pdf", "rEkonometri.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

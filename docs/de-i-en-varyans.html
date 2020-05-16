@@ -1,0 +1,524 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Konu 9 Değişen Varyans | R’da Ekonometri Uygulamaları</title>
+  <meta name="description" content="Ekonometri uygulamalarını R’da yapın." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Konu 9 Değişen Varyans | R’da Ekonometri Uygulamaları" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Konu 9 Değişen Varyans | R’da Ekonometri Uygulamaları" />
+  
+  <meta name="twitter:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+<meta name="author" content="Ahmet Akgül (rpydaneogrendim)" />
+
+
+<meta name="date" content="2020-05-16" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="çoklu-do-rusal-ba-lant-.html"/>
+<link rel="next" href="otokorelasyon.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R'da Ekonometri Uygulamaları</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Nelere İhtiyacınız Olacak?</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#kullanılan-kütüphaneler"><i class="fa fa-check"></i><b>1.1</b> Kullanılan Kütüphaneler</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#kullanılan-veri-setleri"><i class="fa fa-check"></i><b>1.2</b> Kullanılan Veri Setleri</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html"><i class="fa fa-check"></i><b>2</b> Veri ve Model Çeşitleri</a><ul>
+<li class="chapter" data-level="2.1" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#veri-çeşitleri"><i class="fa fa-check"></i><b>2.1</b> Veri Çeşitleri</a></li>
+<li class="chapter" data-level="2.2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#model-çeşitleri"><i class="fa fa-check"></i><b>2.2</b> Model Çeşitleri</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="do-rusal-regresyon-modeli.html"><a href="do-rusal-regresyon-modeli.html"><i class="fa fa-check"></i><b>3</b> Doğrusal Regresyon Modeli</a></li>
+<li class="chapter" data-level="4" data-path="regresyon-modelleriyle-öngörü.html"><a href="regresyon-modelleriyle-öngörü.html"><i class="fa fa-check"></i><b>4</b> Regresyon Modelleriyle Öngörü</a></li>
+<li class="chapter" data-level="5" data-path="francis-galton-ve-regresyon-terimi.html"><a href="francis-galton-ve-regresyon-terimi.html"><i class="fa fa-check"></i><b>5</b> Francis Galton ve Regresyon Terimi</a></li>
+<li class="chapter" data-level="6" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><i class="fa fa-check"></i><b>6</b> Değişkenleri Doğrusal Olmayan Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="6.1" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-doğrusal-ya-da-çift-log-modeller"><i class="fa fa-check"></i><b>6.1</b> Log-Doğrusal ya da Çift-Log Modeller</a></li>
+<li class="chapter" data-level="6.2" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-lin-ya-da-yarı-logaritmik-modeller"><i class="fa fa-check"></i><b>6.2</b> Log-Lin ya da Yarı-Logaritmik Modeller</a></li>
+<li class="chapter" data-level="6.3" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#lin-log-modeller"><i class="fa fa-check"></i><b>6.3</b> Lin-Log Modeller</a></li>
+<li class="chapter" data-level="6.4" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#ters-modeller"><i class="fa fa-check"></i><b>6.4</b> Ters Modeller</a></li>
+<li class="chapter" data-level="6.5" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#polinom-regresyon-modelleri"><i class="fa fa-check"></i><b>6.5</b> Polinom Regresyon Modelleri</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html"><i class="fa fa-check"></i><b>7</b> Kukla Değişkenli Regresyon Modeli</a><ul>
+<li class="chapter" data-level="7.1" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#kukla-değişkenlerin-yorumu"><i class="fa fa-check"></i><b>7.1</b> Kukla Değişkenlerin Yorumu</a></li>
+<li class="chapter" data-level="7.2" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#yapısal-değişimdeki-rolü"><i class="fa fa-check"></i><b>7.2</b> Yapısal Değişimdeki Rolü</a></li>
+<li class="chapter" data-level="7.3" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#mevsimsellikteki-rolü"><i class="fa fa-check"></i><b>7.3</b> Mevsimsellikteki Rolü</a></li>
+<li class="chapter" data-level="7.4" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#parçalı-doğrusal-regresyondaki-rolü"><i class="fa fa-check"></i><b>7.4</b> Parçalı Doğrusal Regresyondaki Rolü</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html"><i class="fa fa-check"></i><b>8</b> Çoklu Doğrusal Bağlantı</a><ul>
+<li class="chapter" data-level="8.1" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#temel-bileşenler-analiziregresyonu"><i class="fa fa-check"></i><b>8.1</b> Temel Bileşenler Analizi/Regresyonu</a></li>
+<li class="chapter" data-level="8.2" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#ridge-regresyon"><i class="fa fa-check"></i><b>8.2</b> Ridge Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html"><i class="fa fa-check"></i><b>9</b> Değişen Varyans</a><ul>
+<li class="chapter" data-level="9.1" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#breusch-pagan"><i class="fa fa-check"></i><b>9.1</b> Breusch-Pagan</a></li>
+<li class="chapter" data-level="9.2" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#white"><i class="fa fa-check"></i><b>9.2</b> White</a></li>
+<li class="chapter" data-level="9.3" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#robust-standart-hatalar"><i class="fa fa-check"></i><b>9.3</b> Robust Standart Hatalar</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="otokorelasyon.html"><a href="otokorelasyon.html"><i class="fa fa-check"></i><b>10</b> Otokorelasyon</a><ul>
+<li class="chapter" data-level="10.1" data-path="otokorelasyon.html"><a href="otokorelasyon.html#durbin-watson-d"><i class="fa fa-check"></i><b>10.1</b> Durbin-Watson d</a></li>
+<li class="chapter" data-level="10.2" data-path="otokorelasyon.html"><a href="otokorelasyon.html#breusch-godfrey"><i class="fa fa-check"></i><b>10.2</b> Breusch-Godfrey</a></li>
+<li class="chapter" data-level="10.3" data-path="otokorelasyon.html"><a href="otokorelasyon.html#hac-yöntemi"><i class="fa fa-check"></i><b>10.3</b> HAC Yöntemi</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html"><i class="fa fa-check"></i><b>11</b> Model Tanımlama Hataları</a><ul>
+<li class="chapter" data-level="11.1" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#eksik-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.1</b> Eksik Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.2" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aşırı-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.2</b> Aşırı Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.3" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#yanlış-fonksiyon-yapısı"><i class="fa fa-check"></i><b>11.3</b> Yanlış Fonksiyon Yapısı</a></li>
+<li class="chapter" data-level="11.4" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#ölçüm-hataları"><i class="fa fa-check"></i><b>11.4</b> Ölçüm Hataları</a></li>
+<li class="chapter" data-level="11.5" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aykırı-değer-yüksek-kaldıraç-etkisi-baskın-nokta-ve-simüle-edilmiş-veriler"><i class="fa fa-check"></i><b>11.5</b> Aykırı Değer, Yüksek Kaldıraç Etkisi, Baskın Nokta ve Simüle Edilmiş Veriler</a></li>
+<li class="chapter" data-level="11.6" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#hata-teriminin-olasılık-dağılımı"><i class="fa fa-check"></i><b>11.6</b> Hata Teriminin Olasılık Dağılımı</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><i class="fa fa-check"></i><b>12</b> Doğrusal Olasılık, Logit ve Probit Modeller</a><ul>
+<li class="chapter" data-level="12.1" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#doğrusal-olasılık"><i class="fa fa-check"></i><b>12.1</b> Doğrusal Olasılık</a></li>
+<li class="chapter" data-level="12.2" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#logit-modeli"><i class="fa fa-check"></i><b>12.2</b> Logit Modeli</a></li>
+<li class="chapter" data-level="12.3" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#probit-model"><i class="fa fa-check"></i><b>12.3</b> Probit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>13</b> Çok Terimli Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="13.1" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#çok-terimli-logit-model"><i class="fa fa-check"></i><b>13.1</b> Çok Terimli Logit Model</a></li>
+<li class="chapter" data-level="13.2" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#koşullu-logit-model"><i class="fa fa-check"></i><b>13.2</b> Koşullu Logit Model</a></li>
+<li class="chapter" data-level="13.3" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#karma-logit-model"><i class="fa fa-check"></i><b>13.3</b> Karma Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html"><i class="fa fa-check"></i><b>14</b> Sıralamalı Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="14.1" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html#sıralı-logit-model"><i class="fa fa-check"></i><b>14.1</b> Sıralı Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><a href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>15</b> Sınırlı Bağımlı Değişkenli Regresyon Modelleri</a></li>
+<li class="chapter" data-level="16" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html"><i class="fa fa-check"></i><b>16</b> Sayma Verilerini Modelleme</a><ul>
+<li class="chapter" data-level="16.1" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#poisson-regresyon"><i class="fa fa-check"></i><b>16.1</b> Poisson Regresyon</a></li>
+<li class="chapter" data-level="16.2" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#negatif-binom-regresyon"><i class="fa fa-check"></i><b>16.2</b> Negatif Binom Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html"><i class="fa fa-check"></i><b>17</b> Dinamik Ekonometri Modelleri</a><ul>
+<li class="chapter" data-level="17.1" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html#otoregresif-dağıtılmış-gecikme-modelleri-ardl"><i class="fa fa-check"></i><b>17.1</b> Otoregresif Dağıtılmış Gecikme Modelleri (ARDL)</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="dilim-kantil-regresyon.html"><a href="dilim-kantil-regresyon.html"><i class="fa fa-check"></i><b>18</b> Dilim (Kantil) Regresyon</a></li>
+<li class="chapter" data-level="19" data-path="yararlan-lan-kaynaklar.html"><a href="yararlan-lan-kaynaklar.html"><i class="fa fa-check"></i><b>19</b> Yararlanılan Kaynaklar</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rpydaneogrendim" target="blank">Github profilimi ziyaret edin.</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R’da Ekonometri Uygulamaları</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="değişen-varyans" class="section level1">
+<h1><span class="header-section-number">Konu 9</span> Değişen Varyans</h1>
+<p>Regresyon modelindeki hata terimi gözlemler boyunca sabit varyanslıdır (homoscedasticity). Sabit varyans olmaması durumu ise değişen varyanstır (heteroscedasticity). Burada bir noktanın altını çizmek gerekiyor: Bu varsayım, her bir gözlemin varyansının aynı olmasını ifade eder; örnek gözlemlerinin tümü için varyansın sabit olmasını değil. Bunu Stock ve Watson’ın kitabında bulunan bir örnek ile açıklayalım.</p>
+<div class="sourceCode" id="cb186"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb186-1" title="1"><span class="kw">library</span>(AER);<span class="kw">library</span>(ggplot2)</a>
+<a class="sourceLine" id="cb186-2" title="2"><span class="kw">data</span>(<span class="st">&quot;CPSSWEducation&quot;</span>) <span class="co">#Kitaptaki verilere AER paketi yardımı ile ulaşılabilir.</span></a>
+<a class="sourceLine" id="cb186-3" title="3"><span class="kw">head</span>(CPSSWEducation, <span class="dv">10</span>)</a></code></pre></div>
+<pre><code>##    age gender  earnings education
+## 1   30   male 34.615383        16
+## 2   30 female 19.230770        16
+## 3   30 female 13.736263        12
+## 4   30 female 13.942307        13
+## 5   30 female 19.230770        16
+## 6   30 female  8.000000        12
+## 7   30   male 19.230770        12
+## 8   29   male 26.153847        16
+## 9   29   male 26.442308        16
+## 10  30 female  6.221719        12</code></pre>
+<div class="sourceCode" id="cb188"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb188-1" title="1"><span class="kw">ggplot</span>(<span class="dt">data =</span> CPSSWEducation, <span class="kw">aes</span>(<span class="dt">x =</span> education, <span class="dt">y =</span> earnings)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb188-2" title="2"><span class="st">  </span><span class="kw">geom_point</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb188-3" title="3"><span class="st">  </span><span class="kw">geom_smooth</span>(<span class="dt">method =</span> <span class="st">&quot;lm&quot;</span>, <span class="dt">se =</span> <span class="ot">FALSE</span>, <span class="dt">color =</span> <span class="st">&quot;red&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb188-4" title="4"><span class="st">  </span><span class="kw">theme_minimal</span>()</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-103-1.png" width="672" /></p>
+<p>Eğitim düzeyi daha yüksek olan çalışanların eğitim düzeyi daha düşük olan çalışanlara göre kazançları (earnings) ortalama olarak daha fazladır. Ancak kazancı daha yüksek olan işler eğitim düzeyi daha yüksek olan kişiler tarafından alınıyorsa kazançların dağılımının <em>varyansı</em> eğitim düzeyi yüksek olan çalışanlar için daha büyük olabilir.</p>
+<p>Şimdi bir model kuralım.</p>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>earnings:</strong> Saatlik kazanç</li>
+</ul>
+<p>Bağımsız değişken(ler):</p>
+<ul>
+<li><strong>education:</strong> Eğitim düzeyi (6-18 yıl arasında değişen)</li>
+</ul>
+<div class="sourceCode" id="cb189"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb189-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> earnings <span class="op">~</span><span class="st"> </span>education, <span class="dt">data =</span> CPSSWEducation)</a>
+<a class="sourceLine" id="cb189-2" title="2"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = earnings ~ education, data = CPSSWEducation)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -17.270  -5.355  -1.513   3.194  77.164 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -3.13437    0.95925  -3.268   0.0011 ** 
+## education    1.46693    0.06978  21.021   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 8.769 on 2948 degrees of freedom
+## Multiple R-squared:  0.1304, Adjusted R-squared:  0.1301 
+## F-statistic: 441.9 on 1 and 2948 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Ortalama olarak saatlik kazanç her bir ilave eğitim yılı için 1.47 $ artmaktadır. Güven aralığı %95 güven düzeyinde aşağıdaki gibidir:</p>
+<div class="sourceCode" id="cb191"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb191-1" title="1"><span class="kw">confint</span>(model, <span class="dt">level =</span> <span class="fl">0.95</span>)</a></code></pre></div>
+<pre><code>##                 2.5 %    97.5 %
+## (Intercept) -5.015248 -1.253495
+## education    1.330098  1.603753</code></pre>
+<p>Standart sapma değerleri yıl olarak eğitim düzeyine göre farklılaştığı için regresyon modeline ilişkin kalıntıların varyansı bağımsız değişkene (yıl olarak eğitim düzeyi) bağlıdır. Yani, değişen varyans söz konusudur.</p>
+<div class="sourceCode" id="cb193"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb193-1" title="1"><span class="kw">library</span>(dplyr)</a>
+<a class="sourceLine" id="cb193-2" title="2"></a>
+<a class="sourceLine" id="cb193-3" title="3">CPSSWEducation <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb193-4" title="4"><span class="st">  </span><span class="kw">group_by</span>(education) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb193-5" title="5"><span class="st">  </span><span class="kw">summarise</span>(<span class="dt">ss =</span> <span class="kw">round</span>(<span class="kw">sd</span>(earnings), <span class="dt">digits =</span> <span class="dv">2</span>)) <span class="co">#Standart sapmalar alındı.</span></a></code></pre></div>
+<pre><code>## # A tibble: 10 x 2
+##    education    ss
+##        &lt;int&gt; &lt;dbl&gt;
+##  1         6  4.48
+##  2         8  3.53
+##  3         9  4.26
+##  4        10  5.46
+##  5        11  5.13
+##  6        12  7.43
+##  7        13  8.05
+##  8        14  8.23
+##  9        16 10.8 
+## 10        18 11.8</code></pre>
+<p>Değişen varyansın nedenleri aşağıdaki gibi sıralanabilir.</p>
+<ul>
+<li><p>Hatasını öğrenen modellerde, tıpkı insanların öğrenmesi gibi davranış hataları zamanla azalır ya da hata sayıları daha tutarlı hale gelir.</p></li>
+<li><p>Örneğin, gelir yükseldikçe insanların istedikleri gibi harcayabilecekleri gelir daha çok olur, seçenekler gelişir (varyans artırıcı etki) ya da daha çok kar eden şirketlerin temettü dağıtımlarında düşük karlı şirketlere göre genellikle daha çok değişkenlik göstermesi beklenir (varyans artırıcı etki).</p></li>
+<li><p>Verilerin toplanmasında bazı hatalar yapılabilir. Veri derleme teknikleri geliştikçe (daha az hataların ortaya çıkması) varyans da düşebilir.</p></li>
+<li><p>Aykırı/uç değerlerin varlığı.</p></li>
+<li><p>Model kurma hataları.</p></li>
+<li><p>Modelde yer alan değişkenlerin birinde ya da birkaçında bulunan çarpıklık.</p></li>
+<li><p>Yanlış veri dönüştürmeleri ya da yanlış fonksiyon kalıbı.</p></li>
+</ul>
+<p>Değişen varyans varsa neler olur?</p>
+<ul>
+<li><p>Sıradan En Küçük Kareler tahmincileri için BLUE’dur (Best Linear Unbiased Estimator, En İyi Doğrusal Yansız Tahmin Edici) demiştik. Değişen varyans olması durumunda doğrusal yansız tahmin edici olur.</p></li>
+<li><p>t ve F testlerine olan güven azalır.</p></li>
+<li><p>Değişen varyans durumunda BLUE tahmincilerini ağırlıklı en küçük kareler yöntemi verir.</p></li>
+</ul>
+<p>Değişen varyans durumunun tespiti konusunda iki testten yararlanacağız: Breusch-Pagan ve White testleri.</p>
+<p>Ne tür düzeltici önlemler alabiliriz?</p>
+<ol style="list-style-type: lower-roman">
+<li><p>Eğer gerçek hata terimi varyansı bağımsız değişkenlerden birinin karesi ile orantılı ise eşitliğin her iki tarafı bu değişkene bölünüp regresyon çalıştırabilir. Ardından bunları Breusch-Pagan ve White testlerinden geçirebiliriz.</p></li>
+<li><p>Eğer gerçek hata terimi varyansı bağımsız değişkenlerden birisi ile orantılıysa karekök dönüşümü kullanılabilir. Yani, her iki taraf belirlenen bağımsız değişkenin kareköküne bölünür. Ardından Breusch-Pagan ve White testlerinden geçirebiliriz.</p></li>
+<li><p>Eğer değerler pozitifse bağımlı değişkenin logaritması alınabilir.</p></li>
+</ol>
+<div class="sourceCode" id="cb195"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb195-1" title="1"><span class="kw">library</span>(readxl);<span class="kw">library</span>(tidyverse);<span class="kw">library</span>(magrittr);<span class="kw">library</span>(lmtest);<span class="kw">library</span>(estimatr)</a></code></pre></div>
+<div class="sourceCode" id="cb196"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb196-1" title="1"><span class="kw">setwd</span>(<span class="st">&quot;C:/Users/datanerd/Desktop/Github/rEkonometri/data&quot;</span>)</a>
+<a class="sourceLine" id="cb196-2" title="2">df &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table1_1.xls&quot;</span>)</a>
+<a class="sourceLine" id="cb196-3" title="3">df <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb196-4" title="4"><span class="st">  </span>dplyr<span class="op">::</span><span class="kw">select</span>(wage, female, nonwhite, union, education, exper)</a></code></pre></div>
+<div id="breusch-pagan" class="section level2">
+<h2><span class="header-section-number">9.1</span> Breusch-Pagan</h2>
+<p>Büyük örneklemler içindir. Sıradan En Küçük Kareler regresyonu tahmin edilip bu regresyondan kalıntı kareleri elde edilir. Ardından kalıntı karelerin bir veya daha fazla X değişkeni ile ilişkili olup olmadığını görmek için kalıntı karelerin modele dahil edilen bağımsız değişkenlere göre regresyonu alınır. Buradaki <span class="math inline">\(H_0\)</span> hata teriminin sabit varyanslı olduğudur. Bu hipotezin testi için F testini (pay ve payda sırasıyla k-1 ve n-k serbestlik dereceli olacak) kullanabiliriz. F istatistiği istatistiksel olarak anlamlı ise <span class="math inline">\(H_0\)</span> reddedilir. F istatistiğine alternatif olarak <span class="math inline">\(\chi^2\)</span> istatistiği de kullanılabilir. <span class="math inline">\(\chi^2\)</span> değeri küçük bir p değerine sahipse <span class="math inline">\(H_0\)</span> reddedilebilir.</p>
+<p>Öncelikle modeli normal bir şekilde kuralım.</p>
+<div class="sourceCode" id="cb197"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb197-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> wage <span class="op">~</span><span class="st"> </span>female <span class="op">+</span><span class="st"> </span>nonwhite <span class="op">+</span><span class="st"> </span>union <span class="op">+</span><span class="st"> </span>education <span class="op">+</span><span class="st"> </span>exper, <span class="dt">data =</span> df)</a>
+<a class="sourceLine" id="cb197-2" title="2"><span class="kw">summary</span>(model)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = wage ~ female + nonwhite + union + education + exper, 
+##     data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -20.781  -3.760  -1.044   2.418  50.414 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -7.18334    1.01579  -7.072 2.51e-12 ***
+## female      -3.07488    0.36462  -8.433  &lt; 2e-16 ***
+## nonwhite    -1.56531    0.50919  -3.074  0.00216 ** 
+## union        1.09598    0.50608   2.166  0.03052 *  
+## education    1.37030    0.06590  20.792  &lt; 2e-16 ***
+## exper        0.16661    0.01605  10.382  &lt; 2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 6.508 on 1283 degrees of freedom
+## Multiple R-squared:  0.3233, Adjusted R-squared:  0.3207 
+## F-statistic: 122.6 on 5 and 1283 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Ardından bu modelden kalıntı kareleri elde edip bir model daha kuralım.</p>
+<div class="sourceCode" id="cb199"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb199-1" title="1">df<span class="op">$</span>res &lt;-<span class="st"> </span>(model<span class="op">$</span>residuals)<span class="op">^</span><span class="dv">2</span></a>
+<a class="sourceLine" id="cb199-2" title="2">modelres &lt;-<span class="st"> </span><span class="kw">lm</span>(res <span class="op">~</span><span class="st"> </span>female <span class="op">+</span><span class="st"> </span>nonwhite <span class="op">+</span><span class="st"> </span>union <span class="op">+</span><span class="st"> </span>education <span class="op">+</span><span class="st"> </span>exper, <span class="dt">data =</span> df)</a>
+<a class="sourceLine" id="cb199-3" title="3"><span class="kw">summary</span>(modelres)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = res ~ female + nonwhite + union + education + exper, 
+##     data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -110.57  -36.73  -18.33   -1.47 2483.23 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -73.3377    19.6801  -3.726 0.000203 ***
+## female       -9.7007     7.0642  -1.373 0.169924    
+## nonwhite    -12.6683     9.8651  -1.284 0.199321    
+## union       -27.2099     9.8049  -2.775 0.005598 ** 
+## education     7.9624     1.2768   6.236 6.08e-10 ***
+## exper         1.1665     0.3109   3.752 0.000183 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 126.1 on 1283 degrees of freedom
+## Multiple R-squared:  0.04292,    Adjusted R-squared:  0.03919 
+## F-statistic: 11.51 on 5 and 1283 DF,  p-value: 6.878e-11</code></pre>
+<p>%4.3 olan bir <span class="math inline">\(R^2\)</span> elde ettik. Bu değeri gözlem sayısı olan 1289 ile çarpıp aşağıdaki <span class="math inline">\(\chi^2\)</span> değerini elde ederiz.</p>
+<div class="sourceCode" id="cb201"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb201-1" title="1"><span class="kw">summary</span>(modelres)<span class="op">$</span>r.squared <span class="op">*</span><span class="st"> </span><span class="kw">nrow</span>(df)</a></code></pre></div>
+<pre><code>## [1] 55.32705</code></pre>
+<p>Tabi bunu paket yardımı ile de yapabiliriz. Hatta buradan p değerini de elde edip hipotezin red olup olmayacağına karar vereceğiz.</p>
+<div class="sourceCode" id="cb203"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb203-1" title="1"><span class="kw">bptest</span>(model)</a></code></pre></div>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  model
+## BP = 55.327, df = 5, p-value = 1.118e-10</code></pre>
+<p>5 serbestlik dereceli (bağımsız değişken sayımız) en az bu değerde bir <span class="math inline">\(\chi^2\)</span> bulma olasılığı neredeyse sıfırdır (0.0000000001118). Yani, <span class="math inline">\(H_0\)</span> reddedilir. Bu da değişen varyansa işaret ediyor.</p>
+</div>
+<div id="white" class="section level2">
+<h2><span class="header-section-number">9.2</span> White</h2>
+<p>Büyük örneklemler içindir. Yukarıdaki teste göre daha genel ve daha esnektir. Burada da <span class="math inline">\(\chi^2\)</span> istatistiği kullanılabilir. White testinin uygulanması için kurulan model tahmin edilerek kalıntılar belirlenir. Belirlenen kalıntıların karelerinin bağımlı değişken olduğu, bağımsız değişkenlerin ise modelin bağımsız değişkenleri, bağımsız değişkenlerin kareleri ve bağımsız değişkenlerin birbirleri ile çarpımlarından oluşan yardımcı regresyon modeli tahmin edilir.</p>
+<div class="sourceCode" id="cb205"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb205-1" title="1">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> wage <span class="op">~</span><span class="st"> </span>female <span class="op">+</span><span class="st"> </span>nonwhite <span class="op">+</span><span class="st"> </span>union <span class="op">+</span><span class="st"> </span>education <span class="op">+</span><span class="st"> </span>exper, <span class="dt">data =</span> df)</a>
+<a class="sourceLine" id="cb205-2" title="2"><span class="kw">bptest</span>(model, <span class="op">~</span><span class="st"> </span>female<span class="op">*</span>nonwhite <span class="op">+</span><span class="st"> </span>female<span class="op">*</span>union <span class="op">+</span><span class="st"> </span>female<span class="op">*</span>education <span class="op">+</span><span class="st"> </span>female<span class="op">*</span>exper <span class="op">+</span><span class="st"> </span>nonwhite<span class="op">*</span>union <span class="op">+</span><span class="st"> </span>nonwhite<span class="op">*</span>education <span class="op">+</span><span class="st"> </span>nonwhite<span class="op">*</span>exper <span class="op">+</span><span class="st"> </span>union<span class="op">*</span>education <span class="op">+</span><span class="st"> </span>union<span class="op">*</span>exper <span class="op">+</span><span class="st"> </span>education<span class="op">*</span>exper <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(female<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(nonwhite<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(union<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(education<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(exper<span class="op">^</span><span class="dv">2</span>), <span class="dt">data =</span> df)</a></code></pre></div>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  model
+## BP = 79.431, df = 17, p-value = 4.839e-10</code></pre>
+<p>Yukarıdaki fonksiyon bağımsız değişkenlerin karesel ve çarpraz terimlerini model ekler. p değeri burada da sıfıra yakın çıktı (0.0000000004839). Yani, White = 79.431 veya daha büyük bir <span class="math inline">\(\chi^2\)</span> değeri bulma olasılığı neredeyse sıfırdır; <span class="math inline">\(H_0\)</span> reddedilir. Bu da değişen varyans sorununa işaret eder.</p>
+<p>Daha önce bağımlı değişkene logaritma almayı uygulamıştık. Acaba bu model değişen varyans içeriyor mu?</p>
+<div class="sourceCode" id="cb207"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb207-1" title="1">df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb207-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">lnwage =</span> <span class="kw">log</span>(wage)) -&gt;<span class="st"> </span>df</a>
+<a class="sourceLine" id="cb207-3" title="3"></a>
+<a class="sourceLine" id="cb207-4" title="4">model &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> lnwage <span class="op">~</span><span class="st"> </span>female <span class="op">+</span><span class="st"> </span>nonwhite <span class="op">+</span><span class="st"> </span>union <span class="op">+</span><span class="st"> </span>education <span class="op">+</span><span class="st"> </span>exper, <span class="dt">data =</span> df)</a>
+<a class="sourceLine" id="cb207-5" title="5"><span class="kw">bptest</span>(model)</a></code></pre></div>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  model
+## BP = 30.35, df = 5, p-value = 1.258e-05</code></pre>
+<div class="sourceCode" id="cb209"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb209-1" title="1"><span class="kw">bptest</span>(model, <span class="op">~</span><span class="st"> </span>female<span class="op">*</span>nonwhite <span class="op">+</span><span class="st"> </span>female<span class="op">*</span>union <span class="op">+</span><span class="st"> </span>female<span class="op">*</span>education <span class="op">+</span><span class="st"> </span>female<span class="op">*</span>exper <span class="op">+</span><span class="st"> </span>nonwhite<span class="op">*</span>union <span class="op">+</span><span class="st"> </span>nonwhite<span class="op">*</span>education <span class="op">+</span><span class="st"> </span>nonwhite<span class="op">*</span>exper <span class="op">+</span><span class="st"> </span>union<span class="op">*</span>education <span class="op">+</span><span class="st"> </span>union<span class="op">*</span>exper <span class="op">+</span><span class="st"> </span>education<span class="op">*</span>exper <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(female<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(nonwhite<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(union<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(education<span class="op">^</span><span class="dv">2</span>) <span class="op">+</span><span class="st"> </span><span class="kw">I</span>(exper<span class="op">^</span><span class="dv">2</span>), <span class="dt">data =</span> df)</a></code></pre></div>
+<pre><code>## 
+##  studentized Breusch-Pagan test
+## 
+## data:  model
+## BP = 45.541, df = 17, p-value = 0.0002022</code></pre>
+<p>p değerleri büyüdü ama yine de değişen varyans sorununa işaret ediyor.</p>
+<p>Çoklu doğrusal bağlantıda da belirtmiştik: Hiçbir şey yapmamak. Değişen varyans için de aslında sorun ciddiyse düzeltmeye gidileceği önerilir. Bu durumu her hastalık için ilaç almamaya benzetiyorum ama yine de önlemlerin ne olabileceğini bilmeliyiz.</p>
+</div>
+<div id="robust-standart-hatalar" class="section level2">
+<h2><span class="header-section-number">9.3</span> Robust Standart Hatalar</h2>
+<p>Örneklem genişliği büyük olduğunda, White, değişen varyansı düzeltilmiş standart hataları bulmak için bir yöntem önermiştir. Literatürde White-Huber standart hataları ya da robust (dirençli) standart hatalar olarak geçer. Bu yöntem ile birazdan çıktıda da göreceğiniz üzere parametreler değişmez ama değişen varyansı hesaba katmak amacıyla standart hatalar düzeltilir. Değişen varyans yoksa diye soracak olursak, robust standart hatalar geleneksel Sıradan En Küçük Kareler standart hataları olacaktır. Yani, sabit varyans durumunda bile bu robust standart hatalar geçerli olacaktır. Altını çizmemiz gereken yer büyük bir örnekleme ihtiyacımız olacağıdır (küçük örneklerde dirençli t istatistikleri t dağılımına çok da yakın olmayan bir dağılım sergiler). Robust standart hatalar ile F istatistiği kullanmak yerine değişen varyans robust Wald istatistiği kullanılır. Değişen varyans robust Wald istatistiğinin F istatistiğine dönüştürülebilir olduğunu da bilelim.</p>
+<div class="sourceCode" id="cb211"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb211-1" title="1"><span class="kw">summary</span>(<span class="kw">lm_robust</span>(<span class="dt">formula =</span> wage <span class="op">~</span><span class="st"> </span>female <span class="op">+</span><span class="st"> </span>nonwhite <span class="op">+</span><span class="st"> </span>union <span class="op">+</span><span class="st"> </span>education <span class="op">+</span><span class="st"> </span>exper, <span class="dt">data =</span> df, <span class="dt">se_type =</span> <span class="st">&quot;stata&quot;</span>))</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm_robust(formula = wage ~ female + nonwhite + union + education + 
+##     exper, data = df, se_type = &quot;stata&quot;)
+## 
+## Standard error type:  HC1 
+## 
+## Coefficients:
+##             Estimate Std. Error t value  Pr(&gt;|t|) CI Lower CI Upper   DF
+## (Intercept)  -7.1833    1.09006  -6.590 6.412e-11  -9.3218  -5.0448 1283
+## female       -3.0749    0.36426  -8.442 8.355e-17  -3.7895  -2.3603 1283
+## nonwhite     -1.5653    0.39763  -3.937 8.706e-05  -2.3454  -0.7852 1283
+## union         1.0960    0.42580   2.574 1.017e-02   0.2606   1.9313 1283
+## education     1.3703    0.08349  16.414 4.200e-55   1.2065   1.5341 1283
+## exper         0.1666    0.01605  10.381 2.678e-24   0.1351   0.1981 1283
+## 
+## Multiple R-squared:  0.3233 ,    Adjusted R-squared:  0.3207 
+## F-statistic: 100.9 on 5 and 1283 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>İşte, hepsi bu kadar. White’ın robust standart hatalarını hesaplayarak değişen varyans sorununu basitçe düzelttik. Regresyon parametreleri (ilk görseldeki modele bakın) aynı kaldı. Bazı standart hatalar değişti bu da doğal olarak t değerlerini değiştirdi.</p>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="çoklu-do-rusal-ba-lant-.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="otokorelasyon.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["rEkonometri.pdf", "rEkonometri.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

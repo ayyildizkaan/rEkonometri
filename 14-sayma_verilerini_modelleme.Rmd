@@ -1,0 +1,211 @@
+# Sayma Verilerini Modelleme
+
+## Poisson Regresyon
+
+* Bir ailenin bir yılda çıktığı tatil sayısı,
+
+* Bir firmanın bir yılda aldığı patent sayısı,
+
+* Bir yılda doktora ya da dişçiye gitme sayısı,
+
+* Bir haftada manava gitme sayısı,
+
+* Bir yılda alınan park cezası ya da hız cezası sayısı,
+
+* Belirli bir zaman diliminde hastanede kalınan gün sayısı,
+
+* Beş dakikalık bir zaman diliminde paralı yol gişesinden geçen araç sayısı,
+
+* Bir yılda sinema, tiyatro ya da operaya gitme sayısı ...
+
+Bunun gibi örneklerde bağımlı değişken sayma türündendir. Söz konusu değişkenlerin değeri kesikli ve sonlu sayıdadır. Aynı zamanda aşağıdaki gibi nadir olaylara ilişkin örnekleri de verebiliriz:
+
+* Bir haftalık sürede yıldırım çarpmasına uğramak,
+
+* iki hafta içinde birden çok loto kazanmak,
+
+* Dört hafta içinde iki ya da daha çok kalp krizi geçirmek,
+
+* Bir gün içerisinde en az bir trafik kazası geçirmek ...
+
+Sayma verisine özellikle uyan olasılık dağılımı poisson olasılık dağılımıdır.
+
+Poisson dağılımın olasılık yoğunluk fonksiyonu:
+
+$f(y_i) = \frac{(\mu^ye^{-\mu})}{y!}$
+
+y = 0, 1, 2, ...
+
+f(y), y değişkeninin negatif olmayan tamsayılı değerler alma olasılığıdır.
+
+y! = y * (y-1) * (y-2) * 2 * 1
+
+Poisson dağılımda varyans ortalama ile aynı değere sahiptir (eşit yayılım). Yani;
+
+e(y) = $\mu$
+
+var(y) = $\mu$
+
+Poisson regresyon modeli şöyle yazılabilir:
+
+$y_i = e(y_i) + \epsilon_i = \mu_i + \epsilon_i$
+
+y'ler birbirinden bağımsız dağılmış ve ortalaması $\mu_i$ olan poisson rassal değişkenlerdir. Şöyle gösterebiliriz:
+
+$\mu_i = e(y_i) = exp(\beta_1 + \beta_2x_{2i} + ... + \beta_kx_{ki})$ ; exp: doğal logaritma tabanı e'nin () içindeki ifade kadar üssüdür.
+
+Burada x'ler ortalama değeri etkileyebilecek bazı değişkenlerdir. Örneğin, sayma değişkenimiz bir kimsenin Babylon'daki etkinliklere bir yılda katılma sayısı olsun. Bu sayı gelire, ücrete, konum olarak uzaklığa ve otopark parasına bağlı olabilir.
+
+Tahmin amacıyla modeli şöyle yazalım:
+
+$f(y_i) = \frac{(\mu^ye^{-\mu})}{y!} + \epsilon_i$
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr);library(moments);library(MASS)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df <- read_excel("Table12_1.xls")
+
+```
+
+1990 yılı için 181 uluslararası imalatçı firmadan oluşan veri seti patentler ve Ar-Ge harcamaları olacak.
+
+Amacımız Ar-Ge, endüstri kategorisi ve iki ülkenin, 181 firmanın almış olduğu ortalama patent sayısına etkisini belirlemektir.
+
+Öncelikle patentlerin, Ar-Ge logaritması (lr90 sütunu), beş endüstri (aerosp, chemist, computer, machines, vehicles) kuklası ve iki ülke (Japan, US) kuklasına göre regresyonunu alarak doğrusal bir regresyon modeli kurmak olacak. Bunu karşılaştırma amacıyla yapacağız.
+
+```{r}
+
+str(df)
+
+```
+
+```{r}
+
+lmodel <- lm(formula = p90 ~ lr90 + aerosp + chemist + computer + machines + vehicles + japan + us, data = df)
+summary(lmodel)
+
+```
+
+Ar-Ge harcamaları (lr90) ile patent sayısı (p90) arasında istatistiksel olarak oldukça anlamlı pozitif bir ilişki bulunmaktadır. Ar-Ge değişkeni logaritmik; patent değişkeni ise doğrusal yapıdadır.
+
+Diğer değişkenler sabit tutulduğunda;
+
+Ar-Ge harcamalarındaki %1'lik artış ortalama patent sayısını 0.73 kadar artırır.
+
+Endüstrilerde ise chemist ve vehicles anlamlıdır. Parametrelerine baktığımızda chemist'te verilen ortalama patent miktarı 47 patent daha fazladır; vehicles'da verilen ortalama patent miktarı 192 patent daha düşüktür.
+
+Ülkelere göre baktığımızda sadece us anlamlıdır. Burada, us firmalarının baz gruba göre ortalamada 77 daha az patent almış olduğunu söyleyebiliriz.
+
+Bu modeli karşılaştırma amaçlı kurduğumuzu söylemiştik. ve bu modelin uygun olmadığını göstermiş olduk. Çünkü bazı firmalar büyük sayıda patentler almış olsalar da firma başına bir yılda alınan patent sayısı genellikle düşüktür. Bunu görselleştirelim.
+
+```{r}
+
+df %>% 
+  ggplot(aes(x = p90)) +
+  geom_histogram() +
+  geom_vline(xintercept = 200, linetype="dashed") +
+  theme_minimal()
+
+```
+
+Firmaların büyük bir çoğunluğunun 200'den daha az patent aldığını görselden net bir şekilde görebiliyoruz. Bu durumu tablo şeklinde de gösterebiliriz.
+
+```{r}
+
+df %>% 
+  mutate(patentler = ifelse(p90 %in% 0:199, "[0-200)",
+                            ifelse(p90 %in% 200:399, "[200-400)",
+                                   ifelse(p90 %in% 400:599, "[400-600)",
+                                          ifelse(p90 %in% 600:799, "[600-800)",
+                                                 ifelse(p90 %in% 800:999, "[800-1000)", "")))))) %>% 
+  group_by(patentler) %>% 
+  summarise("sayı" = n()) %>% 
+  mutate("yüzde" = `sayı` / sum(`sayı`) * 100) %>% 
+  mutate("kümülatif sayı" = cumsum(`sayı`),
+         "kümülatif yüzde" = cumsum(`yüzde`))
+
+```
+
+Patent sayıları özellikle görselden görebileceğimiz gibi çarpık dağılmıştır. Çarpıklık (skewness) değeri:
+
+```{r}
+
+skewness(df$p90)
+
+```
+
+Basıklık (kurtosis) değeri ise:
+
+```{r}
+
+kurtosis(df$p90)
+
+```
+
+Normal dağılımlı bir değişken için skewness 0, kurtosis değeri 3'tür. Jarque-Bera istatistiği:
+
+```{r}
+
+jarque.test(df$p90)
+
+```
+
+Mevcut örnekte 1308 olarak tahmin edilen J-B değeri o kadar büyüktür ki, en az bu değeri elde etme olasılığı neredeyse sıfırdır.
+
+Kısaca, sayma verilerini modellemek için normal olasılık dağılımını kullanamayacak; poisson olasılık dağılımınını kullanacağız.
+
+```{r}
+
+pmodel <- glm(formula = p90 ~ lr90 + aerosp + chemist + computer + machines + vehicles + japan + us, family = "poisson", data = df)
+summary(pmodel)
+
+```
+
+Sadece japan parametresi istatistiksel olarak anlamlı değildir.
+
+lr90 0.8651 çıktı. Ar-Ge harcamaları %1 arttığında bir firmaya verilen ortalama patent sayısı %0.86 artar ya da verilen patentlerin arge harcamalarına göre esnekliği 0.86'dır.
+
+Endüstriler arasından machines'i seçelim. machines endüstrisindeki ortalama patent sayısı, karşılaştırma kategorisine göre % aşağıdaki kadar daha yüksektir.
+
+```{r}
+
+100 * (exp(0.6464) - 1)
+
+```
+
+Ülkeler arasından us'i seçelim. Baz grupla karşılaştırıldığında us kukla parametresi % aşağıdaki kadar daha düşüktür.
+
+```{r}
+
+100 * (exp(-0.4189) - 1)
+
+```
+
+Biz bir tek parametrelerin istatistiksel olarak anlamlı olup olmadığına bakıp yorum yaptık ama bu şekilde modeli kabul edip konuyu bitirmemiz söz konusu olamaz.
+
+Parametre tahminlerinin yukarıdaki tabloda verilen standart hataları, ancak tahmin edilen modelde poisson dağılımı olduğu varsayımı doğruysa geçerlidir. Yazının başında şunu demiştik: Poisson dağılımda varyans ortalama ile aynı değere sahiptir (eşit yayılım). Bunu kontrol etmemiz gerekiyor.
+
+Eğer aşırı yayılım varsa poisson regresyon modeli tahminleri tutarlı olmasına rağmen etkin değildir. Çünkü standart hatalar aşağı yönlü sapmalıdır. Eğer durum böyleyse, tahmin edilen z değerleri yükselmiş olur ve böylece parametre tahminlerinin istatistiksel anlamlılığını yüksek tahmin eder.
+
+```{r}
+
+asiriyayilim <- glm(formula = p90 ~ lr90 + aerosp + chemist + computer + machines + vehicles + japan + us, family = "quasipoisson", data = df) 
+summary(asiriyayilim)$dispersion
+pchisq(summary(asiriyayilim)$dispersion * pmodel$df.residual, pmodel$df.residual, lower = FALSE)
+
+```
+
+Bu sonuç aşırı yayılım olduğunu gösterir.
+
+## Negatif Binom Regresyon
+
+Burada alternatif bir yol olan negatif binom regresyon modeline kaçılabilir. Bu model için varyans ortalamadan daima büyüktür. Negatif binom olasılık dağılımı için $\sigma^2 = \mu + \frac{\mu^2}{r}$ ; $\mu$ > 0, r > 0 (r: başarı sayısı) olduğu gösterilebilir. Bu eşitlik, negatif binom olasılık dağılımı için varyansın ortalamadan daima büyük olduğunu gösterir.
+
+```{r}
+
+nbmodel <- glm.nb(formula = p90 ~ lr90 + aerosp + chemist + computer + machines + vehicles + japan + us, data = df)
+summary(nbmodel)
+
+```

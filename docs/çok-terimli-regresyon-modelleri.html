@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Konu 13 Çok Terimli Regresyon Modelleri | R’da Ekonometri Uygulamaları</title>
+  <meta name="description" content="Ekonometri uygulamalarını R’da yapın." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Konu 13 Çok Terimli Regresyon Modelleri | R’da Ekonometri Uygulamaları" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Konu 13 Çok Terimli Regresyon Modelleri | R’da Ekonometri Uygulamaları" />
+  
+  <meta name="twitter:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+<meta name="author" content="Ahmet Akgül (rpydaneogrendim)" />
+
+
+<meta name="date" content="2020-05-16" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="do-rusal-olas-l-k-logit-ve-probit-modeller.html"/>
+<link rel="next" href="s-ralamal-regresyon-modelleri.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R'da Ekonometri Uygulamaları</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Nelere İhtiyacınız Olacak?</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#kullanılan-kütüphaneler"><i class="fa fa-check"></i><b>1.1</b> Kullanılan Kütüphaneler</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#kullanılan-veri-setleri"><i class="fa fa-check"></i><b>1.2</b> Kullanılan Veri Setleri</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html"><i class="fa fa-check"></i><b>2</b> Veri ve Model Çeşitleri</a><ul>
+<li class="chapter" data-level="2.1" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#veri-çeşitleri"><i class="fa fa-check"></i><b>2.1</b> Veri Çeşitleri</a></li>
+<li class="chapter" data-level="2.2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#model-çeşitleri"><i class="fa fa-check"></i><b>2.2</b> Model Çeşitleri</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="do-rusal-regresyon-modeli.html"><a href="do-rusal-regresyon-modeli.html"><i class="fa fa-check"></i><b>3</b> Doğrusal Regresyon Modeli</a></li>
+<li class="chapter" data-level="4" data-path="regresyon-modelleriyle-öngörü.html"><a href="regresyon-modelleriyle-öngörü.html"><i class="fa fa-check"></i><b>4</b> Regresyon Modelleriyle Öngörü</a></li>
+<li class="chapter" data-level="5" data-path="francis-galton-ve-regresyon-terimi.html"><a href="francis-galton-ve-regresyon-terimi.html"><i class="fa fa-check"></i><b>5</b> Francis Galton ve Regresyon Terimi</a></li>
+<li class="chapter" data-level="6" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><i class="fa fa-check"></i><b>6</b> Değişkenleri Doğrusal Olmayan Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="6.1" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-doğrusal-ya-da-çift-log-modeller"><i class="fa fa-check"></i><b>6.1</b> Log-Doğrusal ya da Çift-Log Modeller</a></li>
+<li class="chapter" data-level="6.2" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-lin-ya-da-yarı-logaritmik-modeller"><i class="fa fa-check"></i><b>6.2</b> Log-Lin ya da Yarı-Logaritmik Modeller</a></li>
+<li class="chapter" data-level="6.3" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#lin-log-modeller"><i class="fa fa-check"></i><b>6.3</b> Lin-Log Modeller</a></li>
+<li class="chapter" data-level="6.4" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#ters-modeller"><i class="fa fa-check"></i><b>6.4</b> Ters Modeller</a></li>
+<li class="chapter" data-level="6.5" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#polinom-regresyon-modelleri"><i class="fa fa-check"></i><b>6.5</b> Polinom Regresyon Modelleri</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html"><i class="fa fa-check"></i><b>7</b> Kukla Değişkenli Regresyon Modeli</a><ul>
+<li class="chapter" data-level="7.1" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#kukla-değişkenlerin-yorumu"><i class="fa fa-check"></i><b>7.1</b> Kukla Değişkenlerin Yorumu</a></li>
+<li class="chapter" data-level="7.2" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#yapısal-değişimdeki-rolü"><i class="fa fa-check"></i><b>7.2</b> Yapısal Değişimdeki Rolü</a></li>
+<li class="chapter" data-level="7.3" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#mevsimsellikteki-rolü"><i class="fa fa-check"></i><b>7.3</b> Mevsimsellikteki Rolü</a></li>
+<li class="chapter" data-level="7.4" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#parçalı-doğrusal-regresyondaki-rolü"><i class="fa fa-check"></i><b>7.4</b> Parçalı Doğrusal Regresyondaki Rolü</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html"><i class="fa fa-check"></i><b>8</b> Çoklu Doğrusal Bağlantı</a><ul>
+<li class="chapter" data-level="8.1" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#temel-bileşenler-analiziregresyonu"><i class="fa fa-check"></i><b>8.1</b> Temel Bileşenler Analizi/Regresyonu</a></li>
+<li class="chapter" data-level="8.2" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#ridge-regresyon"><i class="fa fa-check"></i><b>8.2</b> Ridge Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html"><i class="fa fa-check"></i><b>9</b> Değişen Varyans</a><ul>
+<li class="chapter" data-level="9.1" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#breusch-pagan"><i class="fa fa-check"></i><b>9.1</b> Breusch-Pagan</a></li>
+<li class="chapter" data-level="9.2" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#white"><i class="fa fa-check"></i><b>9.2</b> White</a></li>
+<li class="chapter" data-level="9.3" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#robust-standart-hatalar"><i class="fa fa-check"></i><b>9.3</b> Robust Standart Hatalar</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="otokorelasyon.html"><a href="otokorelasyon.html"><i class="fa fa-check"></i><b>10</b> Otokorelasyon</a><ul>
+<li class="chapter" data-level="10.1" data-path="otokorelasyon.html"><a href="otokorelasyon.html#durbin-watson-d"><i class="fa fa-check"></i><b>10.1</b> Durbin-Watson d</a></li>
+<li class="chapter" data-level="10.2" data-path="otokorelasyon.html"><a href="otokorelasyon.html#breusch-godfrey"><i class="fa fa-check"></i><b>10.2</b> Breusch-Godfrey</a></li>
+<li class="chapter" data-level="10.3" data-path="otokorelasyon.html"><a href="otokorelasyon.html#hac-yöntemi"><i class="fa fa-check"></i><b>10.3</b> HAC Yöntemi</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html"><i class="fa fa-check"></i><b>11</b> Model Tanımlama Hataları</a><ul>
+<li class="chapter" data-level="11.1" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#eksik-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.1</b> Eksik Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.2" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aşırı-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.2</b> Aşırı Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.3" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#yanlış-fonksiyon-yapısı"><i class="fa fa-check"></i><b>11.3</b> Yanlış Fonksiyon Yapısı</a></li>
+<li class="chapter" data-level="11.4" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#ölçüm-hataları"><i class="fa fa-check"></i><b>11.4</b> Ölçüm Hataları</a></li>
+<li class="chapter" data-level="11.5" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aykırı-değer-yüksek-kaldıraç-etkisi-baskın-nokta-ve-simüle-edilmiş-veriler"><i class="fa fa-check"></i><b>11.5</b> Aykırı Değer, Yüksek Kaldıraç Etkisi, Baskın Nokta ve Simüle Edilmiş Veriler</a></li>
+<li class="chapter" data-level="11.6" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#hata-teriminin-olasılık-dağılımı"><i class="fa fa-check"></i><b>11.6</b> Hata Teriminin Olasılık Dağılımı</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><i class="fa fa-check"></i><b>12</b> Doğrusal Olasılık, Logit ve Probit Modeller</a><ul>
+<li class="chapter" data-level="12.1" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#doğrusal-olasılık"><i class="fa fa-check"></i><b>12.1</b> Doğrusal Olasılık</a></li>
+<li class="chapter" data-level="12.2" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#logit-modeli"><i class="fa fa-check"></i><b>12.2</b> Logit Modeli</a></li>
+<li class="chapter" data-level="12.3" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#probit-model"><i class="fa fa-check"></i><b>12.3</b> Probit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>13</b> Çok Terimli Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="13.1" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#çok-terimli-logit-model"><i class="fa fa-check"></i><b>13.1</b> Çok Terimli Logit Model</a></li>
+<li class="chapter" data-level="13.2" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#koşullu-logit-model"><i class="fa fa-check"></i><b>13.2</b> Koşullu Logit Model</a></li>
+<li class="chapter" data-level="13.3" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#karma-logit-model"><i class="fa fa-check"></i><b>13.3</b> Karma Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html"><i class="fa fa-check"></i><b>14</b> Sıralamalı Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="14.1" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html#sıralı-logit-model"><i class="fa fa-check"></i><b>14.1</b> Sıralı Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><a href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>15</b> Sınırlı Bağımlı Değişkenli Regresyon Modelleri</a></li>
+<li class="chapter" data-level="16" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html"><i class="fa fa-check"></i><b>16</b> Sayma Verilerini Modelleme</a><ul>
+<li class="chapter" data-level="16.1" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#poisson-regresyon"><i class="fa fa-check"></i><b>16.1</b> Poisson Regresyon</a></li>
+<li class="chapter" data-level="16.2" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#negatif-binom-regresyon"><i class="fa fa-check"></i><b>16.2</b> Negatif Binom Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html"><i class="fa fa-check"></i><b>17</b> Dinamik Ekonometri Modelleri</a><ul>
+<li class="chapter" data-level="17.1" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html#otoregresif-dağıtılmış-gecikme-modelleri-ardl"><i class="fa fa-check"></i><b>17.1</b> Otoregresif Dağıtılmış Gecikme Modelleri (ARDL)</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="dilim-kantil-regresyon.html"><a href="dilim-kantil-regresyon.html"><i class="fa fa-check"></i><b>18</b> Dilim (Kantil) Regresyon</a></li>
+<li class="chapter" data-level="19" data-path="yararlan-lan-kaynaklar.html"><a href="yararlan-lan-kaynaklar.html"><i class="fa fa-check"></i><b>19</b> Yararlanılan Kaynaklar</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rpydaneogrendim" target="blank">Github profilimi ziyaret edin.</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R’da Ekonometri Uygulamaları</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="çok-terimli-regresyon-modelleri" class="section level1">
+<h1><span class="header-section-number">Konu 13</span> Çok Terimli Regresyon Modelleri</h1>
+<div class="sourceCode" id="cb309"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb309-1" title="1"><span class="kw">library</span>(readxl);<span class="kw">library</span>(tidyverse);<span class="kw">library</span>(magrittr);<span class="kw">library</span>(nnet);<span class="kw">library</span>(mlogit);<span class="kw">library</span>(stargazer);<span class="kw">library</span>(Epi)</a>
+<a class="sourceLine" id="cb309-2" title="2"></a>
+<a class="sourceLine" id="cb309-3" title="3"><span class="kw">setwd</span>(<span class="st">&quot;C:/Users/datanerd/Desktop/Github/rEkonometri/data&quot;</span>)</a>
+<a class="sourceLine" id="cb309-4" title="4">df1 &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table9_1.xls&quot;</span>)</a>
+<a class="sourceLine" id="cb309-5" title="5">df2 &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table9_3.xls&quot;</span>)</a></code></pre></div>
+<div id="çok-terimli-logit-model" class="section level2">
+<h2><span class="header-section-number">13.1</span> Çok Terimli Logit Model</h2>
+<p>Bağımlı değişkenin ikiden fazla seçenekli olduğu durumlar vardır. Ulaşım tercihleri (araba, metrobüs, metro), eğitim tercihi (lisans, yüksek lisans, doktora), anket cevapları (katılıyorum, kısmen, katılmıyorum) gibi. Bu tür modellere çok terimli regresyon modelleri denir.</p>
+<p>Verdiğimiz örneklerde ulaşım ve eğitim tercihleri gibi örnekler nominal ya da sıralamasız çok terimli regresyon modelleri iken; anket cevapları gibi örnekler de sıralamalı çok terimli regresyon modelleridir.</p>
+<div class="sourceCode" id="cb310"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb310-1" title="1"><span class="kw">str</span>(df1)</a></code></pre></div>
+<pre><code>## tibble [1,000 x 8] (S3: tbl_df/tbl/data.frame)
+##  $ psechoice: num [1:1000] 2 2 3 3 3 3 2 1 3 3 ...
+##  $ hscath   : num [1:1000] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ grades   : num [1:1000] 9.08 8.31 7.42 7.42 7.42 ...
+##  $ faminc   : num [1:1000] 62.5 42.5 62.5 62.5 62.5 12.5 30 42.5 17.5 42.5 ...
+##  $ famsiz   : num [1:1000] 5 4 4 4 4 2 5 4 3 6 ...
+##  $ parcoll  : num [1:1000] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ female   : num [1:1000] 0 1 1 1 1 1 0 0 1 0 ...
+##  $ black    : num [1:1000] 0 0 0 0 0 0 0 0 0 0 ...</code></pre>
+<p>Veriler 1000 lise mezununun üç seçenek arasından tercihleri ile alakalıdır. Bu üç seçeneğin olasılık toplamı 1’dir. Çünkü karşılıklı dışlayan ya da birlikte kapsayıcı olayların olasılıkları toplamı 1 yapar. Dolayısıyla herhangi iki seçeneğin olasılığı belirlendiğinde üçüncüsünün olasılığı ortaya çıkmış olacaktır.</p>
+<p>Bu uygulama seçene ya da bireye özgü verilerdir. Seçimler seçimi yapanın özelliklerine bağlıdır. Bu tür veriler olduğunda çok terimli logit ya da çok terimli probit modeller ile tahmin edilir.</p>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>psechoice:</strong> Üniversite ile devam etmeme ise 1, 2 yıllık ise 2, 4 yıllık ise 3</li>
+</ul>
+<p>Bağımsız değişken(ler):</p>
+<ul>
+<li><p><strong>hscath:</strong> Katolik okul mezunu ise 1; değilse 0</p></li>
+<li><p><strong>grades:</strong> Matematik, ingilizce ve sosyal bilgiler ortalama puanıdır (1-13 arasında değer alır ve arttıkça zayıf performansı işaret eder)</p></li>
+<li><p><strong>faminc:</strong> Brüt aile geliri (1000$)</p></li>
+<li><p><strong>famsiz:</strong> Ailedeki birey sayısı</p></li>
+<li><p><strong>parcoll:</strong> En çok eğitimli olan ebeveyn üniversite mezunu ya da daha yükseğine sahipse 1; değilse 0</p></li>
+<li><p><strong>female:</strong> Kadın ise 1; değilse 0</p></li>
+<li><p><strong>black:</strong> Siyah ise 1; değilse 0</p></li>
+</ul>
+<p><span class="math inline">\(\pi_{i1} = \frac{1}{(1 + e^{\alpha_2 + \beta_2X_i} + e^{\alpha_3 + \beta_3X_i})}\)</span></p>
+<p><span class="math inline">\(\pi_{i2} = \frac{e^{\alpha_2 + \beta_2X_i}}{(1 + e^{\alpha_2 + \beta_2X_i} + e^{\alpha_3 + \beta_3X_i})}\)</span></p>
+<p><span class="math inline">\(\pi_{i3} = \frac{e^{\alpha_3 + \beta_3X_i}}{(1 + e^{\alpha_2 + \beta_2X_i} + e^{\alpha_3 + \beta_3X_i})}\)</span></p>
+<p>Modeli kuralım.</p>
+<div class="sourceCode" id="cb312"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb312-1" title="1">mlogitmodel &lt;-<span class="st"> </span><span class="kw">multinom</span>(psechoice <span class="op">~</span>., <span class="dt">data =</span> df1)</a></code></pre></div>
+<pre><code>## # weights:  27 (16 variable)
+## initial  value 1098.612289 
+## iter  10 value 877.997257
+## iter  20 value 829.888040
+## iter  30 value 829.747004
+## final  value 829.746599 
+## converged</code></pre>
+<div class="sourceCode" id="cb314"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb314-1" title="1"><span class="kw">summary</span>(mlogitmodel)</a></code></pre></div>
+<pre><code>## Call:
+## multinom(formula = psechoice ~ ., data = df1)
+## 
+## Coefficients:
+##   (Intercept)    hscath     grades      faminc      famsiz  parcoll      female
+## 2    2.268539 -3.038208 -0.2994902 0.009810147 -0.09708496 0.526391  0.14149231
+## 3    5.007894 11.556727 -0.6982877 0.014857249 -0.06658362 1.024127 -0.05761971
+##       black
+## 2 0.5558017
+## 3 1.4949591
+## 
+## Std. Errors:
+##   (Intercept)       hscath     grades      faminc     famsiz   parcoll
+## 2   0.5782259 1.977826e-08 0.05582942 0.004195157 0.07262562 0.2899024
+## 3   0.5671101 9.205296e-07 0.05744761 0.004122069 0.07207269 0.2773820
+##      female     black
+## 2 0.1961625 0.4296691
+## 3 0.1964270 0.4170274
+## 
+## Residual Deviance: 1659.493 
+## AIC: 1691.493</code></pre>
+<p>Burada default olarak üniversiteye gitmeme (1) seçilmiştir. Yani, baz kategori 1’dir. Ama bu model kurulmadan önce aşağıdaki gibi değiştirilebilir.</p>
+<div class="sourceCode" id="cb316"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb316-1" title="1"><span class="co">#df1$psechoice &lt;- factor(df1$psechoice)</span></a>
+<a class="sourceLine" id="cb316-2" title="2"><span class="co">#df1$psechoice &lt;- relevel(df1$psechoice, ref = 1)</span></a></code></pre></div>
+<p>Baz kategori değiştirilirse çıktıdaki parametreler değişir. Ama tercihlerin olasılıkları hep aynı kalır. Çıktıda yer alan 2 ve 3 şunu ifade etmektedir:</p>
+<p>2: Okul tercihi 1 ile ilişkili olarak okul tercihi 2’nin logit tahminleri</p>
+<p>3: Okul tercihi 1 ile ilişkili olarak okul tercihi 3’ün logit tahminleri</p>
+<div class="sourceCode" id="cb317"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb317-1" title="1">mlogitdata &lt;-<span class="st"> </span><span class="kw">mlogit.data</span>(df1, <span class="dt">choice=</span><span class="st">&quot;psechoice&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;wide&quot;</span>)</a>
+<a class="sourceLine" id="cb317-2" title="2">mlogitmodel &lt;-<span class="st"> </span><span class="kw">mlogit</span>(psechoice <span class="op">~</span><span class="st"> </span><span class="dv">1</span><span class="op">|</span><span class="st"> </span>hscath <span class="op">+</span><span class="st"> </span>grades <span class="op">+</span><span class="st"> </span>faminc <span class="op">+</span><span class="st"> </span>famsiz <span class="op">+</span><span class="st"> </span>parcoll <span class="op">+</span><span class="st"> </span>female <span class="op">+</span><span class="st"> </span>black, <span class="dt">data=</span>mlogitdata)</a>
+<a class="sourceLine" id="cb317-3" title="3"></a>
+<a class="sourceLine" id="cb317-4" title="4"><span class="kw">stargazer</span>(mlogitmodel, <span class="dt">type=</span><span class="st">&quot;text&quot;</span>)</a></code></pre></div>
+<pre><code>## 
+## ==========================================
+##                    Dependent variable:    
+##                ---------------------------
+##                         psechoice         
+## ------------------------------------------
+## 2:(intercept)           2.269***          
+##                          (0.578)          
+##                                           
+## 3:(intercept)           5.008***          
+##                          (0.567)          
+##                                           
+## 2:hscath                 -1.023           
+##                        (4,397.323)        
+##                                           
+## 3:hscath                 17.047           
+##                        (3,026.810)        
+##                                           
+## 2:grades                -0.300***         
+##                          (0.056)          
+##                                           
+## 3:grades                -0.698***         
+##                          (0.057)          
+##                                           
+## 2:faminc                 0.010**          
+##                          (0.004)          
+##                                           
+## 3:faminc                0.015***          
+##                          (0.004)          
+##                                           
+## 2:famsiz                 -0.097           
+##                          (0.073)          
+##                                           
+## 3:famsiz                 -0.067           
+##                          (0.072)          
+##                                           
+## 2:parcoll                0.526*           
+##                          (0.290)          
+##                                           
+## 3:parcoll               1.024***          
+##                          (0.277)          
+##                                           
+## 2:female                  0.142           
+##                          (0.196)          
+##                                           
+## 3:female                 -0.058           
+##                          (0.196)          
+##                                           
+## 2:black                   0.556           
+##                          (0.430)          
+##                                           
+## 3:black                 1.495***          
+##                          (0.417)          
+##                                           
+## ------------------------------------------
+## Observations              1,000           
+## R2                        0.185           
+## Log Likelihood          -829.747          
+## LR Test           377.822*** (df = 16)    
+## ==========================================
+## Note:          *p&lt;0.1; **p&lt;0.05; ***p&lt;0.01</code></pre>
+<p>İlk olarak istatistiksel anlamlılıklara bakalım. 2 olanlarda grades, faminc, parcoll; 3 olanlarda grades, faminc, parcoll ve black değişkenleri istatistiksel olarak anlamlıdır.</p>
+<p>Yapay <span class="math inline">\(R^2\)</span> değeri 0.185 olarak bulunmuş. McFadden tarafından geliştirilen bu <span class="math inline">\(R^2 = 1 – (\frac{ln_{L_u}}{ln_{L_0}})\)</span> olarak ifade edilir. Burada, <span class="math inline">\(L_u\)</span> uyumu yapılmış modelin olabilirlik oranı iken; <span class="math inline">\(L_0\)</span> modelin hiçbir açıklayıcı değişkeni olmaksızın olabilirlik oranıdır.</p>
+<p>p değeri neredeyse sıfır olan ve 378 olarak tahmin edilen LR tahmini istatistiksel olarak oldukça anlamlıdır. Bu da bu modelin uyumunun iyi olduğunu belirtir (her ne kadar bütün eğim parametreleri istatistiksel olarak anlamlı olmasa da).</p>
+<p>Yorumları farklı yollardan yapabiliriz.</p>
+<p>1: üniversite ile devam etmeme, 2: 2 yıllık, 3: 4 yıllık.</p>
+<p>Diğer tüm değişkenler sabit tutulduğunda;</p>
+<p>Bir bağımsız değişkene ait pozitif parametre, tercih 1’e göre tercih 2 için artan bahis oranını belirtir. Bağımsız değişkene ait negatif parametre ise tercih 1’in lehine olan bahis oranının tercih 2’ye göre arttığı anlamına gelir. Çıktıya baktığımızda, pozitif parametreli olan aile geliri (faminc) arttığında tercih 1’e göre tercih 2 bahis oranı artacaktır. Ya da örneğin, negatif parametreli olan puanlar (grades) tercih 1 lehine olan bahis oranının tercih 2’den yüksek olduğunu gösterir. Ortalama puan (grades) 1 birim arttığında üniversiteyi tercih etmemeye göre 2 yıllık bir yeri tercih etmenin logaritmik olasılığı 0.2995 kadar düşer. Üniversiteye gitmemeye göre 2 yıllık bir yeri tercih etme lehine bahis oranı ise 0.7411 ya da %74 (0.2995’in ters logaritması).</p>
+<div class="sourceCode" id="cb319"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb319-1" title="1"><span class="kw">exp</span>(<span class="op">-</span><span class="fl">0.2995</span>)</a></code></pre></div>
+<pre><code>## [1] 0.7411887</code></pre>
+</div>
+<div id="koşullu-logit-model" class="section level2">
+<h2><span class="header-section-number">13.2</span> Koşullu Logit Model</h2>
+<p>Çok terimli logit modeller için seçimler seçimi yapanın özelliklerine bağlıdır demiştik. Koşullu logit modellerde ise seçime özgü nitelikler vardır. Yani, bireye ait özellikler bulunmamaktadır.</p>
+<div class="sourceCode" id="cb321"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb321-1" title="1"><span class="kw">str</span>(df2)</a></code></pre></div>
+<pre><code>## tibble [840 x 13] (S3: tbl_df/tbl/data.frame)
+##  $ choice       : num [1:840] 0 0 0 1 0 0 0 1 0 0 ...
+##  $ termtime     : num [1:840] 69 34 35 0 64 44 53 0 69 34 ...
+##  $ invehiclecost: num [1:840] 59 31 25 10 58 31 25 11 115 98 ...
+##  $ traveltime   : num [1:840] 100 372 417 180 68 354 399 255 125 892 ...
+##  $ travelcost   : num [1:840] 70 71 70 30 68 84 85 50 129 195 ...
+##  $ income       : num [1:840] 35 35 35 35 30 30 30 30 40 40 ...
+##  $ partysize    : num [1:840] 1 1 1 1 2 2 2 2 1 1 ...
+##  $ id           : num [1:840] 1 1 1 1 2 2 2 2 3 3 ...
+##  $ mode         : chr [1:840] &quot;air&quot; &quot;train&quot; &quot;bus&quot; &quot;car&quot; ...
+##  $ air          : num [1:840] 1 0 0 0 1 0 0 0 1 0 ...
+##  $ train        : num [1:840] 0 1 0 0 0 1 0 0 0 1 ...
+##  $ bus          : num [1:840] 0 0 1 0 0 0 1 0 0 0 ...
+##  $ car          : num [1:840] 0 0 0 1 0 0 0 1 0 0 ...</code></pre>
+<p>Veriler 210 yolcunun ulaşım tercihleri (hava, otobüs, araba, tren) ile alakalıdır.</p>
+<p>Bağımlı değişken:</p>
+<ul>
+<li><strong>mode:</strong> air (hava), bus (otobüs), car (araba), tren (train)</li>
+</ul>
+<p>Bağımsız değişken(ler):</p>
+<ul>
+<li><p><strong>termtime:</strong> Terminal bekleme süresi (araba için 0)</p></li>
+<li><p><strong>invehiclecost:</strong> Araç maliyeti</p></li>
+<li><p><strong>traveltime:</strong> Araçla seyahat süresi</p></li>
+<li><p><strong>travelcost:</strong> Araç maliyeti ile bireye ait zamanın alternatif maliyeti toplamı</p></li>
+<li><p><strong>income:</strong> Aile geliri</p></li>
+<li><p><strong>partysize:</strong> Seçilen yöntemdeki yolcu sayısı.</p></li>
+</ul>
+<p>Ama koşullu logit modeller için seçime özgü nitelikler var demiştik fakat income ve partysize bireye özgü değişkenler? İşte bunları dahil etmeyeceğiz. Bunları karma modellerde dahil edeceğiz.</p>
+<p>Veri setinin içinde one hot encoding yapılmış. Kısaca mesela, ilk satırda mode = air olduğu için air sütunu 1 diğerleri 0 olarak kodlanmıştır.</p>
+<p>Çoklu logit modelde olduğu gibi koşullu logit modelde de bir ulaşım aracını baz alacağız. Bu, car olsun.</p>
+<div class="sourceCode" id="cb323"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb323-1" title="1">clogitmodel &lt;-<span class="st"> </span><span class="kw">clogistic</span>(choice <span class="op">~</span><span class="st"> </span>termtime <span class="op">+</span><span class="st"> </span>invehiclecost <span class="op">+</span><span class="st"> </span>traveltime <span class="op">+</span><span class="st"> </span>travelcost <span class="op">+</span><span class="st"> </span>air <span class="op">+</span><span class="st"> </span>train <span class="op">+</span><span class="st"> </span>bus, <span class="dt">strata =</span> id, <span class="dt">data =</span> df2)</a>
+<a class="sourceLine" id="cb323-2" title="2">clogitmodel</a></code></pre></div>
+<pre><code>## 
+## Call: 
+## clogistic(formula = choice ~ termtime + invehiclecost + traveltime + 
+##     travelcost + air + train + bus, strata = id, data = df2)
+## 
+## 
+## 
+## 
+##                  coef exp(coef) se(coef)     z       p
+## termtime      -0.1036     0.902  0.01094 -9.48 0.0e+00
+## invehiclecost -0.0849     0.919  0.01938 -4.38 1.2e-05
+## traveltime    -0.0133     0.987  0.00252 -5.30 1.2e-07
+## travelcost     0.0693     1.072  0.01743  3.97 7.0e-05
+## air            5.2047   182.133  0.90521  5.75 8.9e-09
+## train          4.3606    78.304  0.51067  8.54 0.0e+00
+## bus            3.7632    43.087  0.50626  7.43 1.1e-13
+## 
+## Likelihood ratio test=213  on 7 df, p=0, n=840</code></pre>
+<p>p değerlerinin oldukça düşük olduğunu görüyoruz. Bu da parametrelerin istatistiksel olarak anlamlı olduklarını gösteriyor.</p>
+<p>Likelihood ratio ya da olabilirlik oranı istatistiği 213 oldukça anlamlıdır. Bu, bütün eğim parametrelerinin aynı anda sıfıra eşit olduğu hipotezinin güçlü bir şekilde reddi anlamına gelir.</p>
+<p>Diğer değişkenler sabit tutulduğunda;</p>
+<p>termtime: Arabayla seyahate göre terminalde daha uzun bekleme süresi olan ulaşım türü daha az seçilme eğiliminde olacaktır. Herhangi bir ulaşım türü için terminal süresini 1 dakika artırmak bu türü kullanmanın bahis oranını %10 kadar düşürür.</p>
+<p>traveltime: Eğer arabaya göre bir ulaşım aracındaki seyahat süresi daha uzunsa bu ulaşım türü muhtemelen seçilmeyecektir. Herhangi bir ulaşım türü için seyahat süresini 1 dakika artırmak bu türü kullanmanın bahis oranını %2 kadar düşürür.</p>
+<p>travelcost: Arabaya göre daha düşük alternatif maliyeti olan ulaşım türü seçilecektir.</p>
+</div>
+<div id="karma-logit-model" class="section level2">
+<h2><span class="header-section-number">13.3</span> Karma Logit Model</h2>
+<p>Çok terimli logit modelde seçimler seçimi yapanın özelliklerine bağlıdır demiştik. Koşullu logit modelde ise seçime ait özellikler var olup bireye ait özellikler bulunmamaktadır demiştik. Şu anki başlığımız olan karma logit modelde her ikisini de modele dahil edebiliriz.</p>
+<p>Karma logit modeli, tercih olasılığının hem bireyin özelliklerine hem de tercihin niteliğine bağlı olduğu, hem sabit hem de rassal parametrelerin modelde bulunmasına izin veren ve parametre dağılımlarını da modele katan gelişmiş bir nitel tercih modelidir. Karma logit modelinde, rassal parametrelerin dağılımları konusunda bir sınırlama yoktur. Karma logit modeli, monte carlo metodu, maksimum simüle edilmiş benzerlik metodu, halton dizileri ve bayes yöntemleri kullanılarak tahmin edilebilir.</p>
+<p>Ulaşım tercihleri veri setinde yer alan income (aile geliri) ve partysize (yolcu sayısı) bireye özgü niteliklerdi. Bunları ulaşım yöntemleri ile etkileşime sokacağız. Yani, air, train ve bus’ı income ve partysize ile tek tek çarpacağız. Referans olarak ise car’ı almıştık.</p>
+<div class="sourceCode" id="cb325"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb325-1" title="1">df2 <span class="op">%&lt;&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb325-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">air_income =</span> air<span class="op">*</span>income,</a>
+<a class="sourceLine" id="cb325-3" title="3">         <span class="dt">train_income =</span> train<span class="op">*</span>income,</a>
+<a class="sourceLine" id="cb325-4" title="4">         <span class="dt">bus_income =</span> bus<span class="op">*</span>income,</a>
+<a class="sourceLine" id="cb325-5" title="5">         <span class="dt">air_partysize =</span> air<span class="op">*</span>partysize,</a>
+<a class="sourceLine" id="cb325-6" title="6">         <span class="dt">train_partysize =</span> train<span class="op">*</span>partysize,</a>
+<a class="sourceLine" id="cb325-7" title="7">         <span class="dt">bus_partysize =</span> bus<span class="op">*</span>partysize)</a></code></pre></div>
+<p>Ardından veri setini kullanılabilir bir forma getirelim.</p>
+<div class="sourceCode" id="cb326"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb326-1" title="1">df_mlogit.data &lt;-<span class="st"> </span><span class="kw">mlogit.data</span>(<span class="dt">data =</span> df2, <span class="dt">choice =</span> <span class="st">&quot;mode&quot;</span>, <span class="dt">shape =</span> <span class="st">&quot;long&quot;</span>, <span class="dt">alt.levels =</span> <span class="kw">c</span>(<span class="st">&quot;air&quot;</span>,<span class="st">&quot;train&quot;</span>,<span class="st">&quot;bus&quot;</span>,<span class="st">&quot;car&quot;</span>))</a></code></pre></div>
+<p>Şimdi modeli kurabiliriz.</p>
+<div class="sourceCode" id="cb327"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb327-1" title="1">mlogitmodel &lt;-<span class="st"> </span><span class="kw">mlogit</span>(<span class="dt">formula =</span> choice <span class="op">~</span><span class="st"> </span>termtime <span class="op">+</span><span class="st"> </span>invehiclecost <span class="op">+</span><span class="st"> </span>traveltime <span class="op">+</span><span class="st"> </span>air <span class="op">+</span><span class="st"> </span>train <span class="op">+</span><span class="st"> </span>bus <span class="op">+</span><span class="st"> </span>air_income <span class="op">+</span><span class="st"> </span>train_income <span class="op">+</span><span class="st"> </span>bus_income <span class="op">+</span><span class="st"> </span>air_partysize <span class="op">+</span><span class="st"> </span>train_partysize <span class="op">+</span><span class="st"> </span>bus_partysize <span class="op">|</span><span class="st"> </span><span class="dv">0</span>, <span class="dt">data =</span> df_mlogit.data, <span class="dt">reflevel =</span> <span class="st">&quot;car&quot;</span>)</a>
+<a class="sourceLine" id="cb327-2" title="2"><span class="kw">summary</span>(mlogitmodel)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## mlogit(formula = choice ~ termtime + invehiclecost + traveltime + 
+##     air + train + bus + air_income + train_income + bus_income + 
+##     air_partysize + train_partysize + bus_partysize | 0, data = df_mlogit.data, 
+##     reflevel = &quot;car&quot;, method = &quot;nr&quot;)
+## 
+## Frequencies of alternatives:
+##     car     air   train     bus 
+## 0.28095 0.27619 0.30000 0.14286 
+## 
+## nr method
+## 5 iterations, 0h:0m:0s 
+## g&#39;(-H)^-1g = 2.16E-07 
+## gradient close to zero 
+## 
+## Coefficients :
+##                      Estimate  Std. Error z-value  Pr(&gt;|z|)    
+## termtime          -0.10117970  0.01114230 -9.0807 &lt; 2.2e-16 ***
+## invehiclecost     -0.00866998  0.00787631 -1.1008 0.2709983    
+## traveltime        -0.00413073  0.00089282 -4.6266 3.717e-06 ***
+## air:(intercept)    6.03515972  1.13818665  5.3024 1.143e-07 ***
+## train:(intercept)  5.57352739  0.71129151  7.8358 4.663e-15 ***
+## bus:(intercept)    4.50467508  0.79579194  5.6606 1.508e-08 ***
+## air_income         0.00748088  0.01320268  0.5666 0.5709737    
+## train_income      -0.05922726  0.01489233 -3.9770 6.978e-05 ***
+## bus_income        -0.02089836  0.01635051 -1.2781 0.2011975    
+## air_partysize     -0.92242034  0.25850645 -3.5683 0.0003593 ***
+## train_partysize    0.21627255  0.23363796  0.9257 0.3546155    
+## bus_partysize     -0.14792473  0.34276968 -0.4316 0.6660633    
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Log-Likelihood: -172.47</code></pre>
+<p>Model tahmin edildikten sonra parametreleri yorumlayabiliriz ve yorum kolaylığı açısından bu parametreler nispi bahis oranlarına dönüştürülebilirler.</p>
+<p>termtime, invehiclecost ve traveltime’a ait nispi bahis oranları, bu değişkenlerin her birindeki 1 birim artışın, o ulaşım aracının cazibesini car yolculuğuna göre azaltacağını göstermektedir.</p>
+<p>Etkileşim değişkenlerinin nispi bahis oranlarına bakalım. Örneğin, diğer şeyler sabit tutulduğunda, income’daki 1 birimlik artış train ile seyahat etme bahis oranını %5.8 düşürecektir.</p>
+<div class="sourceCode" id="cb329"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb329-1" title="1">(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span><span class="fl">0.05922726</span>)) <span class="op">*</span><span class="st"> </span><span class="dv">100</span> <span class="co">#exp(train_income&#39;ın parametresi)</span></a></code></pre></div>
+<pre><code>## [1] 5.750745</code></pre>
+<p>Bir diğer örnek, diğer şeyler sabit tutulduğunda, partysize’daki 1 birimlik artış air ile seyahat etme bahis oranını %60.2 düşürecektir.</p>
+<div class="sourceCode" id="cb331"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb331-1" title="1">(<span class="dv">1</span> <span class="op">-</span><span class="st"> </span><span class="kw">exp</span>(<span class="op">-</span><span class="fl">0.92242034</span>)) <span class="op">*</span><span class="st"> </span><span class="dv">100</span> <span class="co">#exp(air_partysize&#39;ın parametresi)</span></a></code></pre></div>
+<pre><code>## [1] 60.24443</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="s-ralamal-regresyon-modelleri.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["rEkonometri.pdf", "rEkonometri.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

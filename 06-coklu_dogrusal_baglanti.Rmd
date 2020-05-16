@@ -1,0 +1,336 @@
+# Çoklu Doğrusal Bağlantı
+
+Bağımsız değişkenler arasında tam ya da tama yakın doğrusal bir ilişki yoktur. Eğer bağımsız değişkenler arasında böyle bir ilişki varsa çoklu doğrusal bağlantı olarak tanımlanabilir.
+
+Öncelikle tam bir doğrusal bağlantı olduğu durumda Sıradan En Küçük Kareler tahminlerinin elde edilmesi mekanik olarak olanaksızdır. Bununla birlikte bağımsız değişkenler arasında tama yakın bir doğrusal bir ilişki de bulunabilir. Kennedy'nin altını çizdiği şu nokta önemlidir: *Çoklu doğrusallık bağımsız değişkenler arasındaki teorik ya da gerçek doğrusal ilişkinin var olup olmamasına bağlı değildir; varlığı üzerinde çalışılan veri kümesinde yaklaşık doğrusal bir ilişkinin var olup olmadığı ile ilgilidir.*
+
+Çoklu doğrusal bağlantı varsa neler olur?
+
+* Sıradan En Küçük Kareler tahmincileri BLUE'dur (Best Linear Unbiased Estimator, En İyi Doğrusal Yansız Tahmin Edici). Fakat hassas tahmini zorlaştıran büyük varyans ve kovaryanslar olacaktır.
+
+* Güven aralıkları daha geniş olma eğiliminde olacaktır. Bunun sonucu olarak gerçek anakütle parametresinin sıfır olduğunu söyleyen $H_0$'ı reddedemeyebiliriz.
+
+* En az bir parametrenin t oranı istatistiksel olarak anlamlı çıkmama eğiliminde olacaktır.
+
+* Regresyon parametreleri istatistiksel olarak anlamlı olmamasına rağmen $R^2$ değeri yüksek çıkabilir.
+
+* Sıradan En Küçük Kareler tahmincileri ve bunların standart hataları verilerdeki küçük değişimlere duyarlı olabilir.
+
+* Seçilen regresyon modeline doğrusal bağlantılı bir değişken eklemek modeldeki diğer değişkenlere ait parametre değerlerini değiştirebilecektir.
+
+```{r}
+
+library(corrplot);library(psych);library(car);library(factoextra);library(FactoMineR);library(lmridge);library(tidyverse)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df1 <- read.table("yagis.txt", sep = " ", header = TRUE)
+df2 <- read.table("yumurta.txt", sep = " ", header = TRUE)
+
+```
+
+10 tane istasyona ait yıllık yağış (mm) verileri ile havza yıllık getirisi (mm) aşağıdaki gibidir:
+
+```{r}
+
+df1
+
+```
+
+Çoklu doğrusal bağlantıyı tespit edelim.
+
+Önce bir model kuralım.
+
+```{r}
+
+model <- lm(y ~., df1[,-1]) #yıl sütunu hariç.
+summary(model)
+
+```
+
+* Yüksek $R^2$ fakat az sayıda anlamlı t oranı ya da en az bir parametrenin t oranının istatistiksel olarak anlamlı çıkmaması:
+
+Uygulamamızda $R^2$ değeri olan %99 yüksektir. Birçok t oranı istatistiksel olarak anlamlı çıkmadı.
+
+* Bağımsız değişkenler arasındaki yüksek ikili korelasyonlar:
+
+```{r}
+
+corrplot(cor(df1[,-c(1,12)]), method = "number", type = "lower")
+
+```
+
+Söylendiği üzere yüksek korelasyonlar göze çarpıyor fakat ikili değişkenli korelasyon parametrelerine ne kadar güveneceğiz? Çünkü bu korelasyonlar hesaplanırken modeldeki diğer değişkenler sabit kalmaz.
+
+* Kısmi korelasyon parametreleri:
+
+Yukarıda diğer değişkenlerin sabit kalmayacağından bahsetmiştik. Üç tane değişkenimiz ($x_1, x_2, x_3$) olduğunu varsayalım. $x_2$ ile $x_3$ arasında %90'lık bir korelasyon olabilir. Fakat burada $x_1$'in etkisini hesaba katmadık. $x_1$ değişkeni hem $x_2$'yi hem de $x_3$'ü etkiliyor olabilir. Yani, $x_2$ ile $x_3$ arasındaki yüksek korelasyon $x_1$'in her ikisini etkiliyor olmasından kaynaklı olabilir. Kısmi korelasyon ile $x_1$'in etkisi çıkarılarak $x_2$ ve $x_3$ arasındaki korelasyon hesaplanır. Bu değer de örneğin %30'a düşebilir.
+
+```{r}
+
+corrplot(partial.r(df1[,-c(1,12)]), method = "number", type = "lower")
+
+```
+
+Mesela, $x_1$-$x_2$ korelasyonu %79 iken kısmi korelasyon ile %38'e düştü. İki değişken arasındaki basit korelasyon parametresi anlamlı, fakat kısmi korelasyon parametresi anlamsız ise bu durum çoklu doğrusal bağlantı problemi için bir işaret olabilir. Kısmi korelasyon yaklaşımı her zaman etkili olmamaktadır. Diğer bir anlatımla, kısmi korelasyon parametreleri yüksek olması durumunda bile çoklu doğrusal bağlantı problemi olabilmektedir.
+
+* Yan regresyon hesaplamaları:
+
+Modele eklenen diğer bağımsız değişkenlerin hangi bağımsız değişkenlerle yüksek derecede doğrusal bağlantılı olduğunu ortaya koymak için her bir bağımsız değişkenin geriye kalan bağımsız değişkenlere göre regresyonu hesaplanır. Uygulamamızda 10 tane bağımsız değişken vardır. Bundan dolayı 10 tane yan regresyonumuz olacaktır. Burada F testi kullanılır. $H_0$ reddedilirse doğrusal bağlantı sonucuna ulaşılır. Oldukça yorucu bir yöntem olabilir.
+
+* Varyans şişirme faktörü ve tolerans faktörü: Varyans şişirme faktörü ile parametre tahminlerinin ve varyanslarının çoklu doğrusal bağlantı nedeni ile gerçek değerlerinden ne kadar uzaklaştığı belirlenir. VIF'lerin hesaplanmasını göstermek için aşağıdaki gibi üç bağımsız değişkenli bir regresyon modelini inceleyelim:
+
+$Y_i = \beta_1 + \beta_2X_1 + \beta_3X_2 + \beta_4X_3 + \epsilon_i$
+
+Adım-1: $X_1$ bağımlı; $X_2$ ve $X_3$ bağımsız. $R^2$ hesapla. $X_1$ için $VIF = \frac{1}{(1 – R^2)}$
+
+Adım-2: $X_2$ bağımlı; $X_1$ ve $X_3$ bağımsız. $R^2$ hesapla. $X_2$ için $VIF = \frac{1}{(1 – R^2)}$
+
+Adım-3: $X_3$ bağımlı; $X_1$ ve $X_2$ bağımsız. $R^2$ hesapla. $X_3$ için $VIF = \frac{1}{(1 – R^2)}$
+
+Bağımlı değişken ile bağımsız değişkenler arasında ilişki yoksa (bu durumda $R^2$ = 0) VIF $\frac{1}{(1 – 0)}$'dan 1'e eşit olacaktır. Eğer tam bir ilişki varsa (bu durumda $R^2$ = 1) VIF $\frac{1}{(1 – 1)}$'den $\infty$'a eşit olacaktır. $R^2$ = 0.9 (ya da %90) ise VIF 10 olacaktır. Literatürde yer alan pratik bir kurala göre VIF > 10 için çoklu doğrusal bağlantı deniliyor. Tolerans değeri ise 1'den $R^2$ değerinin çıkarılması ile bulunur. Daha küçük tolerans daha büyük VIF demektir. Küçük veri setlerinde VIF > 5'de bile çoklu doğrusal bağlantı bulunabilir.
+
+```{r}
+
+car::vif(model)
+
+```
+
+Düzeltici önlemler için temel bileşenler analizi ve hemen arkasından temel bileşenler regresyonu konularını inceleyeceğiz. Akabinde de ridge regresyona bakacağız.
+
+Aslında düzeltici önemlerden biri hiçbir şey yapmamaktır. Blanchard, çoklu doğrusallık için *Sıradan En Küçük Kareler'in ya da daha genel olarak istatistiğin bir sorunu değil, Tanrı buyruğudur* der.
+
+Bu da bir seçenek olabileceği gibi biz temel bileşenler analizi ve regresyonu ile girişimizi yapalım.
+
+## Temel Bileşenler Analizi/Regresyonu
+
+Temel bileşenler analizi, korelasyonlu değişkenleri korelasyonsuz değişkenlere (ortogonal değişkenler) dönüştürebilmektedir. Bu şekilde elde edilen değişkenlere temel bileşenler denir. Analizin temel düşüncesi şudur: Korelasyonlu değişkenler alt gruplara ayrılır. Herhangi bir alt gruba ait olan değişkenler bunları bir arada hareket ettiren ortak bir faktöre sahip olur. Bu ortak faktör temel bileşendir.
+
+Basit bir ifade ile, 10 tane bağımsız değişkenimiz vardı. Biz boyut indirgeme yaparak daha az sayıda değişkenle (birbirleriyle korelasyonsuz) bağımlı değişkeni tahmin etmeye çalışacağız. Yani, örneğin fazla bilgi kaybetmeden birkaç GB veri boyutunu birkaç MB boyutuna düşürebiliriz.
+
+Değişkenlere boyut indirgedikten sonra elde ettiğimiz değişkenlere regresyon modeli kuracağız. Buna ise temel bileşenler regresyonu denir.
+
+Temel bileşenler analizi ile başlayalım. Burada örneğimizi basit bir şekilde anlatabilmek için değiştiriyoruz.
+
+Adım-1: Elimizde 15 yıla ait rainfall (cm) ve runoff (cm) verileri olsun. Değerler şöyle;
+
+```{r}
+
+rainfall <- c(105,115,103,94,95,104,120,121,127,79,133,111,127,108,85)
+runoff <- c(42,46,26,39,29,33,48,58,45,20,54,37,39,34,25)
+df <- data.frame(rainfall = rainfall, runoff = runoff)
+
+```
+
+Adım-2: Verilerin matrise aktarılması ve ortalamadan sapmalarının alınması.
+
+```{r}
+
+df$rainfalldev <- round(df$rainfall - mean(df$rainfall), digits = 1)
+df$runoffdev <- round(df$runoff - mean(df$runoff), digits = 1)
+
+```
+
+Adım-3: Kovaryans matrisinin hesaplanması.
+
+```{r}
+
+covmatrix <- cov(df[,c(3,4)])
+covmatrix
+
+```
+
+Adım-4: Özdeğerler ve özvektörlerin hesaplanması.
+
+```{r}
+
+A <- matrix(c(249.9810, 141.0476, 141.0476, 117.5238), 2, 2, byrow = TRUE)
+eigen <- eigen(A)
+eigen
+
+```
+
+Adım-5: Temel bileşenlerin açıklama oranlarının hesaplanması.
+
+```{r}
+
+eigen$values[1] / (eigen$values[1] + eigen$values[2])
+eigen$values[2] / (eigen$values[1] + eigen$values[2])
+
+```
+
+Birinci temel bileşen varyansın %92.4'ünü açıklarken; ikinci temel bileşen %7.6'sını açıklıyor. Temel bileşenler, değişkenlerin (örneğimizde rainfall ve runoff) doğrusal bir kombinasyonudur. Yani, rainfall $λ_1$ ve runoff $λ_2$'dir ya da tam tersi.
+
+Yazının başındaki veri setine dönelim.
+
+Temel bileşenler analizinde ilk olarak standartlaştırılma işlemi yapılır (farklı ölçümlü verilerin yer alması). Yani, tüm hesaplamalar standart veriler üzerinden yapılır. Bağımlı değişken Y için ise merkezileştirme yapılır. Yani, Y değerlerinden Y ortalama değerleri çıkartılır. Bunu, model kurarken kesme terimine ihtiyacımız kalmaması için yapıyoruz. Bunu yapmak kesin bir kural değildir.
+
+```{r}
+
+df1_yeni <- df1[,c(2:11)] #Sadece X'ler alındı.
+df1_yeni <- as.data.frame(apply(df1_yeni, MARGIN = 2, FUN = function(x) scale(x))) #Standardize edildi.
+df1_yeni$y <- df1$y - mean(df1$y) #Merkezileştirildi.
+df1_yeni
+
+```
+
+Kovaryans matrisini aşağıdaki gibi oluşturalım.
+
+```{r}
+
+cov_m <- cov(df1_yeni[,-11])
+cov_m
+
+```
+
+Özdeğerler ve özvektörler hesaplaması aşağıdaki gibi yapılır.
+
+```{r}
+
+eigen(cov_m)
+
+```
+
+10 tane özvektör elde ettik. Bu özvektörler varyansın yüzde kaçını açıklıyor? Örneğin, $λ_1$ olan 4.94476901'i tüm λ'ların toplamına bölerek yüzdeleri bulabiliyorduk.
+
+```{r}
+
+summary(princomp(df1_yeni[,-11]))
+
+```
+
+Bu sonuçları görselleştirebiliriz.
+
+```{r}
+
+fviz_eig(PCA(df1_yeni[,-11], scale.unit = TRUE, ncp = 10, graph = FALSE), addlabels = TRUE, ylim = c(0, 100))
+
+```
+
+Mesela burada ilk altısı bizi tatmin ediyor. Çünkü kümülatife baktığımızda %95.5'ini açıklıyor. Bu durumda kalan dördünü atabiliriz.
+
+İlk altı özvektörü kullanalım. Standardize edilmiş veri seti ile skorları (ilk altısı) çarpıp yeni bir matris elde edeceğiz.
+
+```{r}
+
+pcr <- princomp(df1_yeni[,-11])
+df_ <- lm(df1_yeni$y ~ 0 + pcr$scores[,1] + pcr$scores[,2] + pcr$scores[,3] + pcr$scores[,4] + pcr$scores[,5] + pcr$scores[,6])
+summary(df_)
+
+```
+
+Bu sonuçlardan bağımlı değişken Y'yi en iyi PC1 ile PC4'ün açıkladığını söyleyebiliriz. Gujarati şöyle der: *Kuşkusuz buradaki güçlük bu temel bileşenleri nasıl yorumlamamız gerektiğini bilmiyor olmamızdandır. Ancak temel bileşenler yöntemi korelasyonlu açıklayıcı değişken sayısını korelasyonsuz birkaç değişkene indirgemede kullanışlı bir yoldur. Sonuç olarak doğrusal bağlantı sorunuyla karşılaşmayız.*
+
+## Ridge Regresyon
+
+Bu konuyu, *Yumurta tavukçuluğunda gelirin Ridge Regresyon analizi ile tahmini* çalışmasından faydalanarak inceleyeceğiz.
+
+```{r}
+
+df2$yas_hafta <- NULL #Buradaki yaş, ay ile ilgilidir. O nedenle hafta sütunu atıldı.
+head(df2, 10)
+
+```
+
+Bağımlı değişken:
+
+* **gelir**
+
+Bağımsız değişken(ler):
+
+* **yasama_gucu**
+
+* **yumurta_verimi**
+
+* **yumurta_agirligi**
+
+* **yas_ay**
+
+Ridge regresyon bir sapmalı tahmin yöntemidir. Sapmalı tahmin yöntemi, parametrelerde gerçekleşmesi beklenen sonuçlara ulaşmayı ve bu sonuçlara ulaşırken varyansların küçülmesini sağlar.
+
+Kısa bir hatırlatma:
+
+Matrisler ile parametre tahminini $\hat{\beta} = (X'X)^{-1} (X'Y)$ eşitliği ile buluyorduk.
+
+Çoklu doğrusal bağlantı sözkonusu olduğunda $(X'X)^{-1}$ matrisinin köşegen elemanları çok büyük değerler almaktadır. Bu sorunu giderebilmek için $X'X$ matrisinin köşegen elemanlarına bir sabitin eklenmesi ile $(X'X + kI)^{-1}$ şeklinde ridge tahmincisi oluşturulmuş olur. Bu sabit k'dır. Bu değer seçilirken $\frac{1}{n}\sum (Y_i - \hat{Y_i})^2$ ile bulunan ortalama hata kareyi azaltmaya ve sapmayı mümkün olduğunca küçük tutmaya dikkat edilmelidir. 0-1 arasında değer alan k'nın 0'a yakın olması istenir. Eğer 0 olursa Sıradan En Küçük Kareler tahminleri ile aynı olur.
+
+Önce bildiğimiz haliyle regresyon modelini kuralım.
+
+```{r}
+
+model1 <- lm(formula = gelir ~ yasama_gucu + yumurta_verimi + yumurta_agirligi + yas_ay, data = df2)
+summary(model1) #Verileri defalarca kez kontrol etmeme rağmen çalışma ile aynı çıktıyı alamadım. İşaretlerde bir problem yok.
+
+```
+
+Değişkenler arası korelasyonlar:
+
+```{r}
+
+corrplot(cor(df2[,-1]), method = "number", type = "lower")
+
+```
+
+Yüksek $R^2$, güçlü korelasyonlar ve istatistiksel olarak anlamlı olmayan parametreler elde ettik.
+
+VIF değerleri ise aşağıdaki gibidir:
+
+```{r}
+
+car::vif(model1)
+
+```
+
+Yumurta verimi dışındaki değişkenlerin >10 olduğunu görüyoruz.
+
+Aslında çoklu doğrusal bağlantının sinyallerini almış olduk.
+
+Modeli kurmadan önce ridge izi kavramını bilmemiz gerekiyor. Ridge regresyon yönteminde en önemli nokta olan k değerinin seçimi için çeşitli yol ve algoritmalar geliştirilmiştir. Bunlardan biri ridge izidir. Burada amaç çoklu doğrusal bağlantının etkilerini görerek uygun k değerinin seçilmesidir.
+
+Ridge regresyon modelini kuralım. Ardından hem ridge hem de VIF grafiklerine bakalım.
+
+```{r, fig.width=10, fig.height=8}
+
+model2 <- lmridge(formula = gelir ~., data = df2, K = seq(0, 0.1, 0.01))
+
+seq(0, 0.1, 0.01) #En uygun k, şunlardan biri olacak.
+
+```
+
+Aşağıdaki ridge izi grafiğinde çok küçük bir k değerinden sonra parametrelerin yataylaştığını gözlemliyoruz.
+
+```{r}
+
+plot(model2, type = "ridge")
+
+```
+
+Aşağıdaki VIF grafiğinde ise yine aynı k değerinden sonra değerler 10 sınırının altına iniyor.
+
+```{r}
+
+plot(model2, type = "vif")
+
+```
+
+Çalışmada da olduğu gibi en uygun k değerini 0.01 olarak bulduk. k = 0.01'e ait parametreler (2. sıra) şöyledir:
+
+```{r}
+
+coef(model2)
+
+```
+
+k = 0 iken parametrelerin önceki model ile aynı olduğuna dikkat edin. *Eğer 0 olursa Sıradan En Küçük Kareler tahminleri ile aynı olur* demiştik.
+
+Modeli k = 0.01 ile yeniden kuralım.
+
+```{r}
+
+model2 <- lmridge(formula = gelir ~ ., data = df2, K = 0.01)
+summary(model2)
+
+```
+
+Çalışmanın sonuç bölümünden:
+
+*Sonuç olarak, bu çalışmada yumurta tavukçuluğunda satış gelirini etkileyebilecek değişkenler arasında, güçlü çoklu doğrusal bağlantı yapısından, RR (Ridge Regresyon) yönteminin EKK (En Küçük Kareler) yöntemine göre daha geçerli, tutarlı, durağan ve beklentilere uygun tahminler sağladığı görülmüştür. Çoklu regresyon analizinde eğer çoklu doğrusal bağlantı söz konusu ise, EKK yöntemiyle parametre tahmininde bulunmak yanlış sonuçlar alınmasına ve yorumlanmasına neden olabilir.*

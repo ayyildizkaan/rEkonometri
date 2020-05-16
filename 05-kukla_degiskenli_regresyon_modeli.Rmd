@@ -1,0 +1,450 @@
+# Kukla Değişkenli Regresyon Modeli
+
+## Kukla Değişkenlerin Yorumu
+
+Kukla değişken derken aynı zamanda nitel değişkenlerden bahsediyoruz. Nitel değişkenlerin belirli bir sayısal değeri yoktur. Yani, nominal ölçek değişkenlerdir. Ama biz 0 ve 1 değerleri ile sayısallaştırıp kukla değişkenler oluşturuyoruz.
+
+Üç tane kukla değişkenimiz vardı: female (kadın ise 1; değilse 0), nonwhite (beyaz olmayan işçi ise 1; değilse 0), union (sendikalı bir iş ise 1; değilse 0).
+
+Kukla değişkeni D (dummy) ile ifade edelim. wage fonksiyonunu şöyle yazabiliriz:
+
+$wage_i = \beta_1 + \beta_2D_{2i} + \beta_3D_{3i} + \beta_4D_{4i} + \beta_5education_i + \beta_6exper_i + \epsilon_i$
+
+$D_{2i}: kadın = 1; erkek = 0$
+
+$D_{3i}: beyaz değil = 1; beyaz = 0$
+
+$D_{4i}: sendikalı = 1; sendikasız = 0$
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr);library(segmented)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df1 <- read_excel("Table1_1.xls")
+df2 <- read_excel("Table3_6.xls")
+df3 <- read_excel("Table3_10.xls")
+
+```
+
+```{r}
+
+df1 %<>% 
+  dplyr::select(wage, female, nonwhite, union, education, exper)
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper, data = df1)
+summary(model)
+
+```
+
+* Eğer modele kesme terimi dahil ettiysek ve bir nitel değişkenin m sayıda kategorisi varsa bu durumda m-1 adet kukla değişken belirleriz. Örnek olarak nonwhite değişkenine bakalım. Eğer işçi beyaz değilse 1 olarak kodladık. Zorunlu olarak beyaz olanları da 0 olarak kodlamalıyız. Bu durumda nonwhite'ın iki kategorisi olduğu için 1 tane kukla değişken belirleriz. Burada hangisine 0-1 verildiğinin bir önemi yoktur. Peki, kategorisi ikiden fazla olan bir nitel değişken olsaydı? Örneğin, 3 tane. Bu durumda en fazla iki (3-1) kukla değişkenimiz olabilir. Bu kuralı izlemezsek kukla değişken tuzağına yakalanırız. Yani, tam doğrusal bağlantı durumu. Eğer üç kategori için üç kukla değişkenimiz ve bir de kesme terimimiz varsa bu üç kukla değişkenin toplamı 1 olup bu da 1 olan kesme terimine eşit olacaktır. İşte tam doğrusallık. female örneğine bakalım. Bu örnekte kadınlar için 1; erkekler için 0 idi. Erkekler için 1; kadınlar için 0 değerini alan erkek kukla değişkenini de modele neden dahil etmiyoruz diye sorabiliriz. Bu gereksizdir. Çünkü, erkekler için kesme terimi $\beta_1$; kadınlar için kesme terimi $\beta_1 + \beta_2$'dir. Sadece iki kategori olduğu için sadece iki farklı kesme terimine ihtiyacımız vardır. Bu da şu anlama gelir: $\beta_1$'in yanı sıra sadece bir tane kukla değişken kullanmamız gerekir. Biz de ilk başta kadınlar için bir kukla değişken kullanmayı tercih ettik.
+
+* Eğer bir nitel değişkenin m kategorisi varsa, kesme terimi dahil etmemek koşuluyla m adet kukla değişken ekleyebiliriz.
+
+* 0 değerini alan kategori referanstır. Tüm karşılaştırmalar bu referansa göre yapılır.
+
+* Kukla değişkenler logaritmik yapıda belirlenemez. Çünkü, 0-1 olarak belirleniyorlar.
+
+* Her kukla parametresi bir serbestlik derecesine mal olur. Bu nedenle küçük örneklemlerde fazla kukla parametresi belirlemekten kaçınmalıyız.
+
+Kukla değişkenler ile ilgili yorumları vermiştik. Diğer değişkenler sabit tutulduğunda;
+
+Kuklaların yorumu:
+
+Kadınların ortalama wage'i erkeklerin ortalama wage'inden 3.08 $ daha düşüktür (female).
+
+Beyaz olmayan bir işçinin ortalama wage'i beyaz bir işçinin ortalama wage'inden 1.57 $ daha düşüktür (nonwhite).
+
+Sendikalı bir işte çalışanın ortalama wage'i sendikalı bir işte çalışmayanın ortalama wage'inden 1.1 $ daha fazladır (union).
+
+Kukla olmayanların yorumu:
+
+Her ilave eğitim yılı için ortalama wage 1.37 $ artmaktadır (education).
+
+Her ilave deneyim için ortalama wage 0.17 $ artmaktadır (exper).
+
+Örneğin, female için ne dedik? Kadınların ortalama wage'i erkeklerin ortalama wage'inden... Burada erkeklere sıfır dediğimiz için referans erkek kategorisi oldu.
+
+-7.18334 olan kesme terimi ise sıfır değeri alan tüm kategorileri işaret etmektedir. Yani, erkek, beyaz, sendikalı olmayan işçilerin beklenen ücreti. Ücret eksi çıkar mı? Yorumlarken tabi ki dikkat edeceğiz. Bunun iktisadi açıdan bir anlamı yoktur.
+
+Bir kadın işçinin erkek işçiye göre ortalama wage'inin ne kadar düşük olduğunu biliyoruz. Ya da beyaz olmayan bir işçinin beyaz işçiye göre... Ya da sendika üyesi bir işçinin sendika üyesi olmayan bir işçiye göre... Peki, beyaz olmayan bir kadın işçinin ortalama wage'inin, sadece kadın bir işçinin veya sadece beyaz olmayan bir işçinin ortalama wage'inden farklı olması mümkün müdür?
+
+Bunu belirlemek için kadın ve beyaz olmayan kuklaların çarpımını wage fonksiyonuna ekleriz. Bu tür çarpıma etkileşimli kukla diyeceğiz.
+
+```{r}
+
+df1 %<>% 
+  mutate(female_nonwhite = female * nonwhite)
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper + female_nonwhite, data = df1)
+summary(model)
+
+```
+
+Diğer faktörler sabit tutulduğunda, kadın olmanın 3.24 $ daha düşük ortalama wage'i vardır. Beyaz olmamanın ortalama 2.16 \$ daha düşük ortalama wage'i vardır. Hem kadın hem de beyaz olmamanın ise female + nonwhite + female_nonwhite = – 3.24 – 2.16 + 1.10 = -4.30 \$ daha düşük ortalama wage'i vardır. Başka bir ifade ile, beyaz olmayan bir kadın sadece kadın olmaktan veya sadece beyaz olmamaktan daha düşük bir ortalama wage elde eder.
+
+Kukla değişken olmayan örneğin, education için şu yorumu yapmıştık: Her ilave eğitim yılı için ortalama wage 1.37 $ artmaktadır. Bunu derken aslında kadın ile erkek arasında, beyaz olmayan ile beyaz arasında ve sendikalı ile sendikasız arasında aynı olduğunu kabul ediyoruz.
+
+Ücret fonksiyonunu şöyle ifade edelim:
+
+$wage_i = \beta_1 + \beta_2D_{2i} + \beta_3D_{3i} + \beta_4D_{4i} + \beta_5education_i + \beta_6exper_i + \beta_7(D_{2i}*education_i) +$
+
+$\beta_8(D_{3i}*education_i) + \beta_9(D_{4i}*education_i) + \beta_{10}(D_{2i}*exper_i) + \beta_{11}(D_{3i}*exper_i) +$
+
+$\beta_{12}(D_{4i}*exper_i) + \epsilon_i$
+
+$\beta_2, \beta_3, \beta_4$'ü yazmıştık; önceden biliyoruz. $\beta_7$ ile $\beta_{11}$ arasını ise aşağıdaki gibi yorumlayacağız.
+
+```{r}
+
+df1 %<>% 
+  mutate(female_educ = female * education,
+         nonwhite_educ = nonwhite * education,
+         union_educ = union * education,
+         female_exper = female * exper,
+         nonwhite_exper = nonwhite * exper,
+         union_exper = union * exper)
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper + female_educ + nonwhite_educ + union_educ + female_exper + nonwhite_exper + union_exper, data = df1)
+summary(model)
+
+```
+
+female_educ ve female_exper parametreleri negatif ve istatistiksel olarak anlamlıdır. Bu da education ve exper'e göre kadın işçiler için ortalama saatlik wage artış hızı, erkek işçilere göre daha düşük demektir. Aynı şekilde nonwhite_educ için yorum education'a göre wage artış hızı beyaz olmayan işçiler için negatiftir; beyaz işçilerinkinden daha düşüktür. Bu parametre %10 seviyesinde istatistiksel olarak anlamlıdır. Diğer parametreler istatistiksel olarak anlamlı değildir. Bunları modelden çıkartıp modeli yeniden kuralım.
+
+```{r}
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper + female_educ + nonwhite_educ + female_exper, data = df1)
+summary(model)
+
+```
+
+Kategorinin 0 ve 1 olmasına göre aldığımız aksiyonlara dikkat edin.
+
+Beyaz, erkek, sendikalı olmayan işçilerin (hepsi sıfırı temsil ediyor) ücret fonksiyonu:
+
+$\hat{wage_i} = -10.6452 + 1.5658education_i + 0.21262exper_i$
+
+Beyaz, kadın, sendikalı olmayan işçilerin ücret fonksiyonu:
+
+$\hat{wage_i} = (-10.6452 + 3.2574) + (1.5658 – 0.34695)education_i + (0.21262 – 0.0949)exper_i$
+
+$\hat{wage_i} = -7.3878 + 1.21885education_i + 0.11772exper_i$
+
+Beyaz olmayan, erkek, sendikalı olmayan işçilerin ücret fonksiyonu:
+
+$\hat{wage_i} = (-10.6452 + 2.62695) + (1.5658 – 0.32937)education_i + 0.21262exper_i$
+
+$\hat{wage_i} = -8.01825 + 1.23643education_i + 0.21262exper_i$
+
+Beyaz, erkek, sendikalı işçilerin ücret fonksiyonu:
+
+$\hat{wage_i} = (-10.6452 + 1.07851) + 1.5658education_i + 0.21262exper_i$
+
+$\hat{wage_i} = -9.56669 + 1.5658education_i + 0.21262exper_i$
+
+Bağımlı değişken logaritmik olsaydı kukla değişkenleri nasıl yorumlayacaktık?
+
+```{r}
+
+df1 %<>% 
+  mutate(lnwage = log(wage))
+
+model <- lm(formula = lnwage ~ female + nonwhite + union + education + exper, data = df1)
+summary(model)
+
+```
+
+Ortalama kadın işçinin ücret oranı ortalama erkek işçinin ücret oranına göre %24.92 daha düşüktür (female). Ancak doğru olan yüzde değişimi bulmak için parametrenin ters logaritmasını alıp 1'den çıkarıyoruz.
+
+```{r}
+
+exp(as.numeric(model$coefficients[2])) - 1 #%24.92 yerine %22.05 koyun.
+
+```
+
+Ortalama beyaz olmayan işçinin ücret oranı ortalama beyaz olan işçinin ücret oranına göre %13.35 daha düşüktür (nonwhite). Doğru değer için;
+
+```{r}
+
+exp(as.numeric(model$coefficients[3])) - 1 #%13.35 yerine %12.50 koyun.
+
+```
+
+Ortalama sendikalı olan işçinin ücret oranı ortalama sendikalı olmayan işçinin ücret oranına göre %18.02 daha yüksektir (union). Doğru değer için;
+
+```{r}
+
+exp(as.numeric(model$coefficients[4])) - 1 #%18.02 yerine %19.75 koyun.
+
+```
+
+## Yapısal Değişimdeki Rolü
+
+Kukla değişkenleri yapısal değişimlerde kullanabiliriz.
+
+```{r}
+
+df2 %<>% 
+  dplyr::select(obs, gps, gpi)
+
+str(df2)
+
+```
+
+ABD için brüt özel yatırımlar (GPI) ile brüt özel tasarruflar (GPS) arasındaki ilişkiyi inceleyelim.
+
+Bağımlı değişken:
+
+* **gpi:** Brüt özel yatırımlar
+
+Bağımsız değişken(ler):
+
+* **gps:** Brüt özel tasarruflar
+
+Yatırım fonksiyonu şudur:
+
+$GPI_t = \beta_1 + \beta_2GPS_t + u_t, \beta_2 > 0$
+
+$\beta_2$, marjinal yatırım eğilimidir. Yani, 1 $ fazla tasarruf sonucunda oluşan ek yatırımdır.
+
+ABD'nin 1981-82 döneminde girdiği resesyon yapısal bir değişim yaratmış olabilir.
+
+Önce bunu dikkate almadan modelimizi kuralım.
+
+```{r}
+
+df2 %<>% 
+  mutate(r81 = ifelse(obs > 1980, 1, 0))
+
+model <- lm(formula = gpi ~ gps, data = df2)
+summary(model)
+
+```
+
+Marjinal yatırım eğilimi 1.10 çıktı. Bu da brüt özel tasarruflar 1 $ arttığında brüt özel yatırımların 1.10 \$ artacağını söyler.
+
+Şimdi yapısal kırılmayı da dikkate alacağız. Bunun için yatırım fonksiyonunu şöyle yazalım:
+
+$GPI_t = \beta_1 + \beta_2GPS_t + \beta_3R1981_t + \epsilon_t$
+
+R1981, resesyonu ifade etmektedir ve 1981'den sonraki gözlemler 1 olacak anlamını taşır.
+
+```{r}
+
+model <- lm(formula = gpi ~ gps + r81, data = df2)
+summary(model)
+
+```
+
+Kukla parametresi -240.8 istatistiksel olarak anlamlıdır ve öncesi-sonrasında ciddi bir fark olduğunu gösterir.
+
+Kesme terimi sıfır değeri alan tüm kategorileri işaret etmektedir. Yani, 1981 öncesini. Buradan yola çıkarak -83.5 - 240.8 = -324.3 bulabiliriz. Bu da resesyon öncesi seviyesine göre çok daha düşük olduğunu gösterir.
+
+Sadece kesme terimi değil; eğimde de değişim olabilir. Bunun için kukla değişkenini brüt özel tasarruflarla etkileşime sokup modele dahil edelim.
+
+```{r}
+
+df2 %<>% 
+  mutate(gps_r81 = gps * r81)
+
+model <- lm(formula = gpi ~ gps + r81 + gps_r81, data = df2)
+summary(model)
+
+```
+
+1981 öncesine ait model:
+
+$\hat{GPI_t} = -7.7799 + 0.9511GPS_t$
+
+1981 sonrasına ait model ise şöyle olur:
+
+$\hat{GPI_t} = (-7.7799 - 357.4587) + (0.9511 + 0.3719)GPS_t$
+
+$\hat{GPI_t} = -365.2386 + 1.323GPS_t$
+
+İki dönem arasında iki değişken arasındaki ilişkinin değişimini göstermiş olduk.
+
+## Mevsimsellikteki Rolü
+
+Mevsimsel etkiler, yıl içinde meydana gelen, sistematik, istikrarlı, genellikle takvimle ilgili dönemsel ve devri karakterdeki etkilerdir. Aylık, üç aylık hatta haftalık veya günlük dalgalanmalar halinde görülebilirler.
+
+Kullanacağımız veriler moda giyim satışlarına aittir.
+
+```{r}
+
+df3 %<>% 
+  dplyr::select(sales, d2, d3, d4, rpdi, conf)
+
+str(df3)
+
+```
+
+Bağımlı değişken:
+
+* **sales:** Bin fit-karelik perakende alanı başına reel satışlar
+
+Bağımsız değişken(ler):
+
+* **d2:** İkinci çeyrek için kukla
+
+* **d3:** Üçüncü çeyrek için kukla
+
+* **d4:** Dördüncü çeyrek için kukla
+
+Yılın ilk çeyreğini referans olarak aldık.
+
+Modeli kuralım.
+
+```{r}
+
+model <- lm(formula = sales ~ d2 + d3 + d4, data = df3)
+summary(model)
+
+```
+
+Çıktılardan görebileceğimiz üzere moda satışları Noel ve diğer tatilleri içeren dördüncü çeyrekte en fazladır. Yorumlayalım: Dördüncü çeyrekteki ortalama satış değeri birinci (referans) çeyrekteki ortalama satışlardan 57 birim daha yüksektir. Dördüncü çeyrek ortalama satış değeri 73.183 + 57.115 = 130.298'dir. Diğer iki çeyrek de aynı şekilde yorumlanabilir.
+
+Bizim amacımız bu değerleri mevsimsellikten arındırmaktı.
+
+Adım-1: Modelden satış hacmi tahminlerini bulalım.
+
+```{r}
+
+df3$tahmin <- model$fitted.values
+
+```
+
+Adım-2: Gerçek satış hacminden tahminleri çıkararak kalıntıları bulalım.
+
+```{r}
+
+df3$kalinti <- df3$sales - df3$tahmin
+
+```
+
+Adım-3: Ortalama satış değerini tahmin edilen kalıntılara ekleyelim.
+
+```{r}
+
+df3$arindirilmis <- mean(df3$sales) + df3$kalinti
+
+```
+
+Mevsimsel arındırmayı gerçekleştirdik. Şimdi hem gerçek değerleri hem de arındırılmış değerleri grafiğe aktaralım.
+
+```{r}
+
+ggplot(df3, aes(x = as.numeric(row.names(df3)))) +
+  geom_line(aes(y = sales), color = "red") +
+  geom_line(aes(y = arindirilmis), color = "blue", linetype = "dashed") +
+  theme_minimal() +
+  theme(axis.title = element_blank()) +
+  scale_y_continuous(limits = c(0,NA))
+
+```
+
+Modeli daha da genişletebiliriz. Aşağıdaki bağımsız değişkenleri modele ekleyelim:
+
+* **rpdi:** Reel kişisel harcanabilir gelir
+
+* **conf:** Tüketici güven endeksi
+
+```{r}
+
+model <- lm(formula = sales ~ d2 + d3 + d4 + rpdi + conf, data = df3)
+summary(model)
+
+```
+
+Bu eklediğimiz değişkenler mevsimsel etkilerden arındırıldı mı?
+
+Frisch-Waugh teoremine göre evet. Yani, modele mevimsel kuklaları katarak aslında bütün zaman serilerini mevsimsellikten arındırmış oluyoruz.
+
+Yukarıdaki çıktı bize mevsimsel faktörleri yansıtan kesmelerin çeyrekten çeyreğe değiştiğini fakat rpdi ve conf eğim parametrelerinin baştan sona sabit kaldığını varsaymaktadır. Bu varsayımı kademeli eğim kuklaları ile test edelim.
+
+$Sales_t = \beta_1 + \beta_2D_{2t} + \beta_3D_{t3} + \beta_4RPDI_t + \beta_5CONF_t + \beta_6(D_2*RPDI_t) + \beta_7(D_3*RPDI_t) +$
+
+$\beta_8(D_4*RPDI_t) + \beta_9(D_2*CONF_t) + \beta_{10}(D_3*CONF_t) + \beta_{11}(D_4*CONF_t) + \epsilon_t$
+
+Varsayımı test etmemizi sağlayacak olan $\beta_6$'dan $\beta_{11}$'e kadar olan kademeli eğim parametreleridir.
+
+```{r}
+
+df3 %<>% 
+  mutate(d2_rpdi = d2*rpdi,
+         d3_rpdi = d3*rpdi,
+         d4_rpdi = d4*rpdi,
+         d2_conf = d2*conf,
+         d3_conf = d3*conf,
+         d4_conf = d4*conf)
+
+model <- lm(formula = sales ~ d2 + d3 + d4 + rpdi + conf + d2_rpdi + d3_rpdi + d4_rpdi + d2_conf + d3_conf + d4_conf, data = df3)
+summary(model)
+
+```
+
+Kademeli eğim parametrelerinin hiçbiri istatistiksel olarak anlamlı çıkmamıştır. Bu bize rpdi ile conf parametrelerinin sezonlar arasında değişmediğini göstermektedir. Bunun yanında mevsimsel kuklaların da istatistiksel olarak anlamlı çıkmadığını görüyoruz. Dolayısıyla, moda satışlarında mevsimsel değişimler yoktur deriz ancak kademeli eğim parametrelerini modelden çıkardığımızda (bir önceki çıktı) güçlü bir mevimsel faktör olduğunu görürüz.
+
+## Parçalı Doğrusal Regresyondaki Rolü
+
+Parçalı doğrusal regresyonu anlamak için Türkiye'ye ait Covid-19 verilerini kullanacağız. Bu veriler 98 vaka ve sonrasına ait 13 günü kapsamaktadır.
+
+```{r}
+
+zaman <- seq(1,13,1)
+vaka <- c(98, 192, 359, 670, 947, 1236, 1529, 1872, 2433, 3629, 5698, 7402, 9217)
+df <- data.frame(zaman = zaman, vaka = vaka)
+
+ggplot(df, aes(x = factor(zaman), y = vaka)) +
+  geom_point() +
+  geom_vline(xintercept = 9, linetype = "dashed") +
+  theme_minimal() +
+  labs(x = "zaman")
+
+```
+
+Vaka sayısının 9. güne kadar normal bir seyirde giderken bundan sonra yönünü yukarı kırdığını görüyoruz. Yani, iki farklı doğru görmekteyiz. 9. gün için eşik değer diyebiliriz. İşte bu bir parçalı doğrusal regresyondur ve bu parçaların kendilerine ait eğimleri vardır. Bu ayrıklığı hesaba katmak için kukla değişkenlerden yararlanacağız:
+
+$Y_i = \beta_1 + \beta_2X_i + \beta_3(X_i - X^*)D_i + \epsilon_i$
+
+Burada, Y vaka sayısı; X zaman ya da gündür. $X^*$ zamanın önceden bilinen eşik değeridir ve D = 1 ($X_i > X^*$), D = 0 ($X_i < X^*$) olur. $\beta_3$ istatistiksel olarak anlamlı ise farklı eğimler olduğu sonucuna ulaşırız.
+
+Parçalara ayrılmış regresyon doğruları şöyle olur:
+
+$E(Y_i) = \beta_1 + \beta_2X_i, D_i = 0$ için
+
+$E(Y_i) = (\beta_1 - \beta_3X^*) + (\beta_2 + \beta_3)X_i, D_i = 1$ için
+
+$\beta_2$ eşikten önceki regresyon doğrusunun; $\beta_2 + \beta_3$ ise eşikten sonraki regresyon doğrusunun eğimini verir.
+
+```{r}
+
+df$A <- df$zaman - 9 #eşik değerden çıkar.
+df$D <- ifelse(df$A > 0, 1, 0) #0'dan büyükse 1; değilse 0 ata.
+df$AD <- df$A * df$D #her iki sütunu çarp.
+
+model <- lm(formula = vaka ~ zaman + AD, data = df)
+summary(model)
+
+```
+
+Tahmin edilen bütün regresyon parametreleri tek tek (t) ve toplu (F) olarak istatistiksel açıdan anlamlıdır. İki regresyon doğrusunun da eğim parametrelerinin farklı olduğunu söyleyebiliriz.
+
+Ortalama Vaka Sayısı = -365.27 + 276.73Zaman, Zaman < 9
+
+Ortalama Vaka Sayısı = (-365.27 - 1484.80*9) + (276.73 + 1484.80)Zaman, Zaman > 9
+
+Ortalama Vaka sayısı = -13728.47 + 1761.53Zaman, Zaman > 9
+
+Eşik güne kadar zamandaki birim artış başına birim vaka sayısı 277 artarken; eşikten sonra 1762 artmıştır.
+
+```{r}
+
+#Paket yardımı ile aşağıdaki gibi bulunabilir:
+model <- segmented(obj = lm(vaka ~ zaman, data = df), seg.Z = ~zaman, psi = list(zaman = 9)) #Kırılma birden fazla ise c(...) ile eklenebilir.
+#summary(model)
+#slope(model)
+
+```
+

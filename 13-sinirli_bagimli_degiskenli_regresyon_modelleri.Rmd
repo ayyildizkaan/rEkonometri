@@ -1,0 +1,156 @@
+# Sınırlı Bağımlı Değişkenli Regresyon Modelleri
+
+Artık, bağımlı değişkenin aldığı değerlere sınırlama gelecek.
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr);library(VGAM);library(truncreg)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df1 <- read_excel("Table11_1.xls")
+df2 <- read_excel("Table11_7.xls")
+
+```
+
+Bir uygulama ile gösterelim. Yapılan bir ampirik çalışma ile çeşitli sosyoekonomik değişkenlerin evli kadınların işgücü piyasasındaki çalışma süreleri üzerindeki etkileri belirlenmeye çalışılmış. Veriler 753 evli kadına aittir. İşgücü piyasası dedik ama bu 753 evli kadının 428'i çalışıyor. Kalan 325'i için çalışma saatleri sıfır diyebiliriz. İşte konu burada başlıyor.
+
+```{r}
+
+df1 %<>% 
+  dplyr::select(hours,age,educ,exper,expersq,faminc,kidsl6,hwage,lfp)
+
+str(df1)
+
+```
+
+Bağımlı değişken:
+
+* **hours:** Saatlik çalışma süresi
+
+Bağımsız değişken(ler):
+
+* **age:** Yaş
+
+* **educ:** Eğitim süresi
+
+* **exper:** Deneyim
+
+* **expersq:** Deneyimin karesi
+
+* **faminc:** Aile geliri
+
+* **kidsl6:** 6 yaş altı çocuk sayısı
+
+* **hwage:** Kocanın ücreti
+
+Sıradan En Küçük Kareler uygulayalım.
+
+```{r}
+
+olsmodel <- lm(hours ~., data = df1 %>% dplyr::select(-lfp))
+summary(olsmodel)
+
+```
+
+İlk aşamada sonuçların iyi çıktığını görüyoruz ama 325 kadının çalışmadığını göz önüne alarak temkinli yaklaşmalıyız.
+
+Şimdi bir de çalışan 428 kadına ait verileri kullanarak model kuralım.
+
+```{r}
+
+olsmodel <- lm(hours ~., data = df1 %>% filter(lfp == 1))
+summary(olsmodel)
+
+```
+
+Önceki modelde educ parametresi anlamlı değilken bu modelde anlamlı çıktı. Tabi sansürlenmiş olsa da bu sonuçlara da temkinli yaklaşmamız gerekiyor. Çünkü sansürlenmiş regresyon modellerine ait Sıradan En Küçük Kareler tahminleri yanlı olup tutarlı değildir.
+
+İki modelin eğim parametrelerinin neden farklı olabileceğini grafikler ile gösterelim. Bunun için hours ile faminc değişkenlerini alalım.
+
+```{r}
+
+ggplot() +
+  geom_point(data = df1, aes(x = faminc, y = hours), size = 1, color = "red") +
+  geom_smooth(data = df1, aes(x = faminc, y = hours), method = "lm", formula = y~x, color = "red", se = FALSE) + #325 gözlem yatay eksenin üzerinde = 0
+  geom_point(data = df1 %>% filter(lfp == 1), aes(x = faminc, y = hours), size = 1, color = "blue") +
+  geom_smooth(data = df1 %>% filter(lfp == 1), aes(x = faminc, y = hours), method = "lm", formula = y~x, color = "blue", se = FALSE) +
+  theme_minimal()
+
+```
+
+Sansürlenmiş örneklemleri aşmak için tobit modelini kullanacağız.
+
+Kısa bir bilgi: Tobin (tobit regresyon modeli geliştiricisi), ilk kez dayanıklı tüketim malları üzerine hane halkı harcamalarını analiz ederken, kimi ailelerin dayanıklı tüketim malı harcaması gibi bir harcama kaleminin olmaması sebebiyle bağımlı değişkeni negatif çıkan bir regresyon türü ile karşılaşmıştır. Tobin bu çalışmasında, harcamanın hiçbir zaman negatif olmayacağı gerçeğinden hareketle hane halkı geliri, belli bir düzeyi geçene kadar bu değişkene sıfır değeri atamıştır. O yıllarda tanımladığı bu model sansürlü regresyon modeline klasik bir örnektir.
+
+```{r}
+
+tobitmodel <- vglm(hours ~., tobit, data = df1 %>% dplyr::select(-lfp))
+summary(tobitmodel)
+
+```
+
+Bir bağımsız değişkenin tobit parametresinin bu bağımsız değişkenin gözlenen bağımlı değişken ortalama değeri üzerindeki marjinal etkisini verdiği şeklinde yorumlayamayız. Yani, Sıradan En Küçük Kareler yorumu geçerli değildir. Nedeni ise tobit türündeki sansürlenmiş regresyon modellerinde bağımsız değişken değerindeki 1 birimlik değişimin iki tane olan etkisindendir. Bu iki etkiden birincisi, gözlenen bağımlı değişkenin ortalama değere; ikincisi, gizli değişkenin gerçekte gözlenme olasılığına etkisidir. Örnek olarak age değişkenini alalım. Parametresi 54'tür. Diğer değişkenler sabit tutulduğunda, yaştaki 1 yıllık artışın yıllık çalışma saati olan hours'a doğrudan etkisi 54 saatlik düşüştür. Bunun yanında evli bir kadının işgücüne katılma olasılığının da azalması anlamındadır. Bu nedenle bizim 54'ü bunun gerçekleşme olasılığı ile çarpmamız gerekiyor.
+
+Tobit modelde hata teriminin sıfır ortalamalı ve sabit varyanslı normal dağılım izlediği varsayılır.
+
+Şimdi başa dönelim. 753 kadın değil de 428'i üzerinden Sıradan En Küçük Kareler yöntemini çalıştırmak istemediğimizi söylemiştik. Dolayısıyla örneklem kırpılmış olduğundan kırpılmış normal dağılımı kullanmamız gerekir. Bu modeli kurmak için de en çok olabilirlik gibi doğrusal olmayan bir tahmin yöntemi kullanmalıyız.
+
+```{r}
+
+mlmodel <- truncreg(hours ~., data = df1 %>% filter(lfp == 1) %>% dplyr::select(-lfp), scaled = TRUE)
+summary(mlmodel)
+
+```
+
+428 kadın üzerinden modeli kurmuş olduk. En başta Sıradan En Küçük Kareler yöntemi ile de model kurmuştuk. Parametre büyüklükleri ve istatistiksel anlamlılıklarda farklılıklar göreceğiz. Örneğin, sansürlenmiş modelde educ parametresi pozitifti. Kırpılmış regresyonda ise educ parametresi negatif çıktı.
+
+O halde sansürlenmiş ve kırpılmış regresyon modellerinden hangisi daha uygundur? *Tobit model (753 gözlem) kırpılmış regresyon modelinden (428 gözlem) daha fazla bilgi kullandığından, tobit modelden elde edilen tahminlerin daha etkin olacağı beklenir* der Gujarati.
+
+Bir uygulama daha yapacağız. Fakat uygulamaya geçmeden önce iki kavramı biraz daha açalım: Sansürlenmiş, kırpılmış.
+
+Kırpılmış regresyon modeli sansürlenmiş regresyon modelinden önemli bir noktada ayrılır. Veri sansürleme durumunda rassal çekilen her bir birim için hep bağımsız değişkenleri gözlerken veri yalnızca bir eşiğin altında veya üstünde sansürlenmediği zaman Y'nin sonucunu gözleriz. Veri budama ile dikkatimizi örnekleme öncesi anakütlenin bir alt setine sınırlıyoruz; böylece bilgi gözlemediğimiz anakütlenin bir parçası mevcuttur. Bir kırpılmış regresyon modeli örneklemimizdeki anakütlenin bir alt setini dışladığımızda ortaya çıkar. Bağımlı değişkenin değişim aralığının herhangi bir şekilde sınırlandırıldığı regresyon modellerinde eğer belirli bir aralığın dışındaki gözlemler tamamen kaybedilmekte ise kırpılmış model, en azından bağımsız değişkenler gözlenebiliyorsa sansürlü model söz konusu olmaktadır.
+
+İlk evliliklerindeki 601 kadın ve erkeğe ait bir örneklemde evlilik dışı ilişki hakkında sorular sorulmuş ve tepkileri ölçülmüş.
+
+```{r}
+
+df2 %<>% 
+  dplyr::select(naffairs, age, male, educ, kids, ratemarr, relig, yrsmarr)
+
+```
+
+* **naffairs:** Bağımlı değişkendir. Geçmiş yıldaki evlilik dışı ilişki sayısı
+
+* **age:** Yaş
+
+* **male:** Erkek ise 1
+
+* **educ:** Eğitim yılı
+
+* **kids:** Çocuk varsa 1
+
+* **ratemarr:** Evlilik değerlendirmesi (çok mutsuz 1, .., çok mutlu 5)
+
+* **relig:** Dindarlık seviyesi (dindar değil 1, .., çok dindar 5)
+
+* **yrsmarr:** Evlilik yılı
+
+Referans olması açısından Sıradan En Küçük Kareler yöntemi ile bir model kuralım.
+
+```{r}
+
+modelref <- lm(naffairs ~., data = df2)
+summary(modelref)
+
+```
+
+age, ratemarr, relig ve yrsmarr değişkenlerinin işaretleri beklentilere paraleldir. Ayrıca istatistiksel olarak da anlamlı çıkmışlardır. Fakat bu veriler sansürlenmiştir. Bu nedenle tahmin edilen parametreler muhtemelen yanlıdır ve tutarlı değildir. Sansürlemeyi hesaba katmak için tobit modelini tahmin edelim. İki modeli de yan yana koyduğumuz zaman tahmin edilen parametrelerinde ve istatistiksel anlamlılıklarında farklılıklar olduğunu göreceğiz.
+
+```{r}
+
+tobitmodel <- vglm(naffairs ~., tobit, data = df2)
+summary(tobitmodel)
+
+```
+
+Uygulamada sansürlenmiş regresyon modeller budanmış regresyon modellere tercih edilebilir. Çünkü ilkinde örneklemdeki bütün gözlemleri; ikincisinde sadece budanmışları dahil ederiz.

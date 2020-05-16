@@ -1,0 +1,523 @@
+<!DOCTYPE html>
+<html lang="" xml:lang="">
+<head>
+
+  <meta charset="utf-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <title>Konu 16 Sayma Verilerini Modelleme | R’da Ekonometri Uygulamaları</title>
+  <meta name="description" content="Ekonometri uygulamalarını R’da yapın." />
+  <meta name="generator" content="bookdown 0.18 and GitBook 2.6.7" />
+
+  <meta property="og:title" content="Konu 16 Sayma Verilerini Modelleme | R’da Ekonometri Uygulamaları" />
+  <meta property="og:type" content="book" />
+  
+  
+  <meta property="og:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Konu 16 Sayma Verilerini Modelleme | R’da Ekonometri Uygulamaları" />
+  
+  <meta name="twitter:description" content="Ekonometri uygulamalarını R’da yapın." />
+  
+
+<meta name="author" content="Ahmet Akgül (rpydaneogrendim)" />
+
+
+<meta name="date" content="2020-05-16" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black" />
+  
+  
+<link rel="prev" href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"/>
+<link rel="next" href="dinamik-ekonometri-modelleri.html"/>
+<script src="libs/jquery-2.2.3/jquery.min.js"></script>
+<link href="libs/gitbook-2.6.7/css/style.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-table.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-bookdown.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-highlight.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-search.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-fontsettings.css" rel="stylesheet" />
+<link href="libs/gitbook-2.6.7/css/plugin-clipboard.css" rel="stylesheet" />
+
+
+
+
+
+
+
+
+
+
+
+<style type="text/css">
+a.sourceLine { display: inline-block; line-height: 1.25; }
+a.sourceLine { pointer-events: none; color: inherit; text-decoration: inherit; }
+a.sourceLine:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode { white-space: pre; position: relative; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+code.sourceCode { white-space: pre-wrap; }
+a.sourceLine { text-indent: -1em; padding-left: 1em; }
+}
+pre.numberSource a.sourceLine
+  { position: relative; left: -4em; }
+pre.numberSource a.sourceLine::before
+  { content: attr(title);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; pointer-events: all; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {  }
+@media screen {
+a.sourceLine::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+<link rel="stylesheet" href="style.css" type="text/css" />
+</head>
+
+<body>
+
+
+
+  <div class="book without-animation with-summary font-size-2 font-family-1" data-basepath=".">
+
+    <div class="book-summary">
+      <nav role="navigation">
+
+<ul class="summary">
+<li><a href="./">R'da Ekonometri Uygulamaları</a></li>
+
+<li class="divider"></li>
+<li class="chapter" data-level="1" data-path="index.html"><a href="index.html"><i class="fa fa-check"></i><b>1</b> Nelere İhtiyacınız Olacak?</a><ul>
+<li class="chapter" data-level="1.1" data-path="index.html"><a href="index.html#kullanılan-kütüphaneler"><i class="fa fa-check"></i><b>1.1</b> Kullanılan Kütüphaneler</a></li>
+<li class="chapter" data-level="1.2" data-path="index.html"><a href="index.html#kullanılan-veri-setleri"><i class="fa fa-check"></i><b>1.2</b> Kullanılan Veri Setleri</a></li>
+</ul></li>
+<li class="chapter" data-level="2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html"><i class="fa fa-check"></i><b>2</b> Veri ve Model Çeşitleri</a><ul>
+<li class="chapter" data-level="2.1" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#veri-çeşitleri"><i class="fa fa-check"></i><b>2.1</b> Veri Çeşitleri</a></li>
+<li class="chapter" data-level="2.2" data-path="veri-ve-model-çe-itleri.html"><a href="veri-ve-model-çe-itleri.html#model-çeşitleri"><i class="fa fa-check"></i><b>2.2</b> Model Çeşitleri</a></li>
+</ul></li>
+<li class="chapter" data-level="3" data-path="do-rusal-regresyon-modeli.html"><a href="do-rusal-regresyon-modeli.html"><i class="fa fa-check"></i><b>3</b> Doğrusal Regresyon Modeli</a></li>
+<li class="chapter" data-level="4" data-path="regresyon-modelleriyle-öngörü.html"><a href="regresyon-modelleriyle-öngörü.html"><i class="fa fa-check"></i><b>4</b> Regresyon Modelleriyle Öngörü</a></li>
+<li class="chapter" data-level="5" data-path="francis-galton-ve-regresyon-terimi.html"><a href="francis-galton-ve-regresyon-terimi.html"><i class="fa fa-check"></i><b>5</b> Francis Galton ve Regresyon Terimi</a></li>
+<li class="chapter" data-level="6" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><i class="fa fa-check"></i><b>6</b> Değişkenleri Doğrusal Olmayan Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="6.1" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-doğrusal-ya-da-çift-log-modeller"><i class="fa fa-check"></i><b>6.1</b> Log-Doğrusal ya da Çift-Log Modeller</a></li>
+<li class="chapter" data-level="6.2" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#log-lin-ya-da-yarı-logaritmik-modeller"><i class="fa fa-check"></i><b>6.2</b> Log-Lin ya da Yarı-Logaritmik Modeller</a></li>
+<li class="chapter" data-level="6.3" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#lin-log-modeller"><i class="fa fa-check"></i><b>6.3</b> Lin-Log Modeller</a></li>
+<li class="chapter" data-level="6.4" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#ters-modeller"><i class="fa fa-check"></i><b>6.4</b> Ters Modeller</a></li>
+<li class="chapter" data-level="6.5" data-path="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html"><a href="de-i-kenleri-do-rusal-olmayan-regresyon-modelleri.html#polinom-regresyon-modelleri"><i class="fa fa-check"></i><b>6.5</b> Polinom Regresyon Modelleri</a></li>
+</ul></li>
+<li class="chapter" data-level="7" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html"><i class="fa fa-check"></i><b>7</b> Kukla Değişkenli Regresyon Modeli</a><ul>
+<li class="chapter" data-level="7.1" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#kukla-değişkenlerin-yorumu"><i class="fa fa-check"></i><b>7.1</b> Kukla Değişkenlerin Yorumu</a></li>
+<li class="chapter" data-level="7.2" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#yapısal-değişimdeki-rolü"><i class="fa fa-check"></i><b>7.2</b> Yapısal Değişimdeki Rolü</a></li>
+<li class="chapter" data-level="7.3" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#mevsimsellikteki-rolü"><i class="fa fa-check"></i><b>7.3</b> Mevsimsellikteki Rolü</a></li>
+<li class="chapter" data-level="7.4" data-path="kukla-de-i-kenli-regresyon-modeli.html"><a href="kukla-de-i-kenli-regresyon-modeli.html#parçalı-doğrusal-regresyondaki-rolü"><i class="fa fa-check"></i><b>7.4</b> Parçalı Doğrusal Regresyondaki Rolü</a></li>
+</ul></li>
+<li class="chapter" data-level="8" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html"><i class="fa fa-check"></i><b>8</b> Çoklu Doğrusal Bağlantı</a><ul>
+<li class="chapter" data-level="8.1" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#temel-bileşenler-analiziregresyonu"><i class="fa fa-check"></i><b>8.1</b> Temel Bileşenler Analizi/Regresyonu</a></li>
+<li class="chapter" data-level="8.2" data-path="çoklu-do-rusal-ba-lant-.html"><a href="çoklu-do-rusal-ba-lant-.html#ridge-regresyon"><i class="fa fa-check"></i><b>8.2</b> Ridge Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="9" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html"><i class="fa fa-check"></i><b>9</b> Değişen Varyans</a><ul>
+<li class="chapter" data-level="9.1" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#breusch-pagan"><i class="fa fa-check"></i><b>9.1</b> Breusch-Pagan</a></li>
+<li class="chapter" data-level="9.2" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#white"><i class="fa fa-check"></i><b>9.2</b> White</a></li>
+<li class="chapter" data-level="9.3" data-path="de-i-en-varyans.html"><a href="de-i-en-varyans.html#robust-standart-hatalar"><i class="fa fa-check"></i><b>9.3</b> Robust Standart Hatalar</a></li>
+</ul></li>
+<li class="chapter" data-level="10" data-path="otokorelasyon.html"><a href="otokorelasyon.html"><i class="fa fa-check"></i><b>10</b> Otokorelasyon</a><ul>
+<li class="chapter" data-level="10.1" data-path="otokorelasyon.html"><a href="otokorelasyon.html#durbin-watson-d"><i class="fa fa-check"></i><b>10.1</b> Durbin-Watson d</a></li>
+<li class="chapter" data-level="10.2" data-path="otokorelasyon.html"><a href="otokorelasyon.html#breusch-godfrey"><i class="fa fa-check"></i><b>10.2</b> Breusch-Godfrey</a></li>
+<li class="chapter" data-level="10.3" data-path="otokorelasyon.html"><a href="otokorelasyon.html#hac-yöntemi"><i class="fa fa-check"></i><b>10.3</b> HAC Yöntemi</a></li>
+</ul></li>
+<li class="chapter" data-level="11" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html"><i class="fa fa-check"></i><b>11</b> Model Tanımlama Hataları</a><ul>
+<li class="chapter" data-level="11.1" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#eksik-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.1</b> Eksik Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.2" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aşırı-tanımlanmış-modeller"><i class="fa fa-check"></i><b>11.2</b> Aşırı Tanımlanmış Modeller</a></li>
+<li class="chapter" data-level="11.3" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#yanlış-fonksiyon-yapısı"><i class="fa fa-check"></i><b>11.3</b> Yanlış Fonksiyon Yapısı</a></li>
+<li class="chapter" data-level="11.4" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#ölçüm-hataları"><i class="fa fa-check"></i><b>11.4</b> Ölçüm Hataları</a></li>
+<li class="chapter" data-level="11.5" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#aykırı-değer-yüksek-kaldıraç-etkisi-baskın-nokta-ve-simüle-edilmiş-veriler"><i class="fa fa-check"></i><b>11.5</b> Aykırı Değer, Yüksek Kaldıraç Etkisi, Baskın Nokta ve Simüle Edilmiş Veriler</a></li>
+<li class="chapter" data-level="11.6" data-path="model-tan-mlama-hatalar-.html"><a href="model-tan-mlama-hatalar-.html#hata-teriminin-olasılık-dağılımı"><i class="fa fa-check"></i><b>11.6</b> Hata Teriminin Olasılık Dağılımı</a></li>
+</ul></li>
+<li class="chapter" data-level="12" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><i class="fa fa-check"></i><b>12</b> Doğrusal Olasılık, Logit ve Probit Modeller</a><ul>
+<li class="chapter" data-level="12.1" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#doğrusal-olasılık"><i class="fa fa-check"></i><b>12.1</b> Doğrusal Olasılık</a></li>
+<li class="chapter" data-level="12.2" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#logit-modeli"><i class="fa fa-check"></i><b>12.2</b> Logit Modeli</a></li>
+<li class="chapter" data-level="12.3" data-path="do-rusal-olas-l-k-logit-ve-probit-modeller.html"><a href="do-rusal-olas-l-k-logit-ve-probit-modeller.html#probit-model"><i class="fa fa-check"></i><b>12.3</b> Probit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="13" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>13</b> Çok Terimli Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="13.1" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#çok-terimli-logit-model"><i class="fa fa-check"></i><b>13.1</b> Çok Terimli Logit Model</a></li>
+<li class="chapter" data-level="13.2" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#koşullu-logit-model"><i class="fa fa-check"></i><b>13.2</b> Koşullu Logit Model</a></li>
+<li class="chapter" data-level="13.3" data-path="çok-terimli-regresyon-modelleri.html"><a href="çok-terimli-regresyon-modelleri.html#karma-logit-model"><i class="fa fa-check"></i><b>13.3</b> Karma Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="14" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html"><i class="fa fa-check"></i><b>14</b> Sıralamalı Regresyon Modelleri</a><ul>
+<li class="chapter" data-level="14.1" data-path="s-ralamal-regresyon-modelleri.html"><a href="s-ralamal-regresyon-modelleri.html#sıralı-logit-model"><i class="fa fa-check"></i><b>14.1</b> Sıralı Logit Model</a></li>
+</ul></li>
+<li class="chapter" data-level="15" data-path="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><a href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html"><i class="fa fa-check"></i><b>15</b> Sınırlı Bağımlı Değişkenli Regresyon Modelleri</a></li>
+<li class="chapter" data-level="16" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html"><i class="fa fa-check"></i><b>16</b> Sayma Verilerini Modelleme</a><ul>
+<li class="chapter" data-level="16.1" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#poisson-regresyon"><i class="fa fa-check"></i><b>16.1</b> Poisson Regresyon</a></li>
+<li class="chapter" data-level="16.2" data-path="sayma-verilerini-modelleme.html"><a href="sayma-verilerini-modelleme.html#negatif-binom-regresyon"><i class="fa fa-check"></i><b>16.2</b> Negatif Binom Regresyon</a></li>
+</ul></li>
+<li class="chapter" data-level="17" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html"><i class="fa fa-check"></i><b>17</b> Dinamik Ekonometri Modelleri</a><ul>
+<li class="chapter" data-level="17.1" data-path="dinamik-ekonometri-modelleri.html"><a href="dinamik-ekonometri-modelleri.html#otoregresif-dağıtılmış-gecikme-modelleri-ardl"><i class="fa fa-check"></i><b>17.1</b> Otoregresif Dağıtılmış Gecikme Modelleri (ARDL)</a></li>
+</ul></li>
+<li class="chapter" data-level="18" data-path="dilim-kantil-regresyon.html"><a href="dilim-kantil-regresyon.html"><i class="fa fa-check"></i><b>18</b> Dilim (Kantil) Regresyon</a></li>
+<li class="chapter" data-level="19" data-path="yararlan-lan-kaynaklar.html"><a href="yararlan-lan-kaynaklar.html"><i class="fa fa-check"></i><b>19</b> Yararlanılan Kaynaklar</a></li>
+<li class="divider"></li>
+<li><a href="https://github.com/rpydaneogrendim" target="blank">Github profilimi ziyaret edin.</a></li>
+
+</ul>
+
+      </nav>
+    </div>
+
+    <div class="book-body">
+      <div class="body-inner">
+        <div class="book-header" role="navigation">
+          <h1>
+            <i class="fa fa-circle-o-notch fa-spin"></i><a href="./">R’da Ekonometri Uygulamaları</a>
+          </h1>
+        </div>
+
+        <div class="page-wrapper" tabindex="-1" role="main">
+          <div class="page-inner">
+
+            <section class="normal" id="section-">
+<div id="sayma-verilerini-modelleme" class="section level1">
+<h1><span class="header-section-number">Konu 16</span> Sayma Verilerini Modelleme</h1>
+<div id="poisson-regresyon" class="section level2">
+<h2><span class="header-section-number">16.1</span> Poisson Regresyon</h2>
+<ul>
+<li><p>Bir ailenin bir yılda çıktığı tatil sayısı,</p></li>
+<li><p>Bir firmanın bir yılda aldığı patent sayısı,</p></li>
+<li><p>Bir yılda doktora ya da dişçiye gitme sayısı,</p></li>
+<li><p>Bir haftada manava gitme sayısı,</p></li>
+<li><p>Bir yılda alınan park cezası ya da hız cezası sayısı,</p></li>
+<li><p>Belirli bir zaman diliminde hastanede kalınan gün sayısı,</p></li>
+<li><p>Beş dakikalık bir zaman diliminde paralı yol gişesinden geçen araç sayısı,</p></li>
+<li><p>Bir yılda sinema, tiyatro ya da operaya gitme sayısı …</p></li>
+</ul>
+<p>Bunun gibi örneklerde bağımlı değişken sayma türündendir. Söz konusu değişkenlerin değeri kesikli ve sonlu sayıdadır. Aynı zamanda aşağıdaki gibi nadir olaylara ilişkin örnekleri de verebiliriz:</p>
+<ul>
+<li><p>Bir haftalık sürede yıldırım çarpmasına uğramak,</p></li>
+<li><p>iki hafta içinde birden çok loto kazanmak,</p></li>
+<li><p>Dört hafta içinde iki ya da daha çok kalp krizi geçirmek,</p></li>
+<li><p>Bir gün içerisinde en az bir trafik kazası geçirmek …</p></li>
+</ul>
+<p>Sayma verisine özellikle uyan olasılık dağılımı poisson olasılık dağılımıdır.</p>
+<p>Poisson dağılımın olasılık yoğunluk fonksiyonu:</p>
+<p><span class="math inline">\(f(y_i) = \frac{(\mu^ye^{-\mu})}{y!}\)</span></p>
+<p>y = 0, 1, 2, …</p>
+<p>f(y), y değişkeninin negatif olmayan tamsayılı değerler alma olasılığıdır.</p>
+<p>y! = y * (y-1) * (y-2) * 2 * 1</p>
+<p>Poisson dağılımda varyans ortalama ile aynı değere sahiptir (eşit yayılım). Yani;</p>
+<p>e(y) = <span class="math inline">\(\mu\)</span></p>
+<p>var(y) = <span class="math inline">\(\mu\)</span></p>
+<p>Poisson regresyon modeli şöyle yazılabilir:</p>
+<p><span class="math inline">\(y_i = e(y_i) + \epsilon_i = \mu_i + \epsilon_i\)</span></p>
+<p>y’ler birbirinden bağımsız dağılmış ve ortalaması <span class="math inline">\(\mu_i\)</span> olan poisson rassal değişkenlerdir. Şöyle gösterebiliriz:</p>
+<p><span class="math inline">\(\mu_i = e(y_i) = exp(\beta_1 + \beta_2x_{2i} + ... + \beta_kx_{ki})\)</span> ; exp: doğal logaritma tabanı e’nin () içindeki ifade kadar üssüdür.</p>
+<p>Burada x’ler ortalama değeri etkileyebilecek bazı değişkenlerdir. Örneğin, sayma değişkenimiz bir kimsenin Babylon’daki etkinliklere bir yılda katılma sayısı olsun. Bu sayı gelire, ücrete, konum olarak uzaklığa ve otopark parasına bağlı olabilir.</p>
+<p>Tahmin amacıyla modeli şöyle yazalım:</p>
+<p><span class="math inline">\(f(y_i) = \frac{(\mu^ye^{-\mu})}{y!} + \epsilon_i\)</span></p>
+<div class="sourceCode" id="cb365"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb365-1" title="1"><span class="kw">library</span>(readxl);<span class="kw">library</span>(tidyverse);<span class="kw">library</span>(magrittr);<span class="kw">library</span>(moments);<span class="kw">library</span>(MASS)</a>
+<a class="sourceLine" id="cb365-2" title="2"></a>
+<a class="sourceLine" id="cb365-3" title="3"><span class="kw">setwd</span>(<span class="st">&quot;C:/Users/datanerd/Desktop/Github/rEkonometri/data&quot;</span>)</a>
+<a class="sourceLine" id="cb365-4" title="4">df &lt;-<span class="st"> </span><span class="kw">read_excel</span>(<span class="st">&quot;Table12_1.xls&quot;</span>)</a></code></pre></div>
+<p>1990 yılı için 181 uluslararası imalatçı firmadan oluşan veri seti patentler ve Ar-Ge harcamaları olacak.</p>
+<p>Amacımız Ar-Ge, endüstri kategorisi ve iki ülkenin, 181 firmanın almış olduğu ortalama patent sayısına etkisini belirlemektir.</p>
+<p>Öncelikle patentlerin, Ar-Ge logaritması (lr90 sütunu), beş endüstri (aerosp, chemist, computer, machines, vehicles) kuklası ve iki ülke (Japan, US) kuklasına göre regresyonunu alarak doğrusal bir regresyon modeli kurmak olacak. Bunu karşılaştırma amacıyla yapacağız.</p>
+<div class="sourceCode" id="cb366"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb366-1" title="1"><span class="kw">str</span>(df)</a></code></pre></div>
+<pre><code>## tibble [181 x 11] (S3: tbl_df/tbl/data.frame)
+##  $ p91     : num [1:181] 55 67 55 83 0 4 7 0 0 96 ...
+##  $ p90     : num [1:181] 80 46 42 102 1 11 55 0 1 67 ...
+##  $ lr91    : num [1:181] 6.29 5.15 4.17 6.13 4.87 ...
+##  $ lr90    : num [1:181] 6.16 5.14 4.1 6.15 4.82 ...
+##  $ aerosp  : num [1:181] 0 0 0 0 0 0 1 0 0 0 ...
+##  $ chemist : num [1:181] 0 0 1 1 0 0 0 0 0 1 ...
+##  $ computer: num [1:181] 0 0 0 0 0 0 0 0 1 0 ...
+##  $ machines: num [1:181] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ vehicles: num [1:181] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ japan   : num [1:181] 0 0 0 0 0 0 0 0 0 0 ...
+##  $ us      : num [1:181] 1 1 1 0 0 0 1 1 1 1 ...</code></pre>
+<div class="sourceCode" id="cb368"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb368-1" title="1">lmodel &lt;-<span class="st"> </span><span class="kw">lm</span>(<span class="dt">formula =</span> p90 <span class="op">~</span><span class="st"> </span>lr90 <span class="op">+</span><span class="st"> </span>aerosp <span class="op">+</span><span class="st"> </span>chemist <span class="op">+</span><span class="st"> </span>computer <span class="op">+</span><span class="st"> </span>machines <span class="op">+</span><span class="st"> </span>vehicles <span class="op">+</span><span class="st"> </span>japan <span class="op">+</span><span class="st"> </span>us, <span class="dt">data =</span> df)</a>
+<a class="sourceLine" id="cb368-2" title="2"><span class="kw">summary</span>(lmodel)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## lm(formula = p90 ~ lr90 + aerosp + chemist + computer + machines + 
+##     vehicles + japan + us, data = df)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -339.29  -52.05   -4.73   37.48  585.04 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept) -250.839     55.435  -4.525 1.12e-05 ***
+## lr90          73.172      7.971   9.180  &lt; 2e-16 ***
+## aerosp       -44.162     35.645  -1.239  0.21706    
+## chemist       47.081     26.542   1.774  0.07786 .  
+## computer      33.856     27.769   1.219  0.22444    
+## machines      34.379     27.813   1.236  0.21811    
+## vehicles    -191.790     36.704  -5.225 4.98e-07 ***
+## japan         26.239     40.920   0.641  0.52223    
+## us           -76.854     28.649  -2.683  0.00802 ** 
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## Residual standard error: 114.5 on 172 degrees of freedom
+## Multiple R-squared:  0.4729, Adjusted R-squared:  0.4484 
+## F-statistic: 19.29 on 8 and 172 DF,  p-value: &lt; 2.2e-16</code></pre>
+<p>Ar-Ge harcamaları (lr90) ile patent sayısı (p90) arasında istatistiksel olarak oldukça anlamlı pozitif bir ilişki bulunmaktadır. Ar-Ge değişkeni logaritmik; patent değişkeni ise doğrusal yapıdadır.</p>
+<p>Diğer değişkenler sabit tutulduğunda;</p>
+<p>Ar-Ge harcamalarındaki %1’lik artış ortalama patent sayısını 0.73 kadar artırır.</p>
+<p>Endüstrilerde ise chemist ve vehicles anlamlıdır. Parametrelerine baktığımızda chemist’te verilen ortalama patent miktarı 47 patent daha fazladır; vehicles’da verilen ortalama patent miktarı 192 patent daha düşüktür.</p>
+<p>Ülkelere göre baktığımızda sadece us anlamlıdır. Burada, us firmalarının baz gruba göre ortalamada 77 daha az patent almış olduğunu söyleyebiliriz.</p>
+<p>Bu modeli karşılaştırma amaçlı kurduğumuzu söylemiştik. ve bu modelin uygun olmadığını göstermiş olduk. Çünkü bazı firmalar büyük sayıda patentler almış olsalar da firma başına bir yılda alınan patent sayısı genellikle düşüktür. Bunu görselleştirelim.</p>
+<div class="sourceCode" id="cb370"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb370-1" title="1">df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb370-2" title="2"><span class="st">  </span><span class="kw">ggplot</span>(<span class="kw">aes</span>(<span class="dt">x =</span> p90)) <span class="op">+</span></a>
+<a class="sourceLine" id="cb370-3" title="3"><span class="st">  </span><span class="kw">geom_histogram</span>() <span class="op">+</span></a>
+<a class="sourceLine" id="cb370-4" title="4"><span class="st">  </span><span class="kw">geom_vline</span>(<span class="dt">xintercept =</span> <span class="dv">200</span>, <span class="dt">linetype=</span><span class="st">&quot;dashed&quot;</span>) <span class="op">+</span></a>
+<a class="sourceLine" id="cb370-5" title="5"><span class="st">  </span><span class="kw">theme_minimal</span>()</a></code></pre></div>
+<p><img src="rEkonometri_files/figure-html/unnamed-chunk-203-1.png" width="672" /></p>
+<p>Firmaların büyük bir çoğunluğunun 200’den daha az patent aldığını görselden net bir şekilde görebiliyoruz. Bu durumu tablo şeklinde de gösterebiliriz.</p>
+<div class="sourceCode" id="cb371"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb371-1" title="1">df <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb371-2" title="2"><span class="st">  </span><span class="kw">mutate</span>(<span class="dt">patentler =</span> <span class="kw">ifelse</span>(p90 <span class="op">%in%</span><span class="st"> </span><span class="dv">0</span><span class="op">:</span><span class="dv">199</span>, <span class="st">&quot;[0-200)&quot;</span>,</a>
+<a class="sourceLine" id="cb371-3" title="3">                            <span class="kw">ifelse</span>(p90 <span class="op">%in%</span><span class="st"> </span><span class="dv">200</span><span class="op">:</span><span class="dv">399</span>, <span class="st">&quot;[200-400)&quot;</span>,</a>
+<a class="sourceLine" id="cb371-4" title="4">                                   <span class="kw">ifelse</span>(p90 <span class="op">%in%</span><span class="st"> </span><span class="dv">400</span><span class="op">:</span><span class="dv">599</span>, <span class="st">&quot;[400-600)&quot;</span>,</a>
+<a class="sourceLine" id="cb371-5" title="5">                                          <span class="kw">ifelse</span>(p90 <span class="op">%in%</span><span class="st"> </span><span class="dv">600</span><span class="op">:</span><span class="dv">799</span>, <span class="st">&quot;[600-800)&quot;</span>,</a>
+<a class="sourceLine" id="cb371-6" title="6">                                                 <span class="kw">ifelse</span>(p90 <span class="op">%in%</span><span class="st"> </span><span class="dv">800</span><span class="op">:</span><span class="dv">999</span>, <span class="st">&quot;[800-1000)&quot;</span>, <span class="st">&quot;&quot;</span>)))))) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb371-7" title="7"><span class="st">  </span><span class="kw">group_by</span>(patentler) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb371-8" title="8"><span class="st">  </span><span class="kw">summarise</span>(<span class="st">&quot;sayı&quot;</span> =<span class="st"> </span><span class="kw">n</span>()) <span class="op">%&gt;%</span><span class="st"> </span></a>
+<a class="sourceLine" id="cb371-9" title="9"><span class="st">  </span><span class="kw">mutate</span>(<span class="st">&quot;yüzde&quot; = `sayı` / sum(`sayı`) * 100) %&gt;% </span></a>
+<a class="sourceLine" id="cb371-10" title="10"><span class="st">  mutate(&quot;</span>kümülatif sayı<span class="st">&quot; = cumsum(`sayı`),</span></a>
+<a class="sourceLine" id="cb371-11" title="11"><span class="st">         &quot;</span>kümülatif yüzde<span class="st">&quot; = cumsum(`yüzde`))</span></a></code></pre></div>
+<pre><code>## # A tibble: 5 x 5
+##   patentler   sayı yüzde `kümülatif sayı` `kümülatif yüzde`
+##   &lt;chr&gt;      &lt;int&gt; &lt;dbl&gt;            &lt;int&gt;             &lt;dbl&gt;
+## 1 [0-200)      160 88.4               160              88.4
+## 2 [200-400)     10  5.52              170              93.9
+## 3 [400-600)      6  3.31              176              97.2
+## 4 [600-800)      3  1.66              179              98.9
+## 5 [800-1000)     2  1.10              181             100</code></pre>
+<p>Patent sayıları özellikle görselden görebileceğimiz gibi çarpık dağılmıştır. Çarpıklık (skewness) değeri:</p>
+<div class="sourceCode" id="cb373"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb373-1" title="1"><span class="kw">skewness</span>(df<span class="op">$</span>p90)</a></code></pre></div>
+<pre><code>## [1] 3.264074</code></pre>
+<p>Basıklık (kurtosis) değeri ise:</p>
+<div class="sourceCode" id="cb375"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb375-1" title="1"><span class="kw">kurtosis</span>(df<span class="op">$</span>p90)</a></code></pre></div>
+<pre><code>## [1] 14.44027</code></pre>
+<p>Normal dağılımlı bir değişken için skewness 0, kurtosis değeri 3’tür. Jarque-Bera istatistiği:</p>
+<div class="sourceCode" id="cb377"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb377-1" title="1"><span class="kw">jarque.test</span>(df<span class="op">$</span>p90)</a></code></pre></div>
+<pre><code>## 
+##  Jarque-Bera Normality Test
+## 
+## data:  df$p90
+## JB = 1308.5, p-value &lt; 2.2e-16
+## alternative hypothesis: greater</code></pre>
+<p>Mevcut örnekte 1308 olarak tahmin edilen J-B değeri o kadar büyüktür ki, en az bu değeri elde etme olasılığı neredeyse sıfırdır.</p>
+<p>Kısaca, sayma verilerini modellemek için normal olasılık dağılımını kullanamayacak; poisson olasılık dağılımınını kullanacağız.</p>
+<div class="sourceCode" id="cb379"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb379-1" title="1">pmodel &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="dt">formula =</span> p90 <span class="op">~</span><span class="st"> </span>lr90 <span class="op">+</span><span class="st"> </span>aerosp <span class="op">+</span><span class="st"> </span>chemist <span class="op">+</span><span class="st"> </span>computer <span class="op">+</span><span class="st"> </span>machines <span class="op">+</span><span class="st"> </span>vehicles <span class="op">+</span><span class="st"> </span>japan <span class="op">+</span><span class="st"> </span>us, <span class="dt">family =</span> <span class="st">&quot;poisson&quot;</span>, <span class="dt">data =</span> df)</a>
+<a class="sourceLine" id="cb379-2" title="2"><span class="kw">summary</span>(pmodel)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## glm(formula = p90 ~ lr90 + aerosp + chemist + computer + machines + 
+##     vehicles + japan + us, family = &quot;poisson&quot;, data = df)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -27.163   -5.210   -1.752    2.942   28.359  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -0.745849   0.062136 -12.003   &lt;2e-16 ***
+## lr90         0.865149   0.008068 107.234   &lt;2e-16 ***
+## aerosp      -0.796538   0.067953 -11.722   &lt;2e-16 ***
+## chemist      0.774751   0.023126  33.501   &lt;2e-16 ***
+## computer     0.468894   0.023939  19.587   &lt;2e-16 ***
+## machines     0.646383   0.038033  16.995   &lt;2e-16 ***
+## vehicles    -1.505641   0.039176 -38.433   &lt;2e-16 ***
+## japan       -0.003893   0.026866  -0.145    0.885    
+## us          -0.418938   0.023094 -18.141   &lt;2e-16 ***
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for poisson family taken to be 1)
+## 
+##     Null deviance: 30808  on 180  degrees of freedom
+## Residual deviance:  9326  on 172  degrees of freedom
+## AIC: 10181
+## 
+## Number of Fisher Scoring iterations: 5</code></pre>
+<p>Sadece japan parametresi istatistiksel olarak anlamlı değildir.</p>
+<p>lr90 0.8651 çıktı. Ar-Ge harcamaları %1 arttığında bir firmaya verilen ortalama patent sayısı %0.86 artar ya da verilen patentlerin arge harcamalarına göre esnekliği 0.86’dır.</p>
+<p>Endüstriler arasından machines’i seçelim. machines endüstrisindeki ortalama patent sayısı, karşılaştırma kategorisine göre % aşağıdaki kadar daha yüksektir.</p>
+<div class="sourceCode" id="cb381"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb381-1" title="1"><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>(<span class="kw">exp</span>(<span class="fl">0.6464</span>) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## [1] 90.86573</code></pre>
+<p>Ülkeler arasından us’i seçelim. Baz grupla karşılaştırıldığında us kukla parametresi % aşağıdaki kadar daha düşüktür.</p>
+<div class="sourceCode" id="cb383"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb383-1" title="1"><span class="dv">100</span> <span class="op">*</span><span class="st"> </span>(<span class="kw">exp</span>(<span class="op">-</span><span class="fl">0.4189</span>) <span class="op">-</span><span class="st"> </span><span class="dv">1</span>)</a></code></pre></div>
+<pre><code>## [1] -34.223</code></pre>
+<p>Biz bir tek parametrelerin istatistiksel olarak anlamlı olup olmadığına bakıp yorum yaptık ama bu şekilde modeli kabul edip konuyu bitirmemiz söz konusu olamaz.</p>
+<p>Parametre tahminlerinin yukarıdaki tabloda verilen standart hataları, ancak tahmin edilen modelde poisson dağılımı olduğu varsayımı doğruysa geçerlidir. Yazının başında şunu demiştik: Poisson dağılımda varyans ortalama ile aynı değere sahiptir (eşit yayılım). Bunu kontrol etmemiz gerekiyor.</p>
+<p>Eğer aşırı yayılım varsa poisson regresyon modeli tahminleri tutarlı olmasına rağmen etkin değildir. Çünkü standart hatalar aşağı yönlü sapmalıdır. Eğer durum böyleyse, tahmin edilen z değerleri yükselmiş olur ve böylece parametre tahminlerinin istatistiksel anlamlılığını yüksek tahmin eder.</p>
+<div class="sourceCode" id="cb385"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb385-1" title="1">asiriyayilim &lt;-<span class="st"> </span><span class="kw">glm</span>(<span class="dt">formula =</span> p90 <span class="op">~</span><span class="st"> </span>lr90 <span class="op">+</span><span class="st"> </span>aerosp <span class="op">+</span><span class="st"> </span>chemist <span class="op">+</span><span class="st"> </span>computer <span class="op">+</span><span class="st"> </span>machines <span class="op">+</span><span class="st"> </span>vehicles <span class="op">+</span><span class="st"> </span>japan <span class="op">+</span><span class="st"> </span>us, <span class="dt">family =</span> <span class="st">&quot;quasipoisson&quot;</span>, <span class="dt">data =</span> df) </a>
+<a class="sourceLine" id="cb385-2" title="2"><span class="kw">summary</span>(asiriyayilim)<span class="op">$</span>dispersion</a></code></pre></div>
+<pre><code>## [1] 61.9516</code></pre>
+<div class="sourceCode" id="cb387"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb387-1" title="1"><span class="kw">pchisq</span>(<span class="kw">summary</span>(asiriyayilim)<span class="op">$</span>dispersion <span class="op">*</span><span class="st"> </span>pmodel<span class="op">$</span>df.residual, pmodel<span class="op">$</span>df.residual, <span class="dt">lower =</span> <span class="ot">FALSE</span>)</a></code></pre></div>
+<pre><code>## [1] 0</code></pre>
+<p>Bu sonuç aşırı yayılım olduğunu gösterir.</p>
+</div>
+<div id="negatif-binom-regresyon" class="section level2">
+<h2><span class="header-section-number">16.2</span> Negatif Binom Regresyon</h2>
+<p>Burada alternatif bir yol olan negatif binom regresyon modeline kaçılabilir. Bu model için varyans ortalamadan daima büyüktür. Negatif binom olasılık dağılımı için <span class="math inline">\(\sigma^2 = \mu + \frac{\mu^2}{r}\)</span> ; <span class="math inline">\(\mu\)</span> &gt; 0, r &gt; 0 (r: başarı sayısı) olduğu gösterilebilir. Bu eşitlik, negatif binom olasılık dağılımı için varyansın ortalamadan daima büyük olduğunu gösterir.</p>
+<div class="sourceCode" id="cb389"><pre class="sourceCode r"><code class="sourceCode r"><a class="sourceLine" id="cb389-1" title="1">nbmodel &lt;-<span class="st"> </span><span class="kw">glm.nb</span>(<span class="dt">formula =</span> p90 <span class="op">~</span><span class="st"> </span>lr90 <span class="op">+</span><span class="st"> </span>aerosp <span class="op">+</span><span class="st"> </span>chemist <span class="op">+</span><span class="st"> </span>computer <span class="op">+</span><span class="st"> </span>machines <span class="op">+</span><span class="st"> </span>vehicles <span class="op">+</span><span class="st"> </span>japan <span class="op">+</span><span class="st"> </span>us, <span class="dt">data =</span> df)</a>
+<a class="sourceLine" id="cb389-2" title="2"><span class="kw">summary</span>(nbmodel)</a></code></pre></div>
+<pre><code>## 
+## Call:
+## glm.nb(formula = p90 ~ lr90 + aerosp + chemist + computer + machines + 
+##     vehicles + japan + us, data = df, init.theta = 0.777306951, 
+##     link = log)
+## 
+## Deviance Residuals: 
+##     Min       1Q   Median       3Q      Max  
+## -2.8148  -1.0293  -0.2992   0.2858   2.5906  
+## 
+## Coefficients:
+##              Estimate Std. Error z value Pr(&gt;|z|)    
+## (Intercept) -0.407240   0.558801  -0.729   0.4661    
+## lr90         0.867174   0.080344  10.793  &lt; 2e-16 ***
+## aerosp      -0.874436   0.364764  -2.397   0.0165 *  
+## chemist      0.666191   0.265790   2.506   0.0122 *  
+## computer    -0.132057   0.279389  -0.473   0.6365    
+## machines     0.008171   0.282563   0.029   0.9769    
+## vehicles    -1.515083   0.366812  -4.130 3.62e-05 ***
+## japan        0.121004   0.407195   0.297   0.7663    
+## us          -0.691413   0.285743  -2.420   0.0155 *  
+## ---
+## Signif. codes:  0 &#39;***&#39; 0.001 &#39;**&#39; 0.01 &#39;*&#39; 0.05 &#39;.&#39; 0.1 &#39; &#39; 1
+## 
+## (Dispersion parameter for Negative Binomial(0.7773) family taken to be 1)
+## 
+##     Null deviance: 427.54  on 180  degrees of freedom
+## Residual deviance: 214.61  on 172  degrees of freedom
+## AIC: 1690.9
+## 
+## Number of Fisher Scoring iterations: 1
+## 
+## 
+##               Theta:  0.7773 
+##           Std. Err.:  0.0820 
+## 
+##  2 x log-likelihood:  -1670.9010</code></pre>
+
+</div>
+</div>
+            </section>
+
+          </div>
+        </div>
+      </div>
+<a href="s-n-rl-ba-ml-de-i-kenli-regresyon-modelleri.html" class="navigation navigation-prev " aria-label="Previous page"><i class="fa fa-angle-left"></i></a>
+<a href="dinamik-ekonometri-modelleri.html" class="navigation navigation-next " aria-label="Next page"><i class="fa fa-angle-right"></i></a>
+    </div>
+  </div>
+<script src="libs/gitbook-2.6.7/js/app.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/lunr.js"></script>
+<script src="libs/gitbook-2.6.7/js/clipboard.min.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-search.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-sharing.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-fontsettings.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-bookdown.js"></script>
+<script src="libs/gitbook-2.6.7/js/jquery.highlight.js"></script>
+<script src="libs/gitbook-2.6.7/js/plugin-clipboard.js"></script>
+<script>
+gitbook.require(["gitbook"], function(gitbook) {
+gitbook.start({
+"sharing": {
+"github": false,
+"facebook": true,
+"twitter": true,
+"linkedin": false,
+"weibo": false,
+"instapaper": false,
+"vk": false,
+"all": ["facebook", "twitter", "linkedin", "weibo", "instapaper"]
+},
+"fontsettings": {
+"theme": "white",
+"family": "sans",
+"size": 2
+},
+"edit": {
+"link": null,
+"text": null
+},
+"history": {
+"link": null,
+"text": null
+},
+"view": {
+"link": null,
+"text": null
+},
+"download": ["rEkonometri.pdf", "rEkonometri.epub"],
+"toc": {
+"collapse": "subsection"
+}
+});
+});
+</script>
+
+<!-- dynamically load mathjax for compatibility with self-contained -->
+<script>
+  (function () {
+    var script = document.createElement("script");
+    script.type = "text/javascript";
+    var src = "true";
+    if (src === "" || src === "true") src = "https://mathjax.rstudio.com/latest/MathJax.js?config=TeX-MML-AM_CHTML";
+    if (location.protocol !== "file:")
+      if (/^https?:/.test(src))
+        src = src.replace(/^https?:/, '');
+    script.src = src;
+    document.getElementsByTagName("head")[0].appendChild(script);
+  })();
+</script>
+</body>
+
+</html>

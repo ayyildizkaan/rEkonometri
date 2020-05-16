@@ -1,0 +1,91 @@
+# Dinamik Ekonometri Modelleri
+
+Zaman serisine ait verilerin kullanıldığı bir regresyon analizinde eğer model, X bağımsız değişkenlerin sadece şimdiki değerlerini değil; gecikmeli ya da geçmişteki değerlerini de içeriyorsa bu modele gecikmesi dağıtılmış model denir. Eğer model, bağımsız değişkenleri arasında bağımlı değişkenin bir ya da birden fazla gecikmeli değerini içeriyorsa buna da otoregresif model denir.
+
+Gecikmesi dağıtılmış model:
+
+$Y_t = \alpha + \beta_0X_t + \beta_1X_{t-1} + \beta_2X_{t-2} + \epsilon_t$
+
+Otoregresif model:
+
+$Y_t = \alpha + \beta X_t + \gamma Y_{t-1} + \epsilon_t$
+
+Gecikmeler psikolojik, teknolojik ve kurumsal nedenlerden dolayı ortaya çıkabilir.
+
+## Otoregresif Dağıtılmış Gecikme Modelleri (ARDL)
+
+Bu modelleri daha genel bir dinamik regresyon modelinde birleştirebiliriz.
+
+$Y_t = \theta_0 + \theta_1Y_{t-1} + \theta_2Y_{t-2} + ... + \theta_pY_{t-p} + \beta_0X_t + \beta1X_{t-1} + \beta_2X_{t-2} + ... + \beta_qX_{t-q} + \epsilon_t$
+
+Yukarıdaki modelde p otoregresif terim; q ise dağıtılmış gecikme terimidir.
+
+ARDL(p,q) olarak yazarsak, gecikmeli Y'ler otoregresif kısmı; gecikmeli X'ler dağıtılmış kısmı oluşturur.
+
+ARDL ile sadece gecikmeli Y'lerin dinamik etkilerini değil, aynı zamanda gecikmeli X'lerin de dinamik etkilerini yakalayabiliriz.
+
+Yine ARDL ile eğer yeterli gecikmeleri model içinde bulundurursak hata terimindeki otokorelasyonu saf dışı edebiliriz.
+
+Aşağıdaki uygulama ile ARDL(1,1) modelini inceleyelim.
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr);library(ARDL);library(lmtest);library(sandwich)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df <- read_excel("pce_dpi.xls")
+
+str(df)
+
+```
+
+Bağımlı değişken:
+
+* **pce:** Kişisel tüketim harcaması
+
+Bağımsız değişken(ler):
+
+* **dpi:** Vergi sonrası gelir
+
+$Y_t = \theta_0 + \theta_1Y_{t-1} + \beta_0X_t + \beta_1X_{t-1} + \epsilon_t, \theta_1 < 1$
+
+Burada, Y = pce ve X = dpi'dır.
+
+Model şunu der: Cari dönemdeki kişisel tüketim harcaması ($Y_t$) hem bir önceki dönem kişisel tüketim harcamasıyla ($Y_{t-1}$) hem de cari ($X_t$) ve bir dönem önceki vergi sonrası gelir ($X_{t-1}$) ile ilişkilidir.
+
+Vergi sonrası gelirdeki 1 birimlik değişimin etki çarpanı (anlık etkisi) $\beta_0$'dır.
+
+Vergi sonrası gelirdeki birim değişim korunduğunda, uzun dönem çarpanı $\frac{\beta_0 + \beta_1}{1 - \theta_1}$ olur. Bu aynı zamanda, vergi sonrası gelirin birim artışı korunduğunda kişisel tüketim harcamasındaki uzun dönemli sürekli artıştır.
+
+ARDL(1,1) ile ilgili varsayımları atlamamamız gerekiyor.
+
+* Y ve X değişkenleri durağandır (Zaman serisinde göreceğiz).
+
+* Yukarıda da yazdığımız aşağıdaki eşitlikte bağımsız değişken değerleri verildiğinde $\epsilon_t$ hata teriminin beklenen ortalama değeri sıfırdır.
+
+$Y_t = \theta_0 + \theta_1Y_{t-1} + \theta_2Y_{t-2} + ... + \theta_pY_{t-p} + \beta_0X_t + \beta1X_{t-1} + \beta_2X_{t-2} + ... + \beta_qX_{t-q} + \epsilon_t$
+
+* Bir önceki maddede yazdığımız eşitlikte yer alan $\epsilon_t$ hata terimi otokorelasyonlu değilse, bu durumda yazdığımız modelin ya da uygulamadaki modelin Sıradan En Küçük Kareler ile tahmin edilen parametreleri tutarlı olacaktır. Eğer $\epsilon_t$ hata terimi otokorelasyonlu ise bu modellerdeki Y terimi de hata terimi ile korelasyonlu olacaktır. Bu durumda da Sıradan En Küçük Kareler tahmincileri tutarlı olmayacaktır.
+
+* X değişkenlerinin dışsal (en azından zayıf dışsal) olduğu varsayılır. Yani, hata terimi ile korelasyonlu değildirler.
+
+```{r}
+
+model <- ardl(formula = pce ~ dpi, data = df, order = c(1,1))
+summary(model)
+
+```
+
+Vergi sonrası gelirdeki (dpi) 1 birimlik değişimin kişisel tüketim harcaması (pce) üzerindeki etki çarpanı (anlık etki) 0.82459'dur. Eğer bu 1 birimlik değişim korunuyorsa bu durumda uzun dönem çarpanı $\frac{0.82459 + (-0.63294)}{1 - 0.80536} = 0.9846383$ olur. Beklentilere paralel olarak uzun dönem çarpan kısa dönem çarpandan büyüktür. Dolayısıyla vergi sonrası gelirdeki 1 $'lık sürdürülebilir bir artış ortalama kişisel tüketim harcamasını 0.98 \$ kadar artıracaktır.
+
+Otokorelasyon ihtimaline karşı hac yöntemi ile modeli tekrar kurabiliriz.
+
+```{r}
+
+coeftest(model, vcov = NeweyWest(model))
+
+```
+
+Hac yöntemi sadece standart hataları ve dolayısıyla t istatistiklerini ve p değerlerini değiştirir.
+
+Eğer ilk kurduğumuz model ile karşılaştırırsak aralarında önemli bir fark olmadığını göreceğiz. Bu durum değişik otokorelasyon sınamalarına dayanan otokorelasyon kanıtlarına rağmen otokorelasyon sorununun çok ciddi görünmediğini ortaya koyar.

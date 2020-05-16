@@ -1,0 +1,219 @@
+# Doğrusal Regresyon Modeli
+
+İlk konunun çok önemli olduğunu düşünüyorum. Bu konuyu anlatabilen hoca da anlayan öğrenci de çok şey başarmış demektir. Greene, *ekonometricinin alet çantasındaki en kullanışlı tek araç doğrusal regresyon modelidir* der. Gerekirse saatlerinizi yetmezse günlerinizi verin ama bu konuyu anlamadan asla diğer konulara geçmeyin.
+
+Genel olarak doğrusal regresyon modelini şöyle yazarız:
+
+$Y_i = \beta_1 + \beta_2X_{2i} + \beta_3X_{3i} + ... + \beta_kX_{ki} + \epsilon_i$
+
+Y, bağımlı ya da açıklanan; X'ler bağımsız ya da açıklayıcı değişkenlerdir. $\epsilon$, rassal ya da stokastik hata terimidir.
+
+Yukarıda yazdığımız eşitliğe anakütle modeli denir. Anakütle kavramı kişiler, firmalar, şehirler gibi geneli temsil eder.
+
+Eşitlikteki $\beta_1$ kesme terimidir. $\beta_2$ ile $\beta_k$ arası ise eğim parametreleridir. Genel olarak $\beta$, gerçek değerini bilmediğimiz ve istatistiki yöntemlerle tahmin etmeye çalıştığımız parametre kavramının sembolik ifadesidir.
+
+$\epsilon$, rassal ya da stokastik hata terimidir ve çeşitli nedenlerden dolayı modelde bulunamayan değişkenleri temsil eder. Stokastik sözcüğü hedef ya da hedefin göbeği anlamına gelir. Kennedy, stokastik ve hata terimini şu örnekle açıklar: *Stokastik bir ilişki, okun nadiren hedefi tam on ikiden vurması gibi, bağımlı değişken değerinin tam olarak öngörülmesi anlamında, her zaman hedefi vuramaz. Hata terimi açıkça bu hedeften sapmaların ya da hataların büyüklüklerini belirlemek amacı ile kullanılır.* Hata terimi gibi bir de kalıntı elde edeceğiz. Bu, aynı anlama gelmekle beraber örneklem söz konusu olduğu zaman kullanılan bir ifadedir. Kennedy, hata terimi için *ekonometristlerin kullandığı tahmin yöntemlerinin başarısı büyük bir oranda hata teriminin yapısına bağlıdır* der.
+
+Öncelikli amacımız, X bağımsız değişkenlerinin değerlerindeki değişmeye Y'nin verdiği *ortalama* tepkiyi bulmaktır. Başka bir ifade ile diğer değişkenleri sabit tutarak bir tane bağımsız değişkenin Y bağımlı değişkeni üzerindeki 1 birimlik etkisini her biri için ölçeriz.
+
+Doğrusal dediğimiz zaman buradaki doğrusallığın değişkenlerden (X'ler) değil; parametrelerden ($\beta'lar$) geldiğini bilmemiz gerekiyor. Bağımlı ve bağımsız değişken(ler) logaritmik, tersi veya kuvveti alınmış şekilde olabilir. Bu, doğrusallık kavramını etkilemez. Asıl önemli olan $\beta$ parametrelerinin kuvvetinin alınmaması, diğer parametrelere bölünmemesi veya dönüştürülmemesidir.
+
+Bu kısa bilgilerden sonra uygulamaya geçebiliriz.
+
+ABD Nüfus İdaresi'nin 1289 (anakütleden alınmış örneklem) kişi ile yaptığı araştırmasından elde edilen veri setini kullanacağız.
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data") #Dosyaları kaydettiğiniz yeri ayarlamalısınız.
+df <- read_excel("Table1_1.xls")
+
+```
+
+```{r}
+
+df %<>% 
+  dplyr::select(wage, female, nonwhite, union, education, exper) #Kullanacağımız değişkenler.
+
+str(df)
+
+```
+
+Bağımlı değişken:
+
+* **wage:** Saatlik ücret ($)
+
+Bağımsız değişken(ler):
+
+* **female:** Kadınsa 1; değilse 0
+
+* **nonwhite:** Beyaz olmayan işçi ise 1; değilse 0
+
+* **union:** Sendikalı bir işte ise 1; değilse 0
+
+* **education:** Yıl bazlı eğitim
+
+* **exper:** Yıl bazlı iş deneyimi. Yaş – eğitim süresi – 6 okula başlama yaşı
+
+wage, education, exper oran ölçeğidir. Oran ölçeği oran, uzaklık ve sıralama özelliklerine sahiptir.
+
+female, nonwhite, union ise kukla değişken olarak kodlanmıştır ve nominal ölçektir. Nominal ölçek oran ölçeğinin özelliklerini taşımaz. Genellikle 1 veya 0 olarak tanımlanırlar.
+
+Çoklu doğrusal regresyon modelini kurabiliriz.
+
+Modeli, *Sıradan En Küçük Kareler* yöntemi ile kuruyoruz.
+
+Elimizde iki değişkenli bir anakütle regresyon fonksiyonu olsun:
+
+$Y_i = \beta_1 + \beta_2X_i + \epsilon_i$
+
+Biz anakütle regresyon fonksiyonunu doğrudan gözlemleyemediğimizi biliyoruz ve bu durumda örnekleme başvuruyoruz.
+
+Örneklem regresyon fonksiyonu şöyle olsun (şapka, tahmincisi olduğunu belirtir):
+
+$Y_i = \hat{\beta_1} + \hat{\beta_2}X_i + \hat{e_i}$
+
+$Y_i = \hat{Y_i} + \hat{e_i}$
+
+Örneklem regresyon fonksiyonunu nasıl belirleyeceğiz?
+
+$\hat{e_i} = Y_i - \hat{Y_i}$
+
+$\hat{e_i} = Y_i - \hat{\beta_1} - \hat{\beta_2}X_i$
+
+$\hat{e_i}$'nin kalıntılar; yani, gözlemlenen değerlerden tahmin edilen değerlerin çıkarılması ile bulunduğunu biliyoruz.
+
+Sıradan En Küçük Kareler yöntemi öyle bir örneklem regresyon fonksiyonu seçer ki kalıntıların kareleri toplamı minimum çıkar. Yani, bu yöntem bir nevi kalıntıları ağırlıklandırır.
+
+```{r}
+
+model <- lm(formula = wage ~ female + nonwhite + union + education + exper, data = df)
+#ya da model <- lm(formula = wage ~., data = df)
+summary(model) #Bazı değerler manuel bulunacak. Bu değerler aşağıdaki çıktıda zaten verilmiş olan değerlerdir.
+
+```
+
+p değeri, bir sıfır hipotezinin ($H_0$) reddedilebileceği en düşük anlamlılık düzeyidir. Her istatistiksel testin sonucunda kullanılan test istatistiğine ait bir p değeri hesaplanır. Bu p değeri, *ilgili hipotez testi sonucunda anlamlı fark vardır* denileceği durumda hatalı karar verme olasılığının ne olduğunu gösterir. p değeri ne kadar küçük olursa $H_0$ hipotezini reddetmek için elimizdeki kanıt o kadar yüksek olur. Her bir parametre için $H_0$ o parametreye ait anakütle değerinin sıfır olduğu anlamına gelir. Yani, diğer bağımsız değişkenler sabitken, *ilgili bağımsız değişkenin bağımlı değişken üzerinde bir etkisi yoktur* anlamını taşır. Örnek olarak exper bağımsız değişkenini alalım. Parametresi 0.16661 olarak bulunmuştur. t değeri ise 10.382'dir. Eğer hipotez bu değişkenin anakütle regresyon fonksiyonundaki parametre değerinin sıfır olduğu yönündeyse, bu hipotezi doğrudan reddedebiliriz. Çünkü en az böyle bir t değeri elde etmenin p değeri neredeyse sıfırdır (0.0000000000000002). O zaman bu durumda exper değişkeninin parametresi istatistiksel olarak oldukça anlamlıdır. Modeldeki diğer değişkenlerin etkisini de dahil ederek exper değişkeni wage'in önemli bir belirleyicisidir diyebiliriz. p değerini %5 olarak belirlersek; bütün değişkenlerin wage üzerinde anlamlı bir etkisi olduğunu söyleyebiliriz.
+
+Hipotez ile ilgili şunu belirtelim: Bir anlamlılık sınamasına, örneğimizde olduğu gibi t sınamasına dayanarak $H_0$'ı reddedemeseydik bu, *bu hipotezi reddedecek nedenimiz olmadığındandır* anlamına gelecekti. Yani, $H_0$'ın bütün kuşkulardan uzak bir biçimde doğru olduğu anlamına gelmez. Tıpkı bir mahkemenin *suçsuzdur* yerine *beraat etmiştir* demesi gibi, bir istatistik sınaması da *kabul ederiz* yerine *reddedemeyiz* sonucuna varır.
+
+$R^2$ değerinin 0.3233; düzeltilmiş $R^2$ değerinin ise 0.3207 olduğunu görüyoruz. $R^2$'yi şöyle bulabiliriz:
+
+Toplam Kareler Toplamı = $\sum y^2_i = \sum(Y_i - \overline{Y})^2$
+
+Açıklanan Kareler Toplamı = $\sum(\hat{Y_i} - \overline{Y})^2$
+
+Kalıntı Kareler Toplamı = $\sum e^2_i$
+
+$R^2 = \frac{\sum(\hat{Y_i} - \overline{Y})^2}{\sum(Y_i - \overline{Y})^2} = \frac{Açıklanan Kareler Toplamı}{Toplam Kareler Toplamı}$ ya da
+
+$R^2 = 1 - \frac{\sum e^2_i}{\sum(Y_i - \overline{Y})^2} = 1 - \frac{Kalıntı Kareler Toplamı}{Toplam Kareler Toplamı}$
+
+```{r}
+
+#Yol-1:
+
+y <- df$wage
+y_sapka <- model$fitted.values
+y_ortalama <- mean(df$wage)
+kalintilar <- model$residuals
+
+aciklanan_kt <- sum((y_sapka - y_ortalama)^2)
+toplam_kt <- sum((y - y_ortalama)^2)
+
+aciklanan_kt / toplam_kt
+
+#Yol-2:
+
+kalinti_kt <- sum(kalintilar^2)
+
+1 - kalinti_kt / toplam_kt
+
+```
+
+$R^2$, örneklem regresyon doğrusunun verilere ne kadar iyi uyduğunu gösterir. Başka bir anlatım ile bağımsız değişkenlerdeki değişimin bağımlı değişimi açıklama oranıdır. 0 ile 1 arasında değer alır. 1 tam uyum anlamındadır. Bu da her tahmin edilen Y'nin gerçek Y'ye eşit olmasıdır ($\hat{Y_i} = Y_i$). Fakat bağımsız değişken sayısı arttıkça $R^2$ değeri de artış eğilimi gösterir. Yani, bu değer modelde yer alan bağımsız değişkenlerin azalmayan bir fonksiyonudur. Bu nedenle çoklu regresyon modellerinde bir de düzeltilmiş değerine bakarız. Buradaki düzeltilmiş teriminden kasıt serbestlik derecesi (gözlem sayısı - bağımsız değişken sayısı, 1289 - 6) düzeltmesidir. Bu da bağımsız değişken sayısına bağlıdır. Eğer bağımsız değişken sayısı 1'den büyük ise düzeltilmiş $R^2$ düzeltilmemiş $R^2$'den küçük olur. Ayrıca düzeltilmiş $R^2$ negatif değer de alabilir. Düzeltilmiş $R^2$'yi $\overline{R}^2 = 1 - (1 - R^2)\frac{n-1}{n-k}$ ile bulabiliriz.
+
+```{r}
+
+R2 <- 0.3233
+n <- nrow(df)
+k <- 6
+
+duzeltilmis_R2 <- 1 - (1 - R2) * ((n - 1) / (n - k))
+duzeltilmis_R2
+
+```
+
+wage'deki değişkenliğin %32'lik kısmı seçtiğimiz beş bağımsız değişken tarafından açıklanır yorumunu yapabiliriz.
+
+Bütün eğim parametrelerinin aynı anda sıfıra eşit olduğu hipotezini test etmek istediğimizde F değerine bakarız. F değeri $R^2$ yardımı ile $F = \frac{R^2/(k-1)}{(1-R^2)/(n-k)}$ şeklinde bulunabilir.
+
+```{r}
+
+R2 <- 0.3233
+n <- nrow(df)
+k <- 6
+
+F_deger <- (R2 / (k - 1)) / ((1 - R2) / (n - k))
+F_deger
+
+```
+
+Eğer bu değere ait p değeri çok düşükse bu hipotez reddedilebilir. Çıktıya baktığımızda bu değerin 0.00000000000000022 olduğunu görüyoruz. Yani, toplu olarak bütün bağımsız değişkenlerin wage üzerinde bir etkisinin olmadığını söyleyen $H_0$'ı güçlü bir şekilde reddedebiliriz. Bu da en az bir bağımsız değişkenin wage üzerinde anlamlı bir etkisi var demektir.
+
+Her bir parametrenin en iyi tahmin değerlerini bulmuştuk. Yine exper üzerinden gidersek bu değer exper için 0.16661'dir. Peki, bir güven aralığında bunu vermek istersek? İstatistikte bir nokta tahmin edicisinin güvenilirliği standart hatasıyla ölçülür. Yalnızca nokta tahminine güvenecek yerde, onun iki yanında iki ya da üç standart hata uzaklığa kadar uzanan öyle bir aralık oluşturabiliriz ki bu aralık, diyelim %95 olasılıkla anakütlenin gerçek parametresini içersin. Burada güven aralığı dediğimiz şeyin genişliği tahmin edicinin standart hatasıyla orantılıdır. $Pr[\hat\beta - t_{a/2}sh(\hat\beta) \le \beta \le \hat\beta + t_{a/2}sh(\hat\beta)]$. Tahmin edicinin örneklem dağılımının standart sapması dediğimiz standart hata (sh) büyüdükçe güven aralığı o kadar genişler. Başka bir ifade ile standart hata ne kadar büyükse anakütle parametresinin bilinmeyen gerçek değerini tahmin etmedeki belirsizlik o kadar yüksek olur. Nasıl yorumlayacağız? %95 varsayımında her 100 aralığın 95'inde gerçek $\beta$ değeri içerilir. Nasıl *yorumlamayacağız*? Belirli bir aralık gerçek $\beta$ değerini %95 olasılıkla içerir. Bu yorum belirtildiği üzere yanlış olacaktır. Belli bir sabit aralığın gerçek $\beta$ değerini içerme olasılığı ya 1'dir ya da 0.
+
+```{r}
+
+confint(model, level = 0.95)
+
+```
+
+exper değişkeninin en iyi tek tahmini 0.16661 idi. %95 güven aralığı 0.1351242 ile 0.1980889 arasındadır. Diğer şeyler sabit tutulduğunda, ilave bir yıllık iş deneyiminin wage üzerindeki etkisinin en az 0.14 $ ve en çok 0.20 \$ olduğu konusunda %95 güvendeyiz ama bunun %5'inde hatalı oluruz. Ayrıca yukarıda dediğimizin üzerinden gidersek, örneğin, gerçek exper parametresinin 0.5 olduğu varsayımını yaptığımızda, aralık sabit olduğundan 0.5 bu aralıkta yer almaz diyebiliriz. Yani, 0.5 bu aralıkta ya yer alır ya da yer almaz. Ya 1 ya da 0.
+
+Bağımsız değişkenlerdeki bir birimlik değişimin wage üzerindeki etkisi şöyledir:
+
+```{r}
+
+model$coefficients
+
+```
+
+Diğer değişkenler sabit tutulduğunda;
+
+Kadınların ortalama wage'i erkeklerin ortalama wage'inden 3.08 $ daha düşüktür (female).
+
+Beyaz olmayan bir işçinin ortalama wage'i beyaz bir işçinin ortalama wage'inden 1.57 $ daha düşüktür (nonwhite).
+
+Sendikalı bir işte çalışanın ortalama wage'i sendikalı bir işte çalışmayanın ortalama wage'inden 1.1 $ daha fazladır (union).
+
+Her ilave eğitim yılı için ortalama wage 1.37 $ artmaktadır (education).
+
+Her ilave deneyim için ortalama wage 0.17 $ artmaktadır (exper).
+
+Bu model yardımı ile bir kişinin alacağı ücreti kesin olarak söyleyemeyiz. Sadece bu kişinin niteliklerine göre ne kazanabileceğini öngörebiliriz.
+
+Kurduğumuz bu regresyon klasik doğrusal regresyon modelinin varsayımlarına dayanmaktadır. Peki, model bu varsayımları sağlıyor mu?
+
+Varsayımlar:
+
+* Regresyon modeli parametrelere göre doğrusaldır.
+
+* Bağımsız değişkenler sabittir. Diğer bir ifade ile hata teriminden bağımsızdırlar.
+
+* Hata teriminin beklenen değeri ya da ortalama değeri sıfırdır.
+
+* Hata terimleri sabit varyanslıdır.
+
+* Hata terimleri arasında otokorelasyon yoktur.
+
+* Bağımsız değişkenler arasında çoklu doğrusal bağlantı yoktur.
+
+* Modelde tanımlama yanlılığı veya hatası yoktur.
+
+* Hata terimi normal dağılımlıdır.
+
+* Gözlem sayısı, bağımsız değişken sayısından büyüktür.
+
+> *İstatistikçiler, sanatçılar gibi, modellerine aşık olmak gibi kötü bir alışkanlığa sahiptirler.* -Box

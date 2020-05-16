@@ -1,0 +1,218 @@
+# Çok Terimli Regresyon Modelleri
+
+```{r}
+
+library(readxl);library(tidyverse);library(magrittr);library(nnet);library(mlogit);library(stargazer);library(Epi)
+
+setwd("C:/Users/datanerd/Desktop/Github/rEkonometri/data")
+df1 <- read_excel("Table9_1.xls")
+df2 <- read_excel("Table9_3.xls")
+
+```
+
+## Çok Terimli Logit Model
+
+Bağımlı değişkenin ikiden fazla seçenekli olduğu durumlar vardır. Ulaşım tercihleri (araba, metrobüs, metro), eğitim tercihi (lisans, yüksek lisans, doktora), anket cevapları (katılıyorum, kısmen, katılmıyorum) gibi. Bu tür modellere çok terimli regresyon modelleri denir.
+
+Verdiğimiz örneklerde ulaşım ve eğitim tercihleri gibi örnekler nominal ya da sıralamasız çok terimli regresyon modelleri iken; anket cevapları gibi örnekler de sıralamalı çok terimli regresyon modelleridir.
+
+```{r}
+
+str(df1)
+
+```
+
+Veriler 1000 lise mezununun üç seçenek arasından tercihleri ile alakalıdır. Bu üç seçeneğin olasılık toplamı 1'dir. Çünkü karşılıklı dışlayan ya da birlikte kapsayıcı olayların olasılıkları toplamı 1 yapar. Dolayısıyla herhangi iki seçeneğin olasılığı belirlendiğinde üçüncüsünün olasılığı ortaya çıkmış olacaktır.
+
+Bu uygulama seçene ya da bireye özgü verilerdir. Seçimler seçimi yapanın özelliklerine bağlıdır. Bu tür veriler olduğunda çok terimli logit ya da çok terimli probit modeller ile tahmin edilir.
+
+Bağımlı değişken:
+
+* **psechoice:** Üniversite ile devam etmeme ise 1, 2 yıllık ise 2, 4 yıllık ise 3
+
+Bağımsız değişken(ler):
+
+* **hscath:** Katolik okul mezunu ise 1; değilse 0
+
+* **grades:** Matematik, ingilizce ve sosyal bilgiler ortalama puanıdır (1-13 arasında değer alır ve arttıkça zayıf performansı işaret eder)
+
+* **faminc:** Brüt aile geliri (1000$)
+
+* **famsiz:** Ailedeki birey sayısı
+
+* **parcoll:** En çok eğitimli olan ebeveyn üniversite mezunu ya da daha yükseğine sahipse 1; değilse 0
+
+* **female:** Kadın ise 1; değilse 0
+
+* **black:** Siyah ise 1; değilse 0
+
+$\pi_{i1} = \frac{1}{(1 + e^{\alpha_2 + \beta_2X_i} + e^{\alpha_3 + \beta_3X_i})}$
+
+$\pi_{i2} = \frac{e^{\alpha_2 + \beta_2X_i}}{(1 + e^{\alpha_2 + \beta_2X_i} + e^{\alpha_3 + \beta_3X_i})}$
+
+$\pi_{i3} = \frac{e^{\alpha_3 + \beta_3X_i}}{(1 + e^{\alpha_2 + \beta_2X_i} + e^{\alpha_3 + \beta_3X_i})}$
+
+Modeli kuralım.
+
+```{r}
+
+mlogitmodel <- multinom(psechoice ~., data = df1)
+summary(mlogitmodel)
+
+```
+
+Burada default olarak üniversiteye gitmeme (1) seçilmiştir. Yani, baz kategori 1'dir. Ama bu model kurulmadan önce aşağıdaki gibi değiştirilebilir.
+
+```{r}
+
+#df1$psechoice <- factor(df1$psechoice)
+#df1$psechoice <- relevel(df1$psechoice, ref = 1)
+
+```
+
+Baz kategori değiştirilirse çıktıdaki parametreler değişir. Ama tercihlerin olasılıkları hep aynı kalır. Çıktıda yer alan 2 ve 3 şunu ifade etmektedir:
+
+2: Okul tercihi 1 ile ilişkili olarak okul tercihi 2'nin logit tahminleri
+
+3: Okul tercihi 1 ile ilişkili olarak okul tercihi 3'ün logit tahminleri
+
+```{r}
+
+mlogitdata <- mlogit.data(df1, choice="psechoice", shape = "wide")
+mlogitmodel <- mlogit(psechoice ~ 1| hscath + grades + faminc + famsiz + parcoll + female + black, data=mlogitdata)
+
+stargazer(mlogitmodel, type="text")
+
+```
+
+İlk olarak istatistiksel anlamlılıklara bakalım. 2 olanlarda grades, faminc, parcoll; 3 olanlarda grades, faminc, parcoll ve black değişkenleri istatistiksel olarak anlamlıdır.
+
+Yapay $R^2$ değeri 0.185 olarak bulunmuş. McFadden tarafından geliştirilen bu $R^2 = 1 – (\frac{ln_{L_u}}{ln_{L_0}})$ olarak ifade edilir. Burada, $L_u$ uyumu yapılmış modelin olabilirlik oranı iken; $L_0$ modelin hiçbir açıklayıcı değişkeni olmaksızın olabilirlik oranıdır.
+
+p değeri neredeyse sıfır olan ve 378 olarak tahmin edilen LR tahmini istatistiksel olarak oldukça anlamlıdır. Bu da bu modelin uyumunun iyi olduğunu belirtir (her ne kadar bütün eğim parametreleri istatistiksel olarak anlamlı olmasa da).
+
+Yorumları farklı yollardan yapabiliriz.
+
+1: üniversite ile devam etmeme, 2: 2 yıllık, 3: 4 yıllık.
+
+Diğer tüm değişkenler sabit tutulduğunda;
+
+Bir bağımsız değişkene ait pozitif parametre, tercih 1'e göre tercih 2 için artan bahis oranını belirtir. Bağımsız değişkene ait negatif parametre ise tercih 1'in lehine olan bahis oranının tercih 2'ye göre arttığı anlamına gelir. Çıktıya baktığımızda, pozitif parametreli olan aile geliri (faminc) arttığında tercih 1'e göre tercih 2 bahis oranı artacaktır. Ya da örneğin, negatif parametreli olan puanlar (grades) tercih 1 lehine olan bahis oranının tercih 2'den yüksek olduğunu gösterir. Ortalama puan (grades) 1 birim arttığında üniversiteyi tercih etmemeye göre 2 yıllık bir yeri tercih etmenin logaritmik olasılığı 0.2995 kadar düşer. Üniversiteye gitmemeye göre 2 yıllık bir yeri tercih etme lehine bahis oranı ise 0.7411 ya da %74 (0.2995'in ters logaritması).
+
+```{r}
+
+exp(-0.2995)
+
+```
+
+## Koşullu Logit Model
+
+Çok terimli logit modeller için seçimler seçimi yapanın özelliklerine bağlıdır demiştik. Koşullu logit modellerde ise seçime özgü nitelikler vardır. Yani, bireye ait özellikler bulunmamaktadır.
+
+```{r}
+
+str(df2)
+
+```
+
+Veriler 210 yolcunun ulaşım tercihleri (hava, otobüs, araba, tren) ile alakalıdır.
+
+Bağımlı değişken:
+
+* **mode:** air (hava), bus (otobüs), car (araba), tren (train)
+
+Bağımsız değişken(ler):
+
+* **termtime:** Terminal bekleme süresi (araba için 0)
+
+* **invehiclecost:** Araç maliyeti
+
+* **traveltime:** Araçla seyahat süresi
+
+* **travelcost:** Araç maliyeti ile bireye ait zamanın alternatif maliyeti toplamı
+
+* **income:** Aile geliri
+
+* **partysize:** Seçilen yöntemdeki yolcu sayısı.
+
+Ama koşullu logit modeller için seçime özgü nitelikler var demiştik fakat income ve partysize bireye özgü değişkenler? İşte bunları dahil etmeyeceğiz. Bunları karma modellerde dahil edeceğiz.
+
+Veri setinin içinde one hot encoding yapılmış. Kısaca mesela, ilk satırda mode = air olduğu için air sütunu 1 diğerleri 0 olarak kodlanmıştır.
+
+Çoklu logit modelde olduğu gibi koşullu logit modelde de bir ulaşım aracını baz alacağız. Bu, car olsun.
+
+```{r}
+
+clogitmodel <- clogistic(choice ~ termtime + invehiclecost + traveltime + travelcost + air + train + bus, strata = id, data = df2)
+clogitmodel
+
+```
+
+p değerlerinin oldukça düşük olduğunu görüyoruz. Bu da parametrelerin istatistiksel olarak anlamlı olduklarını gösteriyor.
+
+Likelihood ratio ya da olabilirlik oranı istatistiği 213 oldukça anlamlıdır. Bu, bütün eğim parametrelerinin aynı anda sıfıra eşit olduğu hipotezinin güçlü bir şekilde reddi anlamına gelir.
+
+Diğer değişkenler sabit tutulduğunda;
+
+termtime: Arabayla seyahate göre terminalde daha uzun bekleme süresi olan ulaşım türü daha az seçilme eğiliminde olacaktır. Herhangi bir ulaşım türü için terminal süresini 1 dakika artırmak bu türü kullanmanın bahis oranını %10 kadar düşürür.
+
+traveltime: Eğer arabaya göre bir ulaşım aracındaki seyahat süresi daha uzunsa bu ulaşım türü muhtemelen seçilmeyecektir. Herhangi bir ulaşım türü için seyahat süresini 1 dakika artırmak bu türü kullanmanın bahis oranını %2 kadar düşürür.
+
+travelcost: Arabaya göre daha düşük alternatif maliyeti olan ulaşım türü seçilecektir.
+
+## Karma Logit Model
+
+Çok terimli logit modelde seçimler seçimi yapanın özelliklerine bağlıdır demiştik. Koşullu logit modelde ise seçime ait özellikler var olup bireye ait özellikler bulunmamaktadır demiştik. Şu anki başlığımız olan karma logit modelde her ikisini de modele dahil edebiliriz.
+
+Karma logit modeli, tercih olasılığının hem bireyin özelliklerine hem de tercihin niteliğine bağlı olduğu, hem sabit hem de rassal parametrelerin modelde bulunmasına izin veren ve parametre dağılımlarını da modele katan gelişmiş bir nitel tercih modelidir. Karma logit modelinde, rassal parametrelerin dağılımları konusunda bir sınırlama yoktur. Karma logit modeli, monte carlo metodu, maksimum simüle edilmiş benzerlik metodu, halton dizileri ve bayes yöntemleri kullanılarak tahmin edilebilir.
+
+Ulaşım tercihleri veri setinde yer alan income (aile geliri) ve partysize (yolcu sayısı) bireye özgü niteliklerdi. Bunları ulaşım yöntemleri ile etkileşime sokacağız. Yani, air, train ve bus'ı income ve partysize ile tek tek çarpacağız. Referans olarak ise car'ı almıştık.
+
+```{r}
+
+df2 %<>% 
+  mutate(air_income = air*income,
+         train_income = train*income,
+         bus_income = bus*income,
+         air_partysize = air*partysize,
+         train_partysize = train*partysize,
+         bus_partysize = bus*partysize)
+
+```
+
+Ardından veri setini kullanılabilir bir forma getirelim.
+
+```{r}
+
+df_mlogit.data <- mlogit.data(data = df2, choice = "mode", shape = "long", alt.levels = c("air","train","bus","car"))
+
+```
+
+Şimdi modeli kurabiliriz.
+
+```{r}
+
+mlogitmodel <- mlogit(formula = choice ~ termtime + invehiclecost + traveltime + air + train + bus + air_income + train_income + bus_income + air_partysize + train_partysize + bus_partysize | 0, data = df_mlogit.data, reflevel = "car")
+summary(mlogitmodel)
+
+```
+
+Model tahmin edildikten sonra parametreleri yorumlayabiliriz ve yorum kolaylığı açısından bu parametreler nispi bahis oranlarına dönüştürülebilirler.
+
+termtime, invehiclecost ve traveltime'a ait nispi bahis oranları, bu değişkenlerin her birindeki 1 birim artışın, o ulaşım aracının cazibesini car yolculuğuna göre azaltacağını göstermektedir.
+
+Etkileşim değişkenlerinin nispi bahis oranlarına bakalım. Örneğin, diğer şeyler sabit tutulduğunda, income'daki 1 birimlik artış train ile seyahat etme bahis oranını %5.8 düşürecektir.
+
+```{r}
+
+(1 - exp(-0.05922726)) * 100 #exp(train_income'ın parametresi)
+
+```
+
+Bir diğer örnek, diğer şeyler sabit tutulduğunda, partysize'daki 1 birimlik artış air ile seyahat etme bahis oranını %60.2 düşürecektir.
+
+```{r}
+
+(1 - exp(-0.92242034)) * 100 #exp(air_partysize'ın parametresi)
+
+```
