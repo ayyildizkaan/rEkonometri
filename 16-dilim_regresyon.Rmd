@@ -91,7 +91,7 @@ Sendikalı işçilerin medyan ücreti sendikalı olmayan işçilerden 1.68 $ dah
 
 Beyaz olmayanların medyan ücreti beyaz işçilerden 0.82 $ daha düşüktür (nonwhite).
 
-Karşılaştırma yapmak amacıyla 25. ve 75. dilimleri de ekleyelim. regresyon istenilen bir dilimde kurulabilir.
+Karşılaştırma yapmak amacıyla 25. ve 75. dilimleri de ekleyelim. Regresyon istenilen bir dilimde kurulabilir.
 
 ```{r}
 
